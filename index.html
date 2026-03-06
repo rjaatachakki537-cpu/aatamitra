@@ -1,133 +1,173 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rana Ji Aata Chakki</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fffbf0; }
+        body { margin: 0; font-family: sans-serif; background: var(--bg); padding-bottom: 80px; }
+        .header { background: var(--dark); color: var(--main); padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
+        .view { display: none; padding: 15px; }
+        .active { display: block; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: white; padding: 10px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; }
+        .card img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
+        .item-row { background: white; border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .item-row img { width: 50px; height: 50px; border-radius: 8px; }
+        .add-btn { background: var(--main); border: none; padding: 8px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--main); }
+        .badge { background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; margin-left: 15px; }
+        .wa-btn { background: #25d366; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="header"><h3>Rana Ji Aata Chakki</h3></div>
+
+<div id="view-home" class="view active">
+    <div class="grid">
+        <div class="card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn fa-2x"></i><h3>Aata</h3></div>
+        <div class="card" onclick="loadSubs('Mustered oil')"><i class="fas fa-oil-can fa-2x"></i><h3>Mustard Oil</h3></div>
+        <div class="card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot fa-2x"></i><h3>Masale</h3></div>
+        <div class="card" onclick="window.open('tel:+918923357537')"><i class="fas fa-phone fa-2x"></i><h3>Contact</h3></div>
+    </div>
+</div>
+
+<div id="view-sub" class="view">
+    <button onclick="showView('view-home')">← Back</button>
+    <h3 id="title-sub"></h3>
+    <div id="list-sub" class="grid"></div>
+</div>
+
+<div id="view-prod" class="view">
+    <button id="back-to-sub">← Back</button>
+    <h3 id="title-prod"></h3>
+    <div id="list-prod"></div>
+</div>
+
+<div id="view-cart" class="view">
+    <h3>Mera Order</h3>
+    <div id="list-cart"></div>
+    <div id="total-cart" style="font-weight:bold; margin:20px 0; text-align:right;"></div>
+    <button class="wa-btn" onclick="orderNow()">WhatsApp par Order Karein</button>
+</div>
+
+<div class="nav">
+    <div onclick="showView('view-home')"><i class="fas fa-home"></i><br>Home</div>
+    <div onclick="showView('view-cart')"><i class="fas fa-shopping-cart"></i><span class="badge" id="b-count">0</span><br>Cart</div>
+</div>
+
 <script>
-    const S_ID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
-    // Is baar hum simplified JSON fetch karenge
-    const G_URL = `https://docs.google.com/spreadsheets/d/${S_ID}/gviz/tq?tqx=out:json&sheet=Products`;
+const SID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
+const URL = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=Products`;
 
-    let sheetData = [];
-    let cart = [];
+let data = [];
+let cart = [];
 
-    async function init() {
-        try {
-            const r = await fetch(G_URL);
-            const t = await r.text();
-            // Data ko saaf karke JSON banana
-            const j = JSON.parse(t.substring(47, t.length - 2));
-            sheetData = j.table.rows;
-            console.log("Data Loaded!");
-        } catch(e) { 
-            console.error("Connection Error", e);
-            alert("Sheet connect nahi ho rahi!"); 
-        }
+// 1. Data Load Karna
+async function init() {
+    try {
+        const r = await fetch(URL);
+        const t = await r.text();
+        const j = JSON.parse(t.substring(47, t.length - 2));
+        data = j.table.rows;
+        console.log("Sheet Loaded!");
+    } catch(e) {
+        alert("Net Check Karein ya Sheet Settings!");
     }
+}
 
-    function openView(id) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(id === 'view-cart') renderCart();
-    }
+function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id === 'view-cart') renderCart();
+}
 
-    function processSub(main) {
-        let subs = {};
-        let lastM = ""; 
+// 2. Sub Category Load (Sabut/Pisa)
+function loadSubs(main) {
+    let subs = {};
+    let lastM = "";
+    data.forEach(r => {
+        let m = r.c[2]?.v || lastM; if(m) lastM = m;
+        let curM = lastM.toLowerCase().trim();
+        let tarM = main.toLowerCase().trim();
+
+        // Special check for Masale
+        let match = (curM === tarM) || (tarM === 'masale' && (curM === 'mirchi' || curM === 'haldi' || curM === 'masala'));
         
-        sheetData.forEach(row => {
-            // Hum seedha Column C (Index 2) dekh rahe hain Category ke liye
-            let m = (row.c[2] && row.c[2].v) ? row.c[2].v : lastM;
-            if(m) lastM = m;
-
-            let currentCat = lastM.toString().toLowerCase().trim();
-            let searchCat = main.toLowerCase().trim();
-
-            // Masale wali condition
-            let match = (currentCat === searchCat) || 
-                        (searchCat === 'masale' && (currentCat === 'mirchi' || currentCat === 'haldi' || currentCat === 'masala'));
-
-            if(match) {
-                let s = (row.c[3] && row.c[3].v) ? row.c[3].v : ""; // Column D: Sub Category
-                let img = (row.c[6] && row.c[6].v) ? row.c[6].v : ""; // Column G: Image
-                if(s && !subs[s]) subs[s] = img;
-            }
-        });
-
-        let h = '';
-        for(let s in subs) {
-            let imgSrc = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3081/3081913.png';
-            h += `
-            <div class="card" onclick="processProd('${main}','${s}')">
-                <img src="${imgSrc}" style="width:100%; height:110px; object-fit:cover; border-radius:15px;">
-                <h3>${s}</h3>
-            </div>`;
+        if(match) {
+            let s = r.c[3]?.v;
+            let img = r.c[6]?.v;
+            if(s && !subs[s]) subs[s] = img;
         }
-        document.getElementById('sub-grid').innerHTML = h || `<p style="text-align:center; padding:20px;">Abhi koi data nahi mila.</p>`;
-        document.getElementById('sub-head').innerText = main;
-        openView('view-sub');
+    });
+
+    let h = '';
+    for(let s in subs) {
+        let img = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3081/3081913.png';
+        h += `<div class="card" onclick="loadProds('${main}','${s}')"><img src="${img}"><h3>${s}</h3></div>`;
     }
+    document.getElementById('list-sub').innerHTML = h || "No Categories Found";
+    document.getElementById('title-sub').innerText = main;
+    showView('view-sub');
+}
 
-    function processProd(main, sub) {
-        let h = '';
-        let lastM = "", lastN = "", lastS = "", lastI = "";
+// 3. Products Load (Mirchi, Haldi etc)
+function loadProds(main, sub) {
+    let h = '';
+    let lM="", lN="", lS="", lI="";
+    data.forEach(r => {
+        let n = r.c[1]?.v || lN; if(n) lN=n;
+        let m = r.c[2]?.v || lM; if(m) lM=m;
+        let s = r.c[3]?.v || lS; if(s) lS=s;
+        let i = r.c[6]?.v || lI; if(i && i.includes('http')) lI=i;
 
-        sheetData.forEach(row => {
-            let n = (row.c[1] && row.c[1].v) ? row.c[1].v : lastN; if(n) lastN = n;
-            let m = (row.c[2] && row.c[2].v) ? row.c[2].v : lastM; if(m) lastM = m;
-            let s = (row.c[3] && row.c[3].v) ? row.c[3].v : lastS; if(s) lastS = s;
-            let i = (row.c[6] && row.c[6].v) ? row.c[6].v : lastI; if(i && i.includes('http')) lastI = i;
+        let curM = lM.toLowerCase().trim();
+        let tarM = main.toLowerCase().trim();
+        let match = (curM === tarM) || (tarM === 'masale' && (curM === 'mirchi' || curM === 'haldi' || curM === 'masala'));
 
-            let currentCat = lastM.toString().toLowerCase().trim();
-            let searchCat = main.toLowerCase().trim();
-            let match = (currentCat === searchCat) || 
-                        (searchCat === 'masale' && (currentCat === 'mirchi' || currentCat === 'haldi' || currentCat === 'masala'));
-
-            if(match && lastS === sub) {
-                let w = (row.c[4] && row.c[4].v) ? row.c[4].v : ""; // Net Weight
-                let p = (row.c[5] && row.c[5].v) ? row.c[5].v : ""; // Price
-                if(w && p) {
-                    h += `
-                    <div class="item-row" style="display:flex; align-items:center; gap:15px; background:white; padding:12px; margin-bottom:10px; border-radius:15px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-                        <img src="${lastI || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; border-radius:10px; object-fit:cover;">
-                        <div style="flex:1">
-                            <h4 style="margin:0;">${lastN}</h4>
-                            <p style="margin:5px 0; color:#666;">${w} - <b>₹${p}</b></p>
-                        </div>
-                        <button onclick="add('${lastN}','${w}','${p}')" style="background:#f4b41a; border:none; padding:8px 12px; border-radius:8px; font-weight:bold;">Add +</button>
-                    </div>`;
-                }
+        if(match && lS === sub) {
+            let w = r.c[4]?.v; let p = r.c[5]?.v;
+            if(w && p) {
+                h += `<div class="item-row"><img src="${lI || 'https://via.placeholder.com/50'}"><div style="flex:1"><b>${lN}</b><br><small>${w} - ₹${p}</small></div><button class="add-btn" onclick="add('${lN}','${w}','${p}')">Add +</button></div>`;
             }
-        });
-        document.getElementById('product-list').innerHTML = h || "Saaman khatam ho gaya!";
-        document.getElementById('prod-head').innerText = sub;
-        document.getElementById('btn-back-prod').onclick = () => processSub(main);
-        openView('view-products');
-    }
+        }
+    });
+    document.getElementById('list-prod').innerHTML = h || "No Items";
+    document.getElementById('title-prod').innerText = sub;
+    document.getElementById('back-to-sub').onclick = () => loadSubs(main);
+    showView('view-prod');
+}
 
-    function add(n,w,p) {
-        cart.push({n,w,p:parseInt(p)});
-        document.getElementById('badge').innerText = cart.length;
-        alert(n + " Cart mein gaya!");
-    }
+function add(n,w,p) {
+    cart.push({n,w,p:parseInt(p)});
+    document.getElementById('b-count').innerText = cart.length;
+    alert("Added!");
+}
 
-    function renderCart() {
-        let h = '', t = 0;
-        cart.forEach((item, i) => {
-            t += item.p;
-            h += `<div class="item-row" style="display:flex; justify-content:space-between; background:white; padding:15px; margin-bottom:10px; border-radius:10px;">
-                    <div><h4 style="margin:0;">${item.n} (${item.w})</h4><b>₹${item.p}</b></div>
-                    <button onclick="remove(${i})" style="color:red; border:none; background:none; font-size:18px;">&times;</button>
-                  </div>`;
-        });
-        document.getElementById('cart-items').innerHTML = h || "Cart khaali hai";
-        document.getElementById('cart-total').innerHTML = `<h3 style="text-align:right;">Total: ₹${t}</h3>`;
-    }
+function renderCart() {
+    let h = '', t = 0;
+    cart.forEach((x, i) => {
+        t += x.p;
+        h += `<div class="item-row"><div style="flex:1"><b>${x.n}</b> (${x.w})<br>₹${x.p}</div><button onclick="remove(${i})" style="color:red;border:none;background:none;">X</button></div>`;
+    });
+    document.getElementById('list-cart').innerHTML = h || "Cart Khali Hai";
+    document.getElementById('total-cart').innerText = "Total: ₹" + t;
+}
 
-    function remove(i) { cart.splice(i,1); document.getElementById('badge').innerText = cart.length; renderCart(); }
+function remove(i) { cart.splice(i,1); document.getElementById('b-count').innerText = cart.length; renderCart(); }
 
-    function sendToWA() {
-        if(cart.length === 0) return alert("Pehle saman add karein!");
-        let msg = "*Rana Ji Aata Chakki Order*\n\n";
-        cart.forEach((item, i) => msg += `${i+1}. ${item.n} (${item.w}) - ₹${item.p}\n`);
-        msg += `\n*Total Amount: ₹${cart.reduce((a,b)=>a+b.p,0)}*`;
-        window.open(`https://wa.me/918923357537?text=${encodeURIComponent(msg)}`);
-    }
+function orderNow() {
+    if(cart.length === 0) return;
+    let msg = "*Order From Rana Ji App*\n\n";
+    cart.forEach(x => msg += `- ${x.n} (${x.w}): ₹${x.p}\n`);
+    msg += `\n*Total: ₹${cart.reduce((a,b)=>a+b.p,0)}*`;
+    window.open(`https://wa.me/918923357537?text=${encodeURIComponent(msg)}`);
+}
 
-    window.onload = init;
+window.onload = init;
 </script>
+</body>
+</html>
