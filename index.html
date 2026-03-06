@@ -3,87 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aata Mitra - Rana Ji</title>
+    <title>Rana Ji Aata Chakki</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fff9e6; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 70px; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { margin: 0; background: var(--bg); color: var(--dark); padding-bottom: 80px; }
+        
+        /* Splash Screen */
         #splash { position: fixed; top: 0; width: 100%; height: 100%; background: var(--main); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
-        .nav { background: var(--dark); color: var(--main); padding: 15px; position: sticky; top: 0; display: flex; justify-content: space-between; z-index: 100; }
-        .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .card img { width: 100%; border-radius: 8px; height: 120px; object-fit: cover; }
-        .price { color: green; font-weight: bold; margin: 5px 0; }
-        .order-btn { background: #25d366; color: white; border: none; padding: 8px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        .bottom-menu { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--main); }
+
+        /* Navbar */
+        .header { background: var(--dark); color: var(--main); padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        
+        /* Product List */
+        .product-list { padding: 10px; }
+        .product-card { background: white; border-radius: 15px; margin-bottom: 20px; overflow: hidden; border: 1px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .product-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
+        .product-info { padding: 15px; }
+        .product-name { font-size: 1.3rem; font-weight: bold; margin: 0 0 10px 0; color: var(--dark); }
+        
+        /* Pricing Table - Jaisa tune manga tha */
+        .price-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.9rem; }
+        .price-table td { padding: 8px; border: 1px solid #f0f0f0; text-align: center; }
+        .price-table th { background: #f9f9f9; padding: 5px; font-size: 0.8rem; color: #666; }
+        .price-val { font-weight: bold; color: #2e7d32; }
+
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .wa-btn { background: #25d366; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .call-btn { background: var(--dark); color: var(--main); border: none; padding: 12px; border-radius: 8px; font-weight: bold; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+        /* Bottom Nav */
+        .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px; border-top: 2px solid var(--main); }
+        .nav-link { text-decoration: none; color: var(--dark); font-size: 0.8rem; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="splash">
-    <i class="fas fa-wheat-awn fa-3x"></i>
-    <h1 style="margin:10px 0;">AATA MITRA</h1>
-    <p>RANA JI AATA CHAKKI</p>
+    <i class="fas fa-wheat-awn fa-4x"></i>
+    <h1>AATA MITRA</h1>
+    <p>Rana Ji Aata Chakki</p>
 </div>
 
-<div class="nav">
-    <span><b>Rana Ji Aata Chakki</b></span>
-    <i class="fas fa-shopping-cart"></i>
+<div class="header">
+    <h2 style="margin:0;">Rana Ji Aata Chakki</h2>
 </div>
 
-<div class="container" id="product-list">
-    <p style="grid-column: span 2; text-align: center;">Saman load ho raha hai...</p>
-</div>
+<div class="product-list" id="products">
+    </div>
 
-<div class="bottom-menu">
-    <div onclick="location.reload()"><i class="fas fa-home"></i><br>Home</div>
-    <div onclick="window.open('https://wa.me/918923357537')"><i class="fab fa-whatsapp"></i><br>WhatsApp</div>
+<div class="footer-nav">
+    <a href="#" class="nav-link" onclick="location.reload()"><i class="fas fa-home fa-lg"></i><br>Home</a>
+    <a href="https://wa.me/918923357537" class="nav-link"><i class="fab fa-whatsapp fa-lg"></i><br>Chat</a>
+    <a href="tel:+918923357537" class="nav-link"><i class="fas fa-phone fa-lg"></i><br>Call</a>
 </div>
 
 <script>
-    // Splash Timeout
-    setTimeout(() => document.getElementById('splash').style.display='none', 2500);
+    setTimeout(() => { document.getElementById('splash').style.display='none'; }, 2000);
 
-    // Teri Sahi Sheet ID
     const SHEET_ID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
-    const G_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Products`;
+    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Products`;
 
-    async function loadData() {
+    async function fetchData() {
         try {
-            const res = await fetch(G_URL);
+            const res = await fetch(URL);
             const text = await res.text();
-            const json = JSON.parse(text.substr(47).slice(0, -2));
-            const items = json.table.rows;
+            const data = JSON.parse(text.substr(47).slice(0, -2));
+            const rows = data.table.rows;
             
             let html = '';
-            items.forEach(row => {
-                const name = row.c[1] ? row.c[1].v : 'Product';
-                const price = row.c[3] ? row.c[3].v : '0';
-                const img = row.c[6] ? row.c[6].v : 'https://via.placeholder.com/150';
-                const status = row.c[7] ? row.c[7].v : 'Live';
+            rows.forEach((row) => {
+                const name = row.c[1]?.v;
+                const p5 = row.c[3]?.v || 'N/A';
+                const p10 = row.c[4]?.v || 'N/A';
+                const p25 = row.c[5]?.v || 'N/A';
+                const img = row.c[6]?.v || 'https://via.placeholder.com/300x180?text=Rana+Ji+Aata';
+                const status = row.c[7]?.v;
 
                 if(status === 'Live') {
                     html += `
-                    <div class="card">
-                        <img src="${img}">
-                        <h4>${name}</h4>
-                        <p class="price">₹${price}</p>
-                        <button class="order-btn" onclick="orderNow('${name}', '${price}')">Order Karein</button>
+                    <div class="product-card">
+                        <img src="${img}" class="product-img">
+                        <div class="product-info">
+                            <h3 class="product-name">${name}</h3>
+                            <table class="price-table">
+                                <tr><th>5 KG</th><th>10 KG</th><th>25 KG</th></tr>
+                                <tr>
+                                    <td class="price-val">₹${p5}</td>
+                                    <td class="price-val">₹${p10}</td>
+                                    <td class="price-val">₹${p25}</td>
+                                </tr>
+                            </table>
+                            <div class="btn-row">
+                                <a href="https://wa.me/918923357537?text=Mujhe ${name} order karna hai" class="wa-btn"><i class="fab fa-whatsapp"></i> Order</a>
+                                <a href="tel:+918923357537" class="call-btn"><i class="fas fa-phone"></i> Call</a>
+                            </div>
+                        </div>
                     </div>`;
                 }
             });
-            document.getElementById('product-list').innerHTML = html || 'Saman nahi mila. Sheet check karein.';
+            document.getElementById('products').innerHTML = html;
         } catch (e) {
-            document.getElementById('product-list').innerHTML = 'Error: Sheet ko Share karein (Anyone with link).';
+            document.getElementById('products').innerHTML = "<p style='text-align:center;'>Sheet settings check karein!</p>";
         }
     }
-
-    function orderNow(pName, pPrice) {
-        let msg = `Namaste Rana Ji, mujhe ye order karna hai:\n\n*Saman:* ${pName}\n*Rate:* ₹${pPrice}`;
-        window.open(`https://wa.me/918923357537?text=${encodeURIComponent(msg)}`);
-    }
-
-    loadData();
+    fetchData();
 </script>
 </body>
 </html>
