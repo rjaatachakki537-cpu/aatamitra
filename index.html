@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aata Mitra - Rana Ji Aata Chakki</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --main-yellow: #f4b41a; --dark-brown: #4a2c2a; --wheat-bg: #fff9e6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--wheat-bg); color: var(--dark-brown); }
+
+        /* 1. SPLASH SCREEN */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--main-yellow); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+            transition: 0.5s ease-out;
+        }
+        #splash-screen i { font-size: 80px; color: var(--dark-brown); margin-bottom: 20px; }
+        #splash-screen h1 { font-size: 2.5rem; letter-spacing: 2px; }
+
+        /* 2. NAVBAR & SEARCH */
+        .navbar { background: var(--dark-brown); padding: 15px; position: fixed; top: 0; width: 100%; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h2 { color: var(--main-yellow); font-size: 1.2rem; }
+        .search-container { margin-top: 70px; padding: 15px; }
+        .search-bar { width: 100%; padding: 12px; border-radius: 25px; border: 2px solid var(--main-yellow); outline: none; }
+
+        /* 3. BANNER SLIDER */
+        .banner-box { margin: 0 15px 20px; background: var(--main-yellow); border-radius: 15px; height: 150px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .banner-text { font-weight: bold; font-size: 1.2rem; color: var(--dark-brown); text-align: center; padding: 10px; }
+
+        /* 4. PRODUCTS SECTION */
+        .section-title { padding-left: 20px; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .product-card { background: white; border-radius: 12px; padding: 10px; border: 1px solid #ddd; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; height: 120px; object-fit: contain; border-radius: 8px; }
+        .product-card h3 { font-size: 0.9rem; margin: 10px 0 5px; }
+        .product-card .price { font-weight: bold; color: green; font-size: 1.1rem; }
+        .add-btn { background: var(--main-yellow); color: var(--dark-brown); border: none; padding: 8px; width: 100%; border-radius: 5px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+
+        /* 5. BOTTOM NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--main-yellow); }
+        .nav-item { text-align: center; color: var(--dark-brown); font-size: 12px; cursor: pointer; }
+        .nav-item i { font-size: 20px; display: block; }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen">
+        <i class="fas fa-wheat-awn"></i>
+        <h1>AATA MITRA</h1>
+        <p>by RANA JI AATA CHAKKI</p>
+    </div>
+
+    <div class="navbar">
+        <h2><i class="fas fa-store"></i> Aata Mitra</h2>
+        <i class="fas fa-shopping-cart" style="color:white; font-size:22px;"></i>
+    </div>
+
+    <div class="search-container">
+        <input type="text" class="search-bar" placeholder="Search Atta, Masala, Oil...">
+    </div>
+
+    <div id="banner-container">
+        <div class="banner-box">
+            <div class="banner-text" id="banner-msg">Loading Fresh Offers...</div>
+        </div>
+    </div>
+
+    <div class="section-title">Hamare Products</div>
+    <div class="product-grid" id="product-container">
+        </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item"><i class="fas fa-home"></i>Home</div>
+        <div class="nav-item"><i class="fas fa-list"></i>Orders</div>
+        <div class="nav-item"><i class="fas fa-user"></i>Profile</div>
+    </div>
+
+    <script>
+        // 1. Splash Screen Timeout
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 500);
+        }, 3000);
+
+        // 2. Google Sheets Configuration
+        const SHEET_ID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
+        
+        // Fetching Banners
+        async function loadBanners() {
+            const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Banners`;
+            try {
+                const res = await fetch(URL);
+                const text = await res.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                const bannerData = json.table.rows[0].c[2].v; // 3rd column: Offer_Text
+                document.getElementById('banner-msg').innerText = bannerData;
+            } catch (e) { document.getElementById('banner-msg').innerText = "10 KG Chakki Atta – ₹20 Discount"; }
+        }
+
+        // Fetching Products
+        async function loadProducts() {
+            const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Products`;
+            try {
+                const res = await fetch(URL);
+                const text = await res.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                const rows = json.table.rows;
+                
+                let html = '';
+                rows.forEach(row => {
+                    const name = row.c[1]?.v || '';
+                    const price = row.c[3]?.v || ''; // Price_5KG
+                    const img = row.c[6]?.v || 'https://via.placeholder.com/150';
+                    const status = row.c[7]?.v || '';
+
+                    if(status === 'Live') {
+                        html += `
+                        <div class="product-card">
+                            <img src="${img}" alt="${name}">
+                            <h3>${name}</h3>
+                            <p class="price">₹${price}</p>
+                            <button class="add-btn">Add to Cart</button>
+                        </div>`;
+                    }
+                });
+                document.getElementById('product-container').innerHTML = html;
+            } catch (e) { console.error("Error loading products", e); }
+        }
+
+        loadBanners();
+        loadProducts();
+    </script>
+</body>
+</html>
