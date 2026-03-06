@@ -1,0 +1,15 @@
+{
+  "name": "RANA JI AATA MITRA",
+  "short_name": "Aata Mitra",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4b41a",
+  "theme_color": "#4a2c2a",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1365/1365611.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
