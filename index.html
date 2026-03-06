@@ -11,8 +11,8 @@ async function init() {
         const t = await r.text();
         const j = JSON.parse(t.substring(47, t.length - 2));
         data = j.table.rows;
-        console.log("System Ready!");
-    } catch(e) { alert("Data load nahi hua!"); }
+        console.log("Sheet Loaded!");
+    } catch(e) { alert("Net Check Karein!"); }
 }
 
 function showView(id) {
@@ -21,19 +21,21 @@ function showView(id) {
     if(id === 'view-cart') renderCart();
 }
 
-// 1. Buttons banane wala function
+// 2. Sub Category Load (Yahan logic alag kiya hai)
 function loadSubs(main) {
     let subs = {};
-    let lastM = ""; 
-    
+    let lastM = "";
     data.forEach(r => {
         let m = r.c[2]?.v || lastM; if(m) lastM = m;
         let curM = lastM.toLowerCase().trim();
         let tarM = main.toLowerCase().trim();
 
-        // Aata aur Oil ke liye purana logic (Column D ke buttons)
-        // Masale ke liye naya logic (Column B ke buttons)
-        if (curM.includes(tarM.substring(0,3)) || (tarM === 'masale' && (curM.includes('mirch') || curM.includes('hald') || curM.includes('masal')))) {
+        // Check if Category matches
+        let match = (curM === tarM) || (tarM === 'masale' && (curM.includes('mirch') || curM.includes('hald') || curM.includes('masal') || curM.includes('jeera') || curM.includes('saunf')));
+        
+        if(match) {
+            // AGAR MASALE HAI TO COLUMN B (NAME) KA BUTTON BANAO
+            // AGAR AATA/OIL HAI TO COLUMN D (SUB-CATEGORY) KA BUTTON BANAO
             let buttonName = (tarM === 'masale') ? r.c[1]?.v : r.c[3]?.v;
             let img = r.c[6]?.v;
             if(buttonName && !subs[buttonName]) subs[buttonName] = img;
@@ -45,16 +47,15 @@ function loadSubs(main) {
         let img = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3081/3081913.png';
         h += `<div class="card" onclick="loadProds('${main}','${s}')"><img src="${img}"><h3>${s}</h3></div>`;
     }
-    document.getElementById('list-sub').innerHTML = h || "Saman nahi mila";
+    document.getElementById('list-sub').innerHTML = h || "No Categories Found";
     document.getElementById('title-sub').innerText = main;
     showView('view-sub');
 }
 
-// 2. Final List dikhane wala function
+// 3. Products Load
 function loadProds(main, subOrItem) {
     let h = '';
     let lM="", lN="", lS="", lI="";
-    
     data.forEach(r => {
         let n = r.c[1]?.v || lN; if(n) lN=n;
         let m = r.c[2]?.v || lM; if(m) lM=m;
@@ -64,18 +65,21 @@ function loadProds(main, subOrItem) {
         let curM = lM.toLowerCase().trim();
         let tarM = main.toLowerCase().trim();
         
-        let isMatch = false;
-        // Masale: Item Name se match karega
-        if(tarM === 'masale' && lN === subOrItem) isMatch = true;
-        // Aata/Oil: Sub-Category se match karega
-        if(tarM !== 'masale' && curM.includes(tarM.substring(0,3)) && lS === subOrItem) isMatch = true;
+        let match = false;
+        if(tarM === 'masale') {
+            // Masale mein hum Item Name (Mirch, Haldi) se match kar rahe hain
+            if(lN === subOrItem) match = true;
+        } else {
+            // Aata/Oil mein hum purane tarike se Sub-Category se match kar rahe hain
+            if(curM === tarM && lS === subOrItem) match = true;
+        }
 
-        if(isMatch) {
+        if(match) {
             let w = r.c[4]?.v; let p = r.c[5]?.v;
             if(w && p) {
-                // Display text adjustment
-                let displayTitle = (tarM === 'masale') ? `${lS} (${lN})` : lN;
-                h += `<div class="item-row"><img src="${lI || 'https://via.placeholder.com/50'}"><div style="flex:1"><b>${displayTitle}</b><br><small>${w} - ₹${p}</small></div><button class="add-btn" onclick="add('${displayTitle}','${w}','${p}')">Add +</button></div>`;
+                // Masale ke liye display thoda badal diya (e.g., "Pisa (Mirch)")
+                let dName = (tarM === 'masale') ? `${lS} (${lN})` : lN;
+                h += `<div class="item-row"><img src="${lI || 'https://via.placeholder.com/50'}"><div style="flex:1"><b>${dName}</b><br><small>${w} - ₹${p}</small></div><button class="add-btn" onclick="add('${dName}','${w}','${p}')">Add +</button></div>`;
             }
         }
     });
@@ -85,11 +89,10 @@ function loadProds(main, subOrItem) {
     showView('view-prod');
 }
 
-// Baaki functions (add, remove, renderCart, orderNow) bilkul pehle jaise hain...
 function add(n,w,p) {
     cart.push({n,w,p:parseInt(p)});
     document.getElementById('b-count').innerText = cart.length;
-    alert(n + " cart mein add hua!");
+    alert(n + " add ho gaya!");
 }
 
 function renderCart() {
@@ -106,9 +109,9 @@ function remove(i) { cart.splice(i,1); document.getElementById('b-count').innerT
 
 function orderNow() {
     if(cart.length === 0) return;
-    let msg = "*Order From Rana Ji App*\n\n";
+    let msg = "*Naya Order - Rana Ji Aata Chakki*\n\n";
     cart.forEach(x => msg += `- ${x.n} (${x.w}): ₹${x.p}\n`);
-    msg += `\n*Total Order: ₹${cart.reduce((a,b)=>a+b.p,0)}*`;
+    msg += `\n*Total: ₹${cart.reduce((a,b)=>a+b.p,0)}*`;
     window.open(`https://wa.me/918923357537?text=${encodeURIComponent(msg)}`);
 }
 
