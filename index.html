@@ -9,7 +9,7 @@
         :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fffbf0; }
         body { margin: 0; font-family: sans-serif; background: var(--bg); padding-bottom: 80px; }
         
-        /* Welcome Screen Jo 3 second baad chali jayegi */
+        /* 1. Welcome Screen Style */
         #welcome-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 9999; display: flex; align-items: center; justify-content: center;
@@ -20,8 +20,20 @@
         .view { display: none; padding: 15px; }
         .active { display: block; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        /* 2. Category Cards */
         .card { background: white; padding: 10px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; }
+        .card i { color: var(--dark); margin-bottom: 5px; }
         .card img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
+        
+        /* 3. Home Banner Style */
+        .home-banner {
+            width: 100%; margin-top: 20px; border-radius: 15px;
+            overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border: 2px solid var(--main);
+        }
+        .home-banner img { width: 100%; display: block; }
+
         .item-row { background: white; border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .item-row img { width: 50px; height: 50px; border-radius: 8px; }
         .add-btn { background: var(--main); border: none; padding: 8px; border-radius: 5px; font-weight: bold; cursor: pointer; }
@@ -33,7 +45,7 @@
 <body>
 
 <div id="welcome-screen">
-    <img src="https://i.postimg.cc/DwBq1hSs/Gemini-Generated-Image-jfiaj2jfiaj2jfia.png" alt="Rana Ji Aata Chakki">
+    <img src="https://i.postimg.cc/DwBq1hSs/Gemini-Generated-Image-jfiaj2jfiaj2jfia.png" alt="Rana Ji Aata Chakki Welcome">
 </div>
 
 <div class="header"><h3>Rana Ji Aata Chakki</h3></div>
@@ -44,6 +56,10 @@
         <div class="card" onclick="loadSubs('Mustered oil')"><i class="fas fa-oil-can fa-2x"></i><h3>Mustard Oil</h3></div>
         <div class="card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot fa-2x"></i><h3>Masale</h3></div>
         <div class="card" onclick="window.open('tel:+918923357537')"><i class="fas fa-phone fa-2x"></i><h3>Contact</h3></div>
+    </div>
+
+    <div class="home-banner">
+        <img src="https://i.postimg.cc/bNTh0VpS/Gemini-Generated-Image-44x2jo44x2jo44x2.png" alt="Pure Spices Banner">
     </div>
 </div>
 
@@ -79,7 +95,7 @@ let data = [];
 let cart = [];
 
 async function init() {
-    // 3 second ka timer
+    // Splash screen timer
     setTimeout(() => {
         document.getElementById('welcome-screen').style.display = 'none';
     }, 3000);
@@ -89,7 +105,7 @@ async function init() {
         const t = await r.text();
         const j = JSON.parse(t.substring(47, t.length - 2));
         data = j.table.rows;
-    } catch(e) { console.log("Data error"); }
+    } catch(e) { console.log("Network Error"); }
 }
 
 function showView(id) {
@@ -105,21 +121,19 @@ function loadSubs(main) {
         let m = r.c[2]?.v || lastM; if(m) lastM = m;
         let curM = lastM.toLowerCase().trim();
         let tarM = main.toLowerCase().trim();
-
-        // Logic check
-        if(curM.includes(tarM.substring(0,3)) || (tarM === 'masale' && (curM.includes('mirch') || curM.includes('hald') || curM.includes('masal')))) {
+        let match = (curM === tarM) || (tarM === 'masale' && (curM.includes('mirch') || curM.includes('hald') || curM.includes('masal')));
+        if(match) {
             let buttonName = (tarM === 'masale') ? r.c[1]?.v : r.c[3]?.v;
             let img = r.c[6]?.v;
             if(buttonName && !subs[buttonName]) subs[buttonName] = img;
         }
     });
-
     let h = '';
     for(let s in subs) {
         let img = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3081/3081913.png';
         h += `<div class="card" onclick="loadProds('${main}','${s}')"><img src="${img}"><h3>${s}</h3></div>`;
     }
-    document.getElementById('list-sub').innerHTML = h || "Saman Nahi Mila";
+    document.getElementById('list-sub').innerHTML = h || "No Categories";
     document.getElementById('title-sub').innerText = main;
     showView('view-sub');
 }
@@ -132,17 +146,8 @@ function loadProds(main, subOrItem) {
         let m = r.c[2]?.v || lM; if(m) lM=m;
         let s = r.c[3]?.v || lS; if(s) lS=s;
         let i = r.c[6]?.v || lI; if(i && i.includes('http')) lI=i;
-
-        let curM = lM.toLowerCase().trim();
         let tarM = main.toLowerCase().trim();
-        
-        let match = false;
-        if(tarM === 'masale') {
-            if(lN === subOrItem) match = true;
-        } else {
-            if(curM.includes(tarM.substring(0,3)) && lS === subOrItem) match = true;
-        }
-
+        let match = (tarM === 'masale') ? (lN === subOrItem) : (lM.toLowerCase().trim() === tarM && lS === subOrItem);
         if(match) {
             let w = r.c[4]?.v; let p = r.c[5]?.v;
             if(w && p) {
