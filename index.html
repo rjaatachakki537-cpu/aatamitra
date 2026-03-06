@@ -1,65 +1,3 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rana Ji Aata Chakki</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fffbf0; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 90px; }
-        .header { background: var(--dark); color: var(--main); padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
-        .view { display: none; padding: 15px; }
-        .active { display: block; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; padding: 10px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; }
-        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 15px; background: #eee; }
-        .card i { font-size: 35px; color: var(--main); margin: 10px 0; display: block; }
-        .item-row { background: white; border-radius: 15px; padding: 12px; margin-bottom: 12px; display: flex; gap: 15px; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .item-row img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
-        .add-cart-btn { background: var(--main); border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 2px solid var(--main); }
-        .cart-count { background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; }
-        .whatsapp-btn { background: #25d366; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; margin-top: 20px; }
-    </style>
-</head>
-<body>
-
-<div class="header"><h2>Rana Ji Aata Chakki</h2></div>
-
-<div id="view-home" class="view active">
-    <div class="grid">
-        <div class="card" onclick="processSub('Aata')"><i class="fas fa-wheat-awn"></i><h3>Aata</h3></div>
-        <div class="card" onclick="processSub('Mustered oil')"><i class="fas fa-oil-can"></i><h3>Mustard Oil</h3></div>
-        <div class="card" onclick="processSub('Masale')"><i class="fas fa-pepper-hot"></i><h3>Masale</h3></div>
-        <div class="card" onclick="window.open('tel:+918923357537')"><i class="fas fa-phone"></i><h3>Contact</h3></div>
-    </div>
-</div>
-
-<div id="view-sub" class="view">
-    <button onclick="openView('view-home')">← Back</button>
-    <h3 id="sub-head">Categories</h3>
-    <div id="sub-grid" class="grid"></div>
-</div>
-
-<div id="view-products" class="view">
-    <button id="btn-back-prod">← Back</button>
-    <h3 id="prod-head">Products</h3>
-    <div id="product-list"></div>
-</div>
-
-<div id="view-cart" class="view">
-    <h3>My Cart</h3>
-    <div id="cart-items"></div>
-    <div id="cart-total" style="font-weight:bold; margin:10px 0;"></div>
-    <button class="whatsapp-btn" onclick="sendToWA()">Send Order on WhatsApp</button>
-</div>
-
-<div class="bottom-nav">
-    <div onclick="openView('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div onclick="openView('view-cart')"><i class="fas fa-shopping-cart"></i><span id="badge" class="cart-count">0</span><br>Cart</div>
-</div>
-
 <script>
     const S_ID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
     const G_URL = `https://docs.google.com/spreadsheets/d/${S_ID}/gviz/tq?tqx=out:json&sheet=Products`;
@@ -73,8 +11,8 @@
             const t = await r.text();
             const j = JSON.parse(t.substring(47, t.length - 2));
             sheetData = j.table.rows;
-            console.log("Data loaded");
-        } catch(e) { alert("Sheet error! Check Share Settings."); }
+            console.log("Sheet Connected!");
+        } catch(e) { alert("Sheet Link ya Internet Check Karein!"); }
     }
 
     function openView(id) {
@@ -83,77 +21,105 @@
         if(id === 'view-cart') renderCart();
     }
 
-    function processSub(main) {
+    // YEH FUNCTION SUB-CATEGORY (SABUT / PISI) DIKHAYEGA
+    function processSub(mainCat) {
         let subs = {};
-        let lastM = "";
+        let lastC = ""; // Category (Aata/Masale)
+        
         sheetData.forEach(row => {
-            let m = row.c[2]?.v || lastM;
-            if(m) lastM = m;
-            if(m && m.toLowerCase().includes(main.toLowerCase().substring(0,3))) {
-                let s = row.c[3]?.v;
-                let img = row.c[6]?.v;
+            let c = row.c[2]?.v || lastC; // Column C
+            if(c) lastC = c;
+
+            // Spelling check: Aata, Masale, Mustered oil
+            if (lastC.toLowerCase().trim().includes(mainCat.toLowerCase().substring(0,3))) {
+                let s = row.c[3]?.v; // Column D (Sub Category)
+                let img = row.c[6]?.v; // Column G (Image)
                 if(s && !subs[s]) subs[s] = img;
             }
         });
 
         let h = '';
         for(let s in subs) {
-            h += `<div class="card" onclick="processProd('${main}','${s}')"><img src="${subs[s] || ''}"><h3>${s}</h3></div>`;
+            let imgSrc = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3081/3081913.png';
+            h += `
+            <div class="card" onclick="processProd('${mainCat}','${s}')">
+                <img src="${imgSrc}">
+                <h3>${s}</h3>
+            </div>`;
         }
-        document.getElementById('sub-grid').innerHTML = h || "No items found";
-        document.getElementById('sub-head').innerText = main;
+        document.getElementById('sub-grid').innerHTML = h || `<p>Saman jaldi aayega!</p>`;
+        document.getElementById('sub-head').innerText = mainCat;
         openView('view-sub');
     }
 
-    function processProd(main, sub) {
+    // YEH FUNCTION SARE PRODUCTS (MIRCHI, HALDI) EK SAATH DIKHAYEGA
+    function processProd(mainCat, subCat) {
         let h = '';
-        let lastM="", lastS="", lastI="", lastN="";
-        sheetData.forEach(row => {
-            let m = row.c[2]?.v || lastM; if(m) lastM=m;
-            let s = row.c[3]?.v || lastS; if(s) lastS=s;
-            let n = row.c[1]?.v || lastN; if(n) lastN=n;
-            let i = row.c[6]?.v || lastI; if(i && i.includes('http')) lastI=i;
+        let lastB="", lastC="", lastD="", lastI="";
 
-            if(m && m.toLowerCase().includes(main.toLowerCase().substring(0,3)) && s === sub) {
-                let w = row.c[4]?.v;
-                let p = row.c[5]?.v;
+        sheetData.forEach(row => {
+            let n = row.c[1]?.v || lastB; if(n) lastB=n; // Name
+            let c = row.c[2]?.v || lastC; if(c) lastC=c; // Category
+            let s = row.c[3]?.v || lastD; if(s) lastD=s; // Sub-Cat
+            let i = row.c[6]?.v || lastI; if(i && i.includes('http')) lastI=i; // Image
+
+            // Match Category and Sub-category
+            if(lastC.toLowerCase().trim().includes(mainCat.toLowerCase().substring(0,3)) && s === subCat) {
+                let w = row.c[4]?.v; // Weight
+                let p = row.c[5]?.v; // Price
                 if(w && p) {
-                    h += `<div class="item-row"><img src="${lastI}"><div style="flex:1"><h4>${lastN}</h4><p>${w} - ₹${p}</p></div><button class="add-cart-btn" onclick="add('${lastN}','${w}','${p}')">Add +</button></div>`;
+                    h += `
+                    <div class="item-row">
+                        <img src="${lastI || 'https://via.placeholder.com/60'}">
+                        <div style="flex:1">
+                            <h4>${lastB}</h4>
+                            <p>${w} | ₹${p}</p>
+                        </div>
+                        <button class="add-cart-btn" onclick="add('${lastB}','${w}','${p}')">Add +</button>
+                    </div>`;
                 }
             }
         });
         document.getElementById('product-list').innerHTML = h;
-        document.getElementById('prod-head').innerText = sub;
-        document.getElementById('btn-back-prod').onclick = () => processSub(main);
+        document.getElementById('prod-head').innerText = subCat;
+        document.getElementById('btn-back-prod').onclick = () => processSub(mainCat);
         openView('view-products');
     }
 
     function add(n,w,p) {
         cart.push({n,w,p:parseInt(p)});
         document.getElementById('badge').innerText = cart.length;
-        alert("Added!");
+        alert(n + " " + w + " Cart mein add ho gaya!");
     }
 
     function renderCart() {
         let h = '', t = 0;
         cart.forEach((item, i) => {
             t += item.p;
-            h += `<div class="item-row"><div><h4>${item.n} (${item.w})</h4><b>₹${item.p}</b></div><button onclick="remove(${i})">X</button></div>`;
+            h += `
+            <div class="item-row">
+                <div style="flex:1">
+                    <h4>${item.n} (${item.w})</h4>
+                    <b>₹${item.p}</b>
+                </div>
+                <button onclick="remove(${i})" style="color:red; border:none; background:none; font-weight:bold;">Hatao</button>
+            </div>`;
         });
-        document.getElementById('cart-items').innerHTML = h || "Cart Empty";
-        document.getElementById('cart-total').innerText = "Total: ₹" + t;
+        document.getElementById('cart-items').innerHTML = h || "Cart khaali hai";
+        document.getElementById('cart-total').innerText = "Total Payable: ₹" + t;
     }
 
     function remove(i) { cart.splice(i,1); document.getElementById('badge').innerText = cart.length; renderCart(); }
 
     function sendToWA() {
-        if(cart.length === 0) return;
-        let msg = "Order:\n";
-        cart.forEach(item => msg += `- ${item.n} (${item.w}): ₹${item.p}\n`);
+        if(cart.length === 0) return alert("Cart khaali hai!");
+        let msg = "*Naya Order - Rana Ji Aata Chakki*\n--------------------------\n";
+        cart.forEach((item, index) => {
+            msg += `${index+1}. ${item.n} (${item.w}) - ₹${item.p}\n`;
+        });
+        msg += "--------------------------\n*Total Order Value: ₹" + cart.reduce((a,b) => a + b.p, 0) + "*";
         window.open(`https://wa.me/918923357537?text=${encodeURIComponent(msg)}`);
     }
 
     window.onload = init;
 </script>
-</body>
-</html>
