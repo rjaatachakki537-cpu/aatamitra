@@ -2,7 +2,7 @@
     const S_ID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
     const G_URL = `https://docs.google.com/spreadsheets/d/${S_ID}/gviz/tq?tqx=out:json&sheet=Products`;
 
-    let sheetData = [];
+    let allProducts = [];
     let cart = [];
 
     async function init() {
@@ -10,9 +10,38 @@
             const r = await fetch(G_URL);
             const t = await r.text();
             const j = JSON.parse(t.substring(47, t.length - 2));
-            sheetData = j.table.rows;
-            console.log("Data loaded successfully");
-        } catch(e) { console.error("Load Error"); }
+            
+            // Column mapping: Column names se index nikaalna
+            const cols = j.table.cols.map(c => c.label.toLowerCase().trim());
+            const idx = {
+                name: cols.indexOf('name'),
+                cat: cols.indexOf('category'),
+                sub: cols.indexOf('sub_category'),
+                weight: cols.indexOf('net weight'),
+                price: cols.indexOf('price'),
+                img: cols.indexOf('image_url')
+            };
+
+            let lastValues = {};
+            
+            allProducts = j.table.rows.map(row => {
+                let p = {
+                    name: row.c[idx.name]?.v || lastValues.name,
+                    cat: row.c[idx.cat]?.v || lastValues.cat,
+                    sub: row.c[idx.sub]?.v || lastValues.sub,
+                    weight: row.c[idx.weight]?.v,
+                    price: row.c[idx.price]?.v,
+                    img: row.c[idx.img]?.v || lastValues.img
+                };
+                // Fill blanks from previous row (for merged cells)
+                if(p.name) lastValues.name = p.name;
+                if(p.cat) lastValues.cat = p.cat;
+                if(p.sub) lastValues.sub = p.sub;
+                if(p.img && p.img.includes('http')) lastValues.img = p.img;
+                return p;
+            });
+            console.log("App Ready!");
+        } catch(e) { alert("Sheet Connection Error!"); }
     }
 
     function openView(id) {
@@ -23,78 +52,47 @@
 
     function processSub(main) {
         let subs = {};
-        let lastM = "";
-        
-        sheetData.forEach(row => {
-            let m = row.c[2]?.v || lastM;
-            if(m) lastM = m;
-
-            let isMatch = false;
-            let currentCat = lastM.toString().toLowerCase().trim();
-            let searchCat = main.toLowerCase().trim();
-
-            // Specially for Masale: check if category is mirchi, haldi, masala or masale
-            if(searchCat === 'masale') {
-                if(currentCat === 'masale' || currentCat === 'masala' || currentCat === 'mirchi' || currentCat === 'haldi') {
-                    isMatch = true;
-                }
-            } else {
-                if(currentCat.includes(searchCat.substring(0,3))) isMatch = true;
-            }
-
-            if(isMatch) {
-                let s = row.c[3]?.v; // Sub-Category (Pisi, Sabut)
-                let img = row.c[6]?.v; 
-                if(s && !subs[s]) subs[s] = img;
+        allProducts.forEach(p => {
+            let c = p.cat ? p.cat.toString().toLowerCase() : "";
+            let m = main.toLowerCase();
+            
+            // Masale logic: check if cat is masale, mirchi, or haldi
+            let match = (c === m) || (m === 'masale' && (c === 'mirchi' || c === 'haldi' || c === 'masala'));
+            
+            if(match && p.sub) {
+                if(!subs[p.sub]) subs[p.sub] = p.img;
             }
         });
 
         let h = '';
         for(let s in subs) {
-            let imgSrc = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3233/3233959.png';
+            let imgSrc = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3081/3081913.png';
             h += `<div class="card" onclick="processProd('${main}','${s}')">
-                    <img src="${imgSrc}" style="width:100%; height:100px; object-fit:cover; border-radius:10px;">
+                    <img src="${imgSrc}" style="width:100%; height:110px; object-fit:cover; border-radius:15px;">
                     <h3>${s}</h3>
                   </div>`;
         }
-        document.getElementById('sub-grid').innerHTML = h || `<p style="text-align:center; padding:20px;">Saman nahi mila. Sheet mein Category check karein.</p>`;
+        document.getElementById('sub-grid').innerHTML = h || `<p style="text-align:center;width:100%;">Saaman load ho raha hai...</p>`;
         document.getElementById('sub-head').innerText = main;
         openView('view-sub');
     }
 
     function processProd(main, sub) {
         let h = '';
-        let lastM="", lastS="", lastI="", lastN="";
-        
-        sheetData.forEach(row => {
-            let m = row.c[2]?.v || lastM; if(m) lastM=m;
-            let s = row.c[3]?.v || lastS; if(s) lastS=s;
-            let n = row.c[1]?.v || lastN; if(n) lastN=n;
-            let i = row.c[6]?.v || lastI; if(i && i.includes('http')) lastI=i;
+        allProducts.forEach(p => {
+            let c = p.cat ? p.cat.toString().toLowerCase() : "";
+            let m = main.toLowerCase();
+            let match = (c === m) || (m === 'masale' && (c === 'mirchi' || c === 'haldi' || c === 'masala'));
 
-            let isMatch = false;
-            let currentCat = lastM.toString().toLowerCase().trim();
-            let searchCat = main.toLowerCase().trim();
-
-            if(searchCat === 'masale') {
-                if(currentCat === 'masale' || currentCat === 'masala' || currentCat === 'mirchi' || currentCat === 'haldi') isMatch = true;
-            } else {
-                if(currentCat.includes(searchCat.substring(0,3))) isMatch = true;
-            }
-
-            if(isMatch && s === sub) {
-                let w = row.c[4]?.v;
-                let p = row.c[5]?.v;
-                if(w && p) {
-                    h += `<div class="item-row" style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:white; padding:10px; border-radius:10px;">
-                            <img src="${lastI || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; border-radius:5px;">
-                            <div style="flex:1">
-                                <h4>${lastN}</h4>
-                                <p>${w} - ₹${p}</p>
-                            </div>
-                            <button class="add-cart-btn" onclick="add('${lastN}','${w}','${p}')" style="background:#f4b41a; border:none; padding:8px; border-radius:5px; font-weight:bold;">Add +</button>
-                          </div>`;
-                }
+            if(match && p.sub === sub && p.price) {
+                h += `<div class="item-row" style="display:flex; align-items:center; gap:15px; background:white; padding:12px; margin-bottom:10px; border-radius:15px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                        <img src="${p.img || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; border-radius:10px; object-fit:cover;">
+                        <div style="flex:1">
+                            <h4 style="margin:0;">${p.name}</h4>
+                            <p style="margin:5px 0; color:#666;">${p.weight} - <b>₹${p.price}</b></p>
+                        </div>
+                        <button onclick="add('${p.name}','${p.weight}','${p.price}')" style="background:#f4b41a; border:none; padding:8px 12px; border-radius:8px; font-weight:bold;">Add +</button>
+                      </div>`;
             }
         });
         document.getElementById('product-list').innerHTML = h || "No Products Found";
@@ -106,29 +104,29 @@
     function add(n,w,p) {
         cart.push({n,w,p:parseInt(p)});
         document.getElementById('badge').innerText = cart.length;
-        alert(n + " Cart mein add ho gaya!");
+        alert(n + " Add ho gaya!");
     }
 
     function renderCart() {
         let h = '', t = 0;
         cart.forEach((item, i) => {
             t += item.p;
-            h += `<div class="item-row" style="display:flex; justify-content:space-between; background:white; padding:10px; margin-bottom:5px; border-radius:10px;">
-                    <div><h4>${item.n} (${item.w})</h4><b>₹${item.p}</b></div>
-                    <button onclick="remove(${i})" style="color:red; border:none; background:none; font-weight:bold;">X</button>
+            h += `<div class="item-row" style="display:flex; justify-content:space-between; background:white; padding:15px; margin-bottom:10px; border-radius:10px;">
+                    <div><h4 style="margin:0;">${item.n} (${item.w})</h4><b>₹${item.p}</b></div>
+                    <button onclick="remove(${i})" style="color:red; border:none; background:none; font-size:18px;">&times;</button>
                   </div>`;
         });
-        document.getElementById('cart-items').innerHTML = h || "Cart khaali hai";
-        document.getElementById('cart-total').innerHTML = `<h3>Total: ₹${t}</h3>`;
+        document.getElementById('cart-items').innerHTML = h || "<p style='text-align:center;'>Cart khaali hai</p>";
+        document.getElementById('cart-total').innerHTML = `<h3 style="text-align:right;">Total: ₹${t}</h3>`;
     }
 
     function remove(i) { cart.splice(i,1); document.getElementById('badge').innerText = cart.length; renderCart(); }
 
     function sendToWA() {
         if(cart.length === 0) return alert("Pehle saman add karein!");
-        let msg = "*Naya Order - Rana Ji*\n\n";
+        let msg = "*Rana Ji Aata Chakki Order*\n\n";
         cart.forEach((item, i) => msg += `${i+1}. ${item.n} (${item.w}) - ₹${item.p}\n`);
-        msg += `\n*Total: ₹${cart.reduce((a,b)=>a+b.p,0)}*`;
+        msg += `\n*Total Amount: ₹${cart.reduce((a,b)=>a+b.p,0)}*`;
         window.open(`https://wa.me/918923357537?text=${encodeURIComponent(msg)}`);
     }
 
