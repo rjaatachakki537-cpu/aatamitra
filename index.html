@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aata Mitra - Rana Ji</title>
+    <title>Rana Ji Aata Chakki</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fffbf0; }
@@ -15,28 +15,27 @@
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
         .card { background: white; padding: 25px 10px; border-radius: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent; }
         .card:active { transform: scale(0.95); border-color: var(--main); }
-        .card i { font-size: 45px; color: var(--main); margin-bottom: 12px; display: block; }
+        .card i { font-size: 40px; color: var(--main); margin-bottom: 12px; display: block; }
         .item-row { background: white; border-radius: 15px; padding: 10px; margin-bottom: 12px; display: flex; gap: 15px; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .item-row img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; background: #eee; }
+        .item-row img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; background: #eee; }
         .item-info { flex: 1; }
-        .item-info h4 { margin: 0; font-size: 14px; }
-        .price-tag { font-weight: bold; color: #2e7d32; font-size: 15px; margin-top: 5px; }
+        .price-tag { font-weight: bold; color: #2e7d32; font-size: 15px; }
         .order-btn { background: #25d366; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .back-btn { background: none; border: none; font-weight: bold; font-size: 16px; color: var(--dark); cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 2px solid var(--main); z-index: 1000; }
         .nav-item { text-align: center; color: #888; text-decoration: none; font-size: 11px; flex: 1; }
-        .nav-item i { font-size: 22px; display: block; margin-bottom: 2px; }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 2px; }
         .nav-item.active-nav { color: var(--dark); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="header"><h2 style="margin:0; font-size: 20px;">Rana Ji Aata Chakki</h2></div>
+<div class="header"><h2 style="margin:0; font-size: 18px;">Rana Ji Aata Chakki</h2></div>
 
 <div id="view-home" class="view active">
     <div class="grid">
-        <div class="card" onclick="showSubCategories('Atta')"><i class="fas fa-wheat-awn"></i><h3>Atta</h3></div>
-        <div class="card" onclick="showSubCategories('Oil')"><i class="fas fa-oil-can"></i><h3>Mustard Oil</h3></div>
+        <div class="card" onclick="showSubCategories('Aata')"><i class="fas fa-wheat-awn"></i><h3>Aata</h3></div>
+        <div class="card" onclick="showSubCategories('Mustered oil')"><i class="fas fa-oil-can"></i><h3>Mustard Oil</h3></div>
         <div class="card" onclick="showSubCategories('Masale')"><i class="fas fa-pepper-hot"></i><h3>Masale</h3></div>
         <div class="card" onclick="window.open('tel:+918923357537')"><i class="fas fa-headset"></i><h3>Contact Us</h3></div>
     </div>
@@ -44,7 +43,7 @@
 
 <div id="view-sub" class="view">
     <button class="back-btn" onclick="openView('view-home')"><i class="fas fa-chevron-left"></i> Back</button>
-    <h3 id="sub-head">Category</h3>
+    <h3 id="sub-head">Sub Category</h3>
     <div id="sub-grid" class="grid"></div>
 </div>
 
@@ -61,7 +60,7 @@
 </div>
 
 <script>
-    const SHEET_ID = '1vSXtv_ccyIbVin77DgFO0eYIzi_-tmhQfGcMs6zJ0OMwkbikOQiDLrfvgMMuZCJZA';
+    const SHEET_ID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx'; 
     const G_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Products`;
 
     let allRows = [];
@@ -72,7 +71,11 @@
             const text = await res.text();
             const json = JSON.parse(text.substr(47).slice(0, -2));
             allRows = json.table.rows;
-        } catch (e) { alert("Sheet not connected! Share setting check karein."); }
+            console.log("Sheet data loaded successfully!");
+        } catch (e) { 
+            console.error("Data Load Error", e);
+            alert("Sheet connect nahi hui! Share settings check karein."); 
+        }
     }
 
     function openView(id) {
@@ -83,7 +86,8 @@
     function showSubCategories(mainCat) {
         let subs = [];
         allRows.forEach(row => {
-            if (row.c[2]?.v === mainCat && row.c[7]?.v === 'Live') {
+            // Column Index check: 2 is Category, 3 is Sub-Category
+            if (row.c[2]?.v === mainCat) {
                 let sub = row.c[3]?.v;
                 if (sub && !subs.includes(sub)) subs.push(sub);
             }
@@ -92,7 +96,7 @@
         subs.forEach(s => {
             html += `<div class="card" onclick="showProducts('${mainCat}', '${s}')"><i class="fas fa-folder-open"></i><h3>${s}</h3></div>`;
         });
-        document.getElementById('sub-grid').innerHTML = html || '<p>Saaman abhi available nahi hai.</p>';
+        document.getElementById('sub-grid').innerHTML = html || '<p style="text-align:center; grid-column:span 2;">Saaman jaldi aa raha hai...</p>';
         document.getElementById('sub-head').innerText = mainCat;
         openView('view-sub');
     }
@@ -100,23 +104,26 @@
     function showProducts(mainCat, subCat) {
         let html = '';
         allRows.forEach(row => {
-            if (row.c[2]?.v === mainCat && row.c[3]?.v === subCat && row.c[7]?.v === 'Live') {
-                const name = row.c[1]?.v;
-                const weight = row.c[4]?.v;
-                const price = row.c[5]?.v;
-                const img = row.c[6]?.v || 'https://via.placeholder.com/70';
-                html += `
-                    <div class="item-row">
-                        <img src="${img}">
-                        <div class="item-info">
-                            <h4>${name} (${weight})</h4>
-                            <div class="price-tag">₹${price}</div>
-                        </div>
-                        <button class="order-btn" onclick="sendWhatsApp('${name}', '${weight}', '${price}')">Order</button>
-                    </div>`;
+            if (row.c[2]?.v === mainCat && row.c[3]?.v === subCat) {
+                // Column Index: 1=Name, 4=Weight, 5=Price, 6=Image, 7=Status
+                if(row.c[7]?.v === 'Live') {
+                    const name = row.c[1]?.v;
+                    const weight = row.c[4]?.v;
+                    const price = row.c[5]?.v;
+                    const img = row.c[6]?.v || 'https://via.placeholder.com/60?text=RanaJi';
+                    html += `
+                        <div class="item-row">
+                            <img src="${img}">
+                            <div class="item-info">
+                                <h4>${name} (${weight})</h4>
+                                <div class="price-tag">₹${price}</div>
+                            </div>
+                            <button class="order-btn" onclick="sendWhatsApp('${name}', '${weight}', '${price}')">Order</button>
+                        </div>`;
+                }
             }
         });
-        document.getElementById('product-list').innerHTML = html;
+        document.getElementById('product-list').innerHTML = html || '<p>Out of Stock</p>';
         document.getElementById('prod-head').innerText = subCat;
         document.getElementById('back-to-sub').onclick = () => showSubCategories(mainCat);
         openView('view-products');
