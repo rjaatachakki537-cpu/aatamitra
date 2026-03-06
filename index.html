@@ -1,3 +1,64 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rana Ji Aata Chakki</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fffbf0; }
+        body { margin: 0; font-family: sans-serif; background: var(--bg); padding-bottom: 80px; }
+        .header { background: var(--dark); color: var(--main); padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
+        .view { display: none; padding: 15px; }
+        .active { display: block; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: white; padding: 10px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; }
+        .card img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
+        .item-row { background: white; border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .item-row img { width: 50px; height: 50px; border-radius: 8px; }
+        .add-btn { background: var(--main); border: none; padding: 8px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--main); }
+        .badge { background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; margin-left: 15px; }
+        .wa-btn { background: #25d366; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="header"><h3>Rana Ji Aata Chakki</h3></div>
+
+<div id="view-home" class="view active">
+    <div class="grid">
+        <div class="card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn fa-2x"></i><h3>Aata</h3></div>
+        <div class="card" onclick="loadSubs('Mustered oil')"><i class="fas fa-oil-can fa-2x"></i><h3>Mustard Oil</h3></div>
+        <div class="card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot fa-2x"></i><h3>Masale</h3></div>
+        <div class="card" onclick="window.open('tel:+918923357537')"><i class="fas fa-phone fa-2x"></i><h3>Contact</h3></div>
+    </div>
+</div>
+
+<div id="view-sub" class="view">
+    <button onclick="showView('view-home')">← Back</button>
+    <h3 id="title-sub"></h3>
+    <div id="list-sub" class="grid"></div>
+</div>
+
+<div id="view-prod" class="view">
+    <button id="back-to-sub">← Back</button>
+    <h3 id="title-prod"></h3>
+    <div id="list-prod"></div>
+</div>
+
+<div id="view-cart" class="view">
+    <h3>Mera Order</h3>
+    <div id="list-cart"></div>
+    <div id="total-cart" style="font-weight:bold; margin:20px 0; text-align:right;"></div>
+    <button class="wa-btn" onclick="orderNow()">WhatsApp par Order Karein</button>
+</div>
+
+<div class="nav">
+    <div onclick="showView('view-home')"><i class="fas fa-home"></i><br>Home</div>
+    <div onclick="showView('view-cart')"><i class="fas fa-shopping-cart"></i><span class="badge" id="b-count">0</span><br>Cart</div>
+</div>
+
 <script>
 const SID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
 const URL = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=Products`;
@@ -21,7 +82,6 @@ function showView(id) {
     if(id === 'view-cart') renderCart();
 }
 
-// 2. Sub Category Load (Yahan logic alag kiya hai)
 function loadSubs(main) {
     let subs = {};
     let lastM = "";
@@ -30,12 +90,10 @@ function loadSubs(main) {
         let curM = lastM.toLowerCase().trim();
         let tarM = main.toLowerCase().trim();
 
-        // Check if Category matches
         let match = (curM === tarM) || (tarM === 'masale' && (curM.includes('mirch') || curM.includes('hald') || curM.includes('masal') || curM.includes('jeera') || curM.includes('saunf')));
         
         if(match) {
-            // AGAR MASALE HAI TO COLUMN B (NAME) KA BUTTON BANAO
-            // AGAR AATA/OIL HAI TO COLUMN D (SUB-CATEGORY) KA BUTTON BANAO
+            // Aata/Oil ke liye Sub-Category, Masale ke liye Item Name
             let buttonName = (tarM === 'masale') ? r.c[1]?.v : r.c[3]?.v;
             let img = r.c[6]?.v;
             if(buttonName && !subs[buttonName]) subs[buttonName] = img;
@@ -52,7 +110,6 @@ function loadSubs(main) {
     showView('view-sub');
 }
 
-// 3. Products Load
 function loadProds(main, subOrItem) {
     let h = '';
     let lM="", lN="", lS="", lI="";
@@ -67,17 +124,14 @@ function loadProds(main, subOrItem) {
         
         let match = false;
         if(tarM === 'masale') {
-            // Masale mein hum Item Name (Mirch, Haldi) se match kar rahe hain
             if(lN === subOrItem) match = true;
         } else {
-            // Aata/Oil mein hum purane tarike se Sub-Category se match kar rahe hain
             if(curM === tarM && lS === subOrItem) match = true;
         }
 
         if(match) {
             let w = r.c[4]?.v; let p = r.c[5]?.v;
             if(w && p) {
-                // Masale ke liye display thoda badal diya (e.g., "Pisa (Mirch)")
                 let dName = (tarM === 'masale') ? `${lS} (${lN})` : lN;
                 h += `<div class="item-row"><img src="${lI || 'https://via.placeholder.com/50'}"><div style="flex:1"><b>${dName}</b><br><small>${w} - ₹${p}</small></div><button class="add-btn" onclick="add('${dName}','${w}','${p}')">Add +</button></div>`;
             }
@@ -117,3 +171,5 @@ function orderNow() {
 
 window.onload = init;
 </script>
+</body>
+</html>
