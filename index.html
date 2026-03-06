@@ -33,7 +33,7 @@
 <body>
 
 <div id="welcome-screen">
-    <img src="https://i.postimg.cc/85zK235r/rana-ji-warm.jpg" alt="Welcome">
+    <img src="https://i.postimg.cc/DwBq1hSs/Gemini-Generated-Image-jfiaj2jfiaj2jfia.png" alt="Rana Ji Aata Chakki">
 </div>
 
 <div class="header"><h3>Rana Ji Aata Chakki</h3></div>
@@ -79,7 +79,7 @@ let data = [];
 let cart = [];
 
 async function init() {
-    // Splash screen ko 3 second baad hatane ke liye
+    // 3 second ka timer
     setTimeout(() => {
         document.getElementById('welcome-screen').style.display = 'none';
     }, 3000);
@@ -89,7 +89,7 @@ async function init() {
         const t = await r.text();
         const j = JSON.parse(t.substring(47, t.length - 2));
         data = j.table.rows;
-    } catch(e) { alert("Data load nahi hua!"); }
+    } catch(e) { console.log("Data error"); }
 }
 
 function showView(id) {
@@ -106,7 +106,7 @@ function loadSubs(main) {
         let curM = lastM.toLowerCase().trim();
         let tarM = main.toLowerCase().trim();
 
-        // Agar masale hain toh Name ka button, warna Sub-category (weight) ka button
+        // Logic check
         if(curM.includes(tarM.substring(0,3)) || (tarM === 'masale' && (curM.includes('mirch') || curM.includes('hald') || curM.includes('masal')))) {
             let buttonName = (tarM === 'masale') ? r.c[1]?.v : r.c[3]?.v;
             let img = r.c[6]?.v;
@@ -119,7 +119,7 @@ function loadSubs(main) {
         let img = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3081/3081913.png';
         h += `<div class="card" onclick="loadProds('${main}','${s}')"><img src="${img}"><h3>${s}</h3></div>`;
     }
-    document.getElementById('list-sub').innerHTML = h || "No Categories";
+    document.getElementById('list-sub').innerHTML = h || "Saman Nahi Mila";
     document.getElementById('title-sub').innerText = main;
     showView('view-sub');
 }
@@ -160,7 +160,6 @@ function loadProds(main, subOrItem) {
 function add(n,w,p) {
     cart.push({n,w,p:parseInt(p)});
     document.getElementById('b-count').innerText = cart.length;
-    alert(n + " cart mein gaya!");
 }
 
 function renderCart() {
