@@ -1,3 +1,64 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rana Ji Aata Chakki</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fffbf0; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; }
+        .header { background: var(--dark); color: var(--main); padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
+        .view { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: white; padding: 25px 10px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent; }
+        .card:active { transform: scale(0.95); border-color: var(--main); }
+        .card i { font-size: 40px; color: var(--main); margin-bottom: 12px; display: block; }
+        .item-row { background: white; border-radius: 15px; padding: 12px; margin-bottom: 12px; display: flex; gap: 15px; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .item-row img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; background: #eee; }
+        .item-info { flex: 1; }
+        .price-tag { font-weight: bold; color: #2e7d32; font-size: 16px; margin: 4px 0; }
+        .order-btn { background: #25d366; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .back-btn { background: none; border: none; font-weight: bold; font-size: 16px; color: var(--dark); cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 2px solid var(--main); z-index: 1000; }
+        .nav-item { text-align: center; color: #888; text-decoration: none; font-size: 11px; flex: 1; }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 2px; }
+        .nav-item.active-nav { color: var(--dark); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="header"><h2 style="margin:0; font-size: 18px;">Rana Ji Aata Chakki</h2></div>
+
+<div id="view-home" class="view active">
+    <div class="grid">
+        <div class="card" onclick="showSubCategories('Atta')"><i class="fas fa-wheat-awn"></i><h3>Atta</h3></div>
+        <div class="card" onclick="showSubCategories('Mustered oil')"><i class="fas fa-oil-can"></i><h3>Oil</h3></div>
+        <div class="card" onclick="showSubCategories('Masale')"><i class="fas fa-pepper-hot"></i><h3>Masale</h3></div>
+        <div class="card" onclick="window.open('tel:+918923357537')"><i class="fas fa-phone"></i><h3>Contact</h3></div>
+    </div>
+</div>
+
+<div id="view-sub" class="view">
+    <button class="back-btn" onclick="openView('view-home')"><i class="fas fa-chevron-left"></i> Back</button>
+    <h3 id="sub-head">Category</h3>
+    <div id="sub-grid" class="grid"></div>
+</div>
+
+<div id="view-products" class="view">
+    <button class="back-btn" id="back-to-sub"><i class="fas fa-chevron-left"></i> Back</button>
+    <h3 id="prod-head">Products</h3>
+    <div id="product-list"></div>
+</div>
+
+<div class="bottom-nav">
+    <a href="javascript:void(0)" class="nav-item active-nav" onclick="openView('view-home')"><i class="fas fa-home"></i>Home</a>
+    <a href="javascript:void(0)" class="nav-item" onclick="alert('Profile saving feature coming soon!')"><i class="fas fa-user"></i>Profile</a>
+    <a href="javascript:void(0)" class="nav-item" onclick="alert('Cart empty!')"><i class="fas fa-shopping-cart"></i>Cart</a>
+</div>
+
 <script>
     const SHEET_ID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx'; 
     const G_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Products`;
@@ -10,23 +71,26 @@
             const text = await res.text();
             const json = JSON.parse(text.substr(47).slice(0, -2));
             allRows = json.table.rows;
-            console.log("Data loaded successfully!");
-        } catch (e) { console.error("Data Load Error", e); }
+            console.log("Data loaded");
+        } catch (e) { alert("Sheet check karein!"); }
+    }
+
+    function openView(id) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     }
 
     function showSubCategories(mainCat) {
         let subs = [];
-        let lastMainCat = "";
+        let lastMain = "";
         
         allRows.forEach(row => {
-            // Agar cell khaali hai toh pichla wala uthao
-            let currentMain = row.c[2]?.v || lastMainCat;
-            let currentSub = row.c[3]?.v;
-            
-            if (currentMain) lastMainCat = currentMain;
+            let currentMain = row.c[2]?.v || lastMain;
+            if (currentMain) lastMain = currentMain;
 
-            if (currentMain === mainCat && currentSub) {
-                if (!subs.includes(currentSub)) subs.push(currentSub);
+            if (currentMain === mainCat) {
+                let sub = row.c[3]?.v;
+                if (sub && !subs.includes(sub)) subs.push(sub);
             }
         });
 
@@ -34,46 +98,49 @@
         subs.forEach(s => {
             html += `<div class="card" onclick="showProducts('${mainCat}', '${s}')"><i class="fas fa-folder-open"></i><h3>${s}</h3></div>`;
         });
-        document.getElementById('sub-grid').innerHTML = html || '<p style="text-align:center; grid-column:span 2;">Data check karein...</p>';
+        document.getElementById('sub-grid').innerHTML = html || '<p>Jaldi aa raha hai...</p>';
         document.getElementById('sub-head').innerText = mainCat;
         openView('view-sub');
     }
 
     function showProducts(mainCat, subCat) {
         let html = '';
-        let lastMainCat = "";
-        let lastSubCat = "";
+        let lastMain = "";
+        let lastSub = "";
         let lastImg = "";
+        let lastName = "";
 
         allRows.forEach(row => {
-            let currentMain = row.c[2]?.v || lastMainCat;
-            let currentSub = row.c[3]?.v || lastSubCat;
+            let currentMain = row.c[2]?.v || lastMain;
+            let currentSub = row.c[3]?.v || lastSub;
+            let currentName = row.c[1]?.v || lastName;
             let currentImg = row.c[6]?.v || lastImg;
 
-            if (currentMain) lastMainCat = currentMain;
-            if (currentSub) lastSubCat = currentSub;
-            if (currentImg) lastImg = currentImg;
+            if (currentMain) lastMain = currentMain;
+            if (currentSub) lastSub = currentSub;
+            if (currentName) lastName = currentName;
+            if (currentImg && currentImg !== "Link") lastImg = currentImg;
 
             if (currentMain === mainCat && currentSub === subCat) {
-                const name = row.c[1]?.v || lastSubCat;
                 const weight = row.c[4]?.v;
                 const price = row.c[5]?.v;
-                const status = row.c[7]?.v || 'Live'; // Agar Status khaali hai toh Live maano
+                const status = row.c[7]?.v || 'Live';
 
-                if(status === 'Live' && weight && price) {
+                if(status === 'Live' && weight) {
                     html += `
                         <div class="item-row">
-                            <img src="${currentImg || 'https://via.placeholder.com/60'}">
+                            <img src="${(lastImg && lastImg !== "Link") ? lastImg : 'https://via.placeholder.com/100?text=RanaJi'}">
                             <div class="item-info">
-                                <h4>${name} (${weight})</h4>
+                                <h4>${lastName}</h4>
+                                <p style="margin:0; font-size:12px; color:#666;">Size: ${weight}</p>
                                 <div class="price-tag">₹${price}</div>
                             </div>
-                            <button class="order-btn" onclick="sendWhatsApp('${name}', '${weight}', '${price}')">Order</button>
+                            <button class="order-btn" onclick="sendWhatsApp('${lastName}', '${weight}', '${price}')">Order</button>
                         </div>`;
                 }
             }
         });
-        document.getElementById('product-list').innerHTML = html || '<p>Out of Stock</p>';
+        document.getElementById('product-list').innerHTML = html;
         document.getElementById('prod-head').innerText = subCat;
         document.getElementById('back-to-sub').onclick = () => showSubCategories(mainCat);
         openView('view-products');
@@ -86,3 +153,5 @@
 
     window.onload = loadSheetData;
 </script>
+</body>
+</html>
