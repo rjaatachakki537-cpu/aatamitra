@@ -11,8 +11,8 @@
             const t = await r.text();
             const j = JSON.parse(t.substring(47, t.length - 2));
             sheetData = j.table.rows;
-            console.log("Sheet Connected!");
-        } catch(e) { alert("Sheet Link ya Internet Check Karein!"); }
+            console.log("Data loaded");
+        } catch(e) { console.error("Load Error"); }
     }
 
     function openView(id) {
@@ -21,103 +21,118 @@
         if(id === 'view-cart') renderCart();
     }
 
-    // YEH FUNCTION SUB-CATEGORY (SABUT / PISI) DIKHAYEGA
-    function processSub(mainCat) {
+    function processSub(main) {
         let subs = {};
-        let lastC = ""; // Category (Aata/Masale)
-        
+        let lastM = "";
         sheetData.forEach(row => {
-            let c = row.c[2]?.v || lastC; // Column C
-            if(c) lastC = c;
+            let m = row.c[2]?.v || lastM;
+            if(m) lastM = m;
 
-            // Spelling check: Aata, Masale, Mustered oil
-            if (lastC.toLowerCase().trim().includes(mainCat.toLowerCase().substring(0,3))) {
-                let s = row.c[3]?.v; // Column D (Sub Category)
-                let img = row.c[6]?.v; // Column G (Image)
+            // Masale ke liye hum Haldi, Mirchi aur Masala sab check kar rahe hain
+            let isMatch = false;
+            let currentCat = m.toString().toLowerCase().trim();
+            let searchCat = main.toLowerCase().trim();
+
+            if(currentCat === searchCat) isMatch = true;
+            if(searchCat === 'masale' && (currentCat === 'mirchi' || currentCat === 'haldi' || currentCat === 'masala')) isMatch = true;
+
+            if(isMatch) {
+                let s = row.c[3]?.v;
+                let img = row.c[6]?.v;
                 if(s && !subs[s]) subs[s] = img;
             }
         });
 
         let h = '';
         for(let s in subs) {
-            let imgSrc = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3081/3081913.png';
-            h += `
-            <div class="card" onclick="processProd('${mainCat}','${s}')">
-                <img src="${imgSrc}">
-                <h3>${s}</h3>
-            </div>`;
+            let imgSrc = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3233/3233959.png';
+            h += `<div class="card" onclick="processProd('${main}','${s}')">
+                    <img src="${imgSrc}" style="width:100%; height:100px; object-fit:cover; border-radius:10px;">
+                    <h3>${s}</h3>
+                  </div>`;
         }
-        document.getElementById('sub-grid').innerHTML = h || `<p>Saman jaldi aayega!</p>`;
-        document.getElementById('sub-head').innerText = mainCat;
+        document.getElementById('sub-grid').innerHTML = h || `<p style="text-align:center; padding:20px;">Kuch nahi mila. Sheet mein check karein.</p>`;
+        document.getElementById('sub-head').innerText = main;
         openView('view-sub');
     }
 
-    // YEH FUNCTION SARE PRODUCTS (MIRCHI, HALDI) EK SAATH DIKHAYEGA
-    function processProd(mainCat, subCat) {
+    function processProd(main, sub) {
         let h = '';
-        let lastB="", lastC="", lastD="", lastI="";
-
+        let lastM="", lastS="", lastI="", lastN="";
         sheetData.forEach(row => {
-            let n = row.c[1]?.v || lastB; if(n) lastB=n; // Name
-            let c = row.c[2]?.v || lastC; if(c) lastC=c; // Category
-            let s = row.c[3]?.v || lastD; if(s) lastD=s; // Sub-Cat
-            let i = row.c[6]?.v || lastI; if(i && i.includes('http')) lastI=i; // Image
+            let m = row.c[2]?.v || lastM; if(m) lastM=m;
+            let s = row.c[3]?.v || lastS; if(s) lastS=s;
+            let n = row.c[1]?.v || lastN; if(n) lastN=n;
+            let i = row.c[6]?.v || lastI; if(i && i.includes('http')) lastI=i;
 
-            // Match Category and Sub-category
-            if(lastC.toLowerCase().trim().includes(mainCat.toLowerCase().substring(0,3)) && s === subCat) {
-                let w = row.c[4]?.v; // Weight
-                let p = row.c[5]?.v; // Price
+            let isMatch = false;
+            let currentCat = m.toString().toLowerCase().trim();
+            let searchCat = main.toLowerCase().trim();
+            if(currentCat === searchCat) isMatch = true;
+            if(searchCat === 'masale' && (currentCat === 'mirchi' || currentCat === 'haldi' || currentCat === 'masala')) isMatch = true;
+
+            if(isMatch && s === sub) {
+                let w = row.c[4]?.v;
+                let p = row.c[5]?.v;
                 if(w && p) {
-                    h += `
-                    <div class="item-row">
-                        <img src="${lastI || 'https://via.placeholder.com/60'}">
-                        <div style="flex:1">
-                            <h4>${lastB}</h4>
-                            <p>${w} | ₹${p}</p>
-                        </div>
-                        <button class="add-cart-btn" onclick="add('${lastB}','${w}','${p}')">Add +</button>
-                    </div>`;
+                    h += `<div class="item-row" style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:white; padding:10px; border-radius:10px;">
+                            <img src="${lastI || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; border-radius:5px;">
+                            <div style="flex:1">
+                                <h4>${lastN}</h4>
+                                <p>${w} - ₹${p}</p>
+                            </div>
+                            <button class="add-cart-btn" onclick="add('${lastN}','${w}','${p}')" style="background:#f4b41a; border:none; padding:5px 10px; border-radius:5px; font-weight:bold;">Add +</button>
+                          </div>`;
                 }
             }
         });
-        document.getElementById('product-list').innerHTML = h;
-        document.getElementById('prod-head').innerText = subCat;
-        document.getElementById('btn-back-prod').onclick = () => processSub(mainCat);
+        document.getElementById('product-list').innerHTML = h || "No Products";
+        document.getElementById('prod-head').innerText = sub;
+        document.getElementById('btn-back-prod').onclick = () => processSub(main);
         openView('view-products');
     }
 
     function add(n,w,p) {
         cart.push({n,w,p:parseInt(p)});
         document.getElementById('badge').innerText = cart.length;
-        alert(n + " " + w + " Cart mein add ho gaya!");
+        const toast = document.createElement("div");
+        toast.innerText = n + " Cart mein gaya!";
+        toast.style.cssText = "position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:black; color:white; padding:10px 20px; border-radius:20px; font-size:12px; z-index:2000;";
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
     }
 
     function renderCart() {
         let h = '', t = 0;
         cart.forEach((item, i) => {
             t += item.p;
-            h += `
-            <div class="item-row">
-                <div style="flex:1">
-                    <h4>${item.n} (${item.w})</h4>
-                    <b>₹${item.p}</b>
-                </div>
-                <button onclick="remove(${i})" style="color:red; border:none; background:none; font-weight:bold;">Hatao</button>
-            </div>`;
+            h += `<div class="item-row" style="display:flex; justify-content:space-between; background:white; padding:10px; margin-bottom:5px; border-radius:10px;">
+                    <div>
+                        <h4>${item.n} (${item.w})</h4>
+                        <b>₹${item.p}</b>
+                    </div>
+                    <button onclick="remove(${i})" style="background:#ffeded; color:red; border:1px solid red; padding:5px 10px; border-radius:5px;">X</button>
+                  </div>`;
         });
-        document.getElementById('cart-items').innerHTML = h || "Cart khaali hai";
-        document.getElementById('cart-total').innerText = "Total Payable: ₹" + t;
+        document.getElementById('cart-items').innerHTML = h || "<p style='text-align:center;'>Cart khaali hai!</p>";
+        document.getElementById('cart-total').innerHTML = `<h3>Total: ₹${t}</h3>`;
     }
 
-    function remove(i) { cart.splice(i,1); document.getElementById('badge').innerText = cart.length; renderCart(); }
+    function remove(i) { 
+        cart.splice(i,1); 
+        document.getElementById('badge').innerText = cart.length; 
+        renderCart(); 
+    }
 
     function sendToWA() {
-        if(cart.length === 0) return alert("Cart khaali hai!");
-        let msg = "*Naya Order - Rana Ji Aata Chakki*\n--------------------------\n";
-        cart.forEach((item, index) => {
-            msg += `${index+1}. ${item.n} (${item.w}) - ₹${item.p}\n`;
+        if(cart.length === 0) return alert("Pehle saman add karein!");
+        let msg = "Namaste Rana Ji, mera order niche hai:\n\n";
+        let total = 0;
+        cart.forEach((item, i) => {
+            msg += `${i+1}. *${item.n}* (${item.w}) - ₹${item.p}\n`;
+            total += item.p;
         });
-        msg += "--------------------------\n*Total Order Value: ₹" + cart.reduce((a,b) => a + b.p, 0) + "*";
+        msg += `\n*Total Amount: ₹${total}*`;
         window.open(`https://wa.me/918923357537?text=${encodeURIComponent(msg)}`);
     }
 
