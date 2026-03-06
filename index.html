@@ -1,47 +1,23 @@
 <script>
     const S_ID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
+    // Is baar hum simplified JSON fetch karenge
     const G_URL = `https://docs.google.com/spreadsheets/d/${S_ID}/gviz/tq?tqx=out:json&sheet=Products`;
 
-    let allProducts = [];
+    let sheetData = [];
     let cart = [];
 
     async function init() {
         try {
             const r = await fetch(G_URL);
             const t = await r.text();
+            // Data ko saaf karke JSON banana
             const j = JSON.parse(t.substring(47, t.length - 2));
-            
-            // Column mapping: Column names se index nikaalna
-            const cols = j.table.cols.map(c => c.label.toLowerCase().trim());
-            const idx = {
-                name: cols.indexOf('name'),
-                cat: cols.indexOf('category'),
-                sub: cols.indexOf('sub_category'),
-                weight: cols.indexOf('net weight'),
-                price: cols.indexOf('price'),
-                img: cols.indexOf('image_url')
-            };
-
-            let lastValues = {};
-            
-            allProducts = j.table.rows.map(row => {
-                let p = {
-                    name: row.c[idx.name]?.v || lastValues.name,
-                    cat: row.c[idx.cat]?.v || lastValues.cat,
-                    sub: row.c[idx.sub]?.v || lastValues.sub,
-                    weight: row.c[idx.weight]?.v,
-                    price: row.c[idx.price]?.v,
-                    img: row.c[idx.img]?.v || lastValues.img
-                };
-                // Fill blanks from previous row (for merged cells)
-                if(p.name) lastValues.name = p.name;
-                if(p.cat) lastValues.cat = p.cat;
-                if(p.sub) lastValues.sub = p.sub;
-                if(p.img && p.img.includes('http')) lastValues.img = p.img;
-                return p;
-            });
-            console.log("App Ready!");
-        } catch(e) { alert("Sheet Connection Error!"); }
+            sheetData = j.table.rows;
+            console.log("Data Loaded!");
+        } catch(e) { 
+            console.error("Connection Error", e);
+            alert("Sheet connect nahi ho rahi!"); 
+        }
     }
 
     function openView(id) {
@@ -52,50 +28,73 @@
 
     function processSub(main) {
         let subs = {};
-        allProducts.forEach(p => {
-            let c = p.cat ? p.cat.toString().toLowerCase() : "";
-            let m = main.toLowerCase();
-            
-            // Masale logic: check if cat is masale, mirchi, or haldi
-            let match = (c === m) || (m === 'masale' && (c === 'mirchi' || c === 'haldi' || c === 'masala'));
-            
-            if(match && p.sub) {
-                if(!subs[p.sub]) subs[p.sub] = p.img;
+        let lastM = ""; 
+        
+        sheetData.forEach(row => {
+            // Hum seedha Column C (Index 2) dekh rahe hain Category ke liye
+            let m = (row.c[2] && row.c[2].v) ? row.c[2].v : lastM;
+            if(m) lastM = m;
+
+            let currentCat = lastM.toString().toLowerCase().trim();
+            let searchCat = main.toLowerCase().trim();
+
+            // Masale wali condition
+            let match = (currentCat === searchCat) || 
+                        (searchCat === 'masale' && (currentCat === 'mirchi' || currentCat === 'haldi' || currentCat === 'masala'));
+
+            if(match) {
+                let s = (row.c[3] && row.c[3].v) ? row.c[3].v : ""; // Column D: Sub Category
+                let img = (row.c[6] && row.c[6].v) ? row.c[6].v : ""; // Column G: Image
+                if(s && !subs[s]) subs[s] = img;
             }
         });
 
         let h = '';
         for(let s in subs) {
             let imgSrc = (subs[s] && subs[s].includes('http')) ? subs[s] : 'https://cdn-icons-png.flaticon.com/512/3081/3081913.png';
-            h += `<div class="card" onclick="processProd('${main}','${s}')">
-                    <img src="${imgSrc}" style="width:100%; height:110px; object-fit:cover; border-radius:15px;">
-                    <h3>${s}</h3>
-                  </div>`;
+            h += `
+            <div class="card" onclick="processProd('${main}','${s}')">
+                <img src="${imgSrc}" style="width:100%; height:110px; object-fit:cover; border-radius:15px;">
+                <h3>${s}</h3>
+            </div>`;
         }
-        document.getElementById('sub-grid').innerHTML = h || `<p style="text-align:center;width:100%;">Saaman load ho raha hai...</p>`;
+        document.getElementById('sub-grid').innerHTML = h || `<p style="text-align:center; padding:20px;">Abhi koi data nahi mila.</p>`;
         document.getElementById('sub-head').innerText = main;
         openView('view-sub');
     }
 
     function processProd(main, sub) {
         let h = '';
-        allProducts.forEach(p => {
-            let c = p.cat ? p.cat.toString().toLowerCase() : "";
-            let m = main.toLowerCase();
-            let match = (c === m) || (m === 'masale' && (c === 'mirchi' || c === 'haldi' || c === 'masala'));
+        let lastM = "", lastN = "", lastS = "", lastI = "";
 
-            if(match && p.sub === sub && p.price) {
-                h += `<div class="item-row" style="display:flex; align-items:center; gap:15px; background:white; padding:12px; margin-bottom:10px; border-radius:15px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-                        <img src="${p.img || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; border-radius:10px; object-fit:cover;">
+        sheetData.forEach(row => {
+            let n = (row.c[1] && row.c[1].v) ? row.c[1].v : lastN; if(n) lastN = n;
+            let m = (row.c[2] && row.c[2].v) ? row.c[2].v : lastM; if(m) lastM = m;
+            let s = (row.c[3] && row.c[3].v) ? row.c[3].v : lastS; if(s) lastS = s;
+            let i = (row.c[6] && row.c[6].v) ? row.c[6].v : lastI; if(i && i.includes('http')) lastI = i;
+
+            let currentCat = lastM.toString().toLowerCase().trim();
+            let searchCat = main.toLowerCase().trim();
+            let match = (currentCat === searchCat) || 
+                        (searchCat === 'masale' && (currentCat === 'mirchi' || currentCat === 'haldi' || currentCat === 'masala'));
+
+            if(match && lastS === sub) {
+                let w = (row.c[4] && row.c[4].v) ? row.c[4].v : ""; // Net Weight
+                let p = (row.c[5] && row.c[5].v) ? row.c[5].v : ""; // Price
+                if(w && p) {
+                    h += `
+                    <div class="item-row" style="display:flex; align-items:center; gap:15px; background:white; padding:12px; margin-bottom:10px; border-radius:15px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                        <img src="${lastI || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; border-radius:10px; object-fit:cover;">
                         <div style="flex:1">
-                            <h4 style="margin:0;">${p.name}</h4>
-                            <p style="margin:5px 0; color:#666;">${p.weight} - <b>₹${p.price}</b></p>
+                            <h4 style="margin:0;">${lastN}</h4>
+                            <p style="margin:5px 0; color:#666;">${w} - <b>₹${p}</b></p>
                         </div>
-                        <button onclick="add('${p.name}','${p.weight}','${p.price}')" style="background:#f4b41a; border:none; padding:8px 12px; border-radius:8px; font-weight:bold;">Add +</button>
-                      </div>`;
+                        <button onclick="add('${lastN}','${w}','${p}')" style="background:#f4b41a; border:none; padding:8px 12px; border-radius:8px; font-weight:bold;">Add +</button>
+                    </div>`;
+                }
             }
         });
-        document.getElementById('product-list').innerHTML = h || "No Products Found";
+        document.getElementById('product-list').innerHTML = h || "Saaman khatam ho gaya!";
         document.getElementById('prod-head').innerText = sub;
         document.getElementById('btn-back-prod').onclick = () => processSub(main);
         openView('view-products');
@@ -104,7 +103,7 @@
     function add(n,w,p) {
         cart.push({n,w,p:parseInt(p)});
         document.getElementById('badge').innerText = cart.length;
-        alert(n + " Add ho gaya!");
+        alert(n + " Cart mein gaya!");
     }
 
     function renderCart() {
@@ -116,7 +115,7 @@
                     <button onclick="remove(${i})" style="color:red; border:none; background:none; font-size:18px;">&times;</button>
                   </div>`;
         });
-        document.getElementById('cart-items').innerHTML = h || "<p style='text-align:center;'>Cart khaali hai</p>";
+        document.getElementById('cart-items').innerHTML = h || "Cart khaali hai";
         document.getElementById('cart-total').innerHTML = `<h3 style="text-align:right;">Total: ₹${t}</h3>`;
     }
 
