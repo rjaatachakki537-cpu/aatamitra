@@ -3,76 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rana Ji Aata Chakki</title>
+    <title>Rana Ji Aata Chakki | VIP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fffbf0; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); padding-bottom: 80px; }
-        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fffbf0; --accent: #2ecc71; --red: #e74c3c; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
+        
+        /* Splash Screen */
+        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: 0.5s; }
         #welcome-screen img { width: 100%; height: 100%; object-fit: cover; }
-        .header { background: var(--dark); color: var(--main); padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
-        .search-container { padding: 10px; background: var(--dark); position: sticky; top: 55px; z-index: 999; }
-        #search-input { width: 100%; padding: 12px; border-radius: 25px; border: none; outline: none; font-size: 16px; box-sizing: border-box; }
-        .view { display: none; padding: 15px; }
+
+        /* Header & Search */
+        .header { background: var(--dark); color: var(--main); padding: 18px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .header h3 { margin: 0; font-size: 20px; font-weight: 700; text-transform: uppercase; }
+        .search-container { padding: 12px 15px; background: var(--dark); position: sticky; top: 58px; z-index: 999; }
+        #search-input { width: 100%; padding: 12px 20px; border-radius: 50px; border: none; outline: none; font-size: 15px; box-sizing: border-box; }
+
+        .view { display: none; padding: 15px; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .active { display: block; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; padding: 10px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; }
-        .card img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
-        .item-row { background: white; border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .item-row img { width: 50px; height: 50px; border-radius: 8px; }
-        .add-btn { background: var(--main); border: none; padding: 8px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--main); }
-        .badge { background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; margin-left: 15px; }
-        .order-btn { background: #25d366; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; margin-top: 10px; cursor: pointer; font-size: 16px; }
-        .bill-box { background: white; padding: 20px; border-radius: 15px; border: 2px dashed var(--dark); line-height: 1.6; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; font-size: 16px; }
+
+        /* Category Cards with Icons */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .card { background: white; padding: 20px 10px; border-radius: 20px; text-align: center; box-shadow: 0 6px 15px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid rgba(0,0,0,0.03); transition: 0.3s; }
+        .card:active { transform: scale(0.92); }
+        .card i { font-size: 35px; color: var(--main); margin-bottom: 12px; display: block; }
+        .card h3 { margin: 0; font-size: 15px; color: var(--dark); font-weight: 600; }
+
+        /* Items Display */
+        .item-row { background: white; border-radius: 18px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
+        .item-row img { width: 65px; height: 65px; border-radius: 12px; object-fit: cover; }
+        .item-info { flex: 1; }
+        .item-info b { font-size: 15px; display: block; color: #333; }
+        .item-info span { font-size: 13px; color: #777; }
+        .add-btn { background: var(--main); border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 3px 6px rgba(244,180,26,0.2); }
+        .add-btn:active { transform: scale(0.9); }
+
+        /* Navigation & Cart Animation */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1000; }
+        .nav-item { text-align: center; color: #bbb; flex: 1; font-size: 12px; position: relative; transition: 0.3s; }
+        .nav-item.active { color: var(--dark); font-weight: bold; }
+        .nav-item i { font-size: 20px; margin-bottom: 3px; }
+        .badge { background: var(--red); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; top: -5px; right: 28%; border: 2px solid white; }
+        
+        /* Animation class for cart */
+        .cart-pop { animation: jello; animation-duration: 0.5s; }
+
+        /* Form & Success */
+        input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-size: 15px; background: #fafafa; }
+        .order-btn { background: var(--accent); color: white; border: none; padding: 16px; width: 100%; border-radius: 15px; font-weight: bold; font-size: 16px; box-shadow: 0 6px 12px rgba(46, 204, 113, 0.2); }
+        .bill-box { background: #fff; padding: 18px; border-radius: 15px; border: 2px dashed #ddd; margin: 15px 0; text-align: left; line-height: 1.6; }
+        .cancel-btn { background: none; border: 1.5px solid var(--red); color: var(--red); padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="welcome-screen"><img src="https://i.postimg.cc/28dsdD1S/Gemini-Generated-Image-14ju3v14ju3v14ju.png"></div>
-<div class="header"><h3>Rana Ji Aata Chakki</h3></div>
-<div class="search-container"><input type="text" id="search-input" placeholder="Saman dhoondhein (Aata, Tel...)" onkeyup="searchProduct()"></div>
-
-<div id="view-search" class="view"><button onclick="closeSearch()">← Back</button><div id="list-search" style="margin-top:15px;"></div></div>
+<div class="header"><h3>RANA JI AATA CHAKKI</h3></div>
+<div class="search-container"><input type="text" id="search-input" placeholder="Kuch dhoondhna hai?" onkeyup="searchProduct()"></div>
 
 <div id="view-home" class="view active">
     <div class="grid">
-        <div class="card" onclick="loadSubs('Aata')"><h3>Aata</h3></div>
-        <div class="card" onclick="loadSubs('Mustered oil')"><h3>Mustard Oil</h3></div>
-        <div class="card" onclick="loadSubs('Masale')"><h3>Masale</h3></div>
-        <div class="card" onclick="window.open('tel:+918923357537')"><h3>Contact</h3></div>
+        <div class="card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn"></i><h3>Aata</h3></div>
+        <div class="card" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet"></i><h3>Mustard Oil</h3></div>
+        <div class="card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot"></i><h3>Masale</h3></div>
+        <div class="card" onclick="window.open('tel:+918923357537')"><i class="fas fa-headset"></i><h3>Help</h3></div>
     </div>
-    <div style="width: 100%; margin-top: 20px; border-radius: 15px; overflow: hidden; border: 2px solid var(--main);">
+    <div style="margin-top: 25px; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
         <img src="https://i.postimg.cc/bNTh0VpS/Gemini-Generated-Image-44x2jo44x2jo44x2.png" style="width: 100%; display: block;">
     </div>
 </div>
 
-<div id="view-sub" class="view"><button onclick="showView('view-home')">← Back</button><div id="list-sub" class="grid"></div></div>
-<div id="view-prod" class="view"><button id="back-to-sub">← Back</button><div id="list-prod"></div></div>
+<div id="view-search" class="view"><button onclick="closeSearch()" style="border:none;background:none;font-weight:bold;">← WAPAS</button><div id="list-search" style="margin-top:15px;"></div></div>
+<div id="view-sub" class="view"><button onclick="showView('view-home')" style="border:none;background:none;font-weight:bold;">← WAPAS</button><div id="list-sub" class="grid" style="margin-top:15px;"></div></div>
+<div id="view-prod" class="view"><button id="back-to-sub" style="border:none;background:none;font-weight:bold;">← WAPAS</button><div id="list-prod" style="margin-top:15px;"></div></div>
 
 <div id="view-cart" class="view">
-    <h3>🛒 Mera Order</h3>
+    <h3 style="margin-top:0;"><i class="fas fa-shopping-bag"></i> Mera Bag</h3>
     <div id="list-cart"></div>
-    <div id="total-cart" style="font-weight:bold; margin:20px 0; text-align:right; font-size:18px;"></div>
-    <div style="background:#f0f0f0; padding:15px; border-radius:10px;">
+    <div id="total-cart" style="font-weight:bold; margin:20px 0; text-align:right; font-size:20px; color:var(--dark);"></div>
+    <div style="background:white; padding:20px; border-radius:20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
         <input type="text" id="u-name" placeholder="Apna Naam">
         <input type="number" id="u-mobile" placeholder="Mobile Number">
-        <input type="text" id="u-address" placeholder="Pura Pata (Address)">
-        <button class="order-btn" id="final-btn" onclick="processOrder()">Order Final Karein</button>
+        <input type="text" id="u-address" placeholder="Delivery ka Pata">
+        <button class="order-btn" id="final-btn" onclick="processOrder()">Order Confirm Karein</button>
     </div>
 </div>
 
-<div id="view-success" class="view">
-    <div style="text-align:center; color:green;"><h2>✅ Order Confirm Ho Gaya!</h2></div>
-    <div id="bill-content" class="bill-box"></div>
-    <p style="text-align:center; font-size:12px; color:gray;">Upar wale bill ka screenshot le lein.</p>
-    <button class="order-btn" style="background:var(--dark);" onclick="showView('view-home')">Wapas Home Par</button>
+<div id="view-success" class="view" style="text-align:center;">
+    <div style="background:white; padding:25px; border-radius:25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        <i class="fas fa-check-circle animate__animated animate__bounceIn" style="font-size: 70px; color: var(--accent);"></i>
+        <h2 style="color:var(--accent); margin-top:15px;">Order Done!</h2>
+        <div id="bill-content" class="bill-box"></div>
+        <button onclick="cancelOrder()" class="cancel-btn">❌ Order Galti Se Ho Gaya? Cancel Karein</button>
+    </div>
+    <button class="order-btn" style="background:var(--dark); margin-top:20px;" onclick="showView('view-home')">Wapas Home</button>
 </div>
 
 <div class="nav">
-    <div onclick="showView('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div onclick="showView('view-cart')"><i class="fas fa-shopping-cart"></i><span class="badge" id="b-count">0</span><br>Cart</div>
+    <div class="nav-item active" onclick="showView('view-home')"><i class="fas fa-home"></i><br>Home</div>
+    <div class="nav-item" id="nav-cart" onclick="showView('view-cart')">
+        <i class="fas fa-shopping-basket"></i><span class="badge" id="b-count">0</span><br>Cart
+    </div>
 </div>
 
 <script>
@@ -80,10 +113,10 @@ const SID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
 const WID = 'https://script.google.com/macros/s/AKfycbyuk5iFgCDNF9kuyrqKo-vhgp0GSKz9Up-PKTIobgOU3Mm9GnGhC88rVEs4A4zlvOYj/exec';
 const URL = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=Products`;
 
-let data = [], cart = [];
+let data = [], cart = [], currentOrderId = "";
 
 async function init() {
-    setTimeout(() => { document.getElementById('welcome-screen').style.display = 'none'; }, 2500);
+    setTimeout(() => { document.getElementById('welcome-screen').style.opacity = '0'; setTimeout(()=> {document.getElementById('welcome-screen').style.display = 'none';}, 500); }, 2500);
     try {
         const r = await fetch(URL); const t = await r.text();
         const j = JSON.parse(t.substring(47, t.length - 2));
@@ -94,7 +127,9 @@ async function init() {
 function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(id === 'view-cart') renderCart();
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if(id === 'view-home') document.querySelectorAll('.nav-item')[0].classList.add('active');
+    if(id === 'view-cart') { renderCart(); document.getElementById('nav-cart').classList.add('active'); }
 }
 
 function searchProduct() {
@@ -104,7 +139,7 @@ function searchProduct() {
     let h = '';
     data.forEach(r => {
         let n = r.c[1]?.v || ""; let w = r.c[4]?.v || ""; let p = r.c[5]?.v || ""; let i = r.c[6]?.v || "";
-        if(n.toLowerCase().includes(q)) h += `<div class="item-row"><img src="${i}"><div style="flex:1"><b>${n}</b> (${w})<br>₹${p}</div><button class="add-btn" onclick="add('${n}','${w}','${p}')">Add +</button></div>`;
+        if(n.toLowerCase().includes(q)) h += `<div class="item-row"><img src="${i}"><div class="item-info"><b>${n}</b><span>${w}</span><br><b>₹${p}</b></div><button class="add-btn" onclick="add('${n}','${w}','${p}')">ADD +</button></div>`;
     });
     document.getElementById('list-search').innerHTML = h || "Saman nahi mila!";
 }
@@ -120,7 +155,7 @@ function loadSubs(main) {
         }
     });
     let h = '';
-    for(let s in subs) h += `<div class="card" onclick="loadProds('${main}','${s}')"><img src="${subs[s] || 'https://via.placeholder.com/100'}"><h3>${s}</h3></div>`;
+    for(let s in subs) h += `<div class="card" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%;height:80px;object-fit:cover;border-radius:12px;margin-bottom:8px;"><h3>${s}</h3></div>`;
     document.getElementById('list-sub').innerHTML = h; showView('view-sub');
 }
 
@@ -134,7 +169,7 @@ function loadProds(main, subOrItem) {
         let match = (main === 'Masale') ? (lN === subOrItem) : (lM.includes(main.substring(0,3)) && lS === subOrItem);
         if(match) {
             let w = r.c[4]?.v, p = r.c[5]?.v;
-            if(w && p) h += `<div class="item-row"><img src="${lI}"><div style="flex:1"><b>${lN}</b> (${w})<br>₹${p}</div><button class="add-btn" onclick="add('${lN}','${w}','${p}')">Add +</button></div>`;
+            if(w && p) h += `<div class="item-row"><img src="${lI}"><div class="item-info"><b>${lN}</b><span>${w}</span><br><b>₹${p}</b></div><button class="add-btn" onclick="add('${lN}','${w}','${p}')">ADD +</button></div>`;
         }
     });
     document.getElementById('list-prod').innerHTML = h;
@@ -142,14 +177,22 @@ function loadProds(main, subOrItem) {
     showView('view-prod');
 }
 
-function add(n,w,p) { cart.push({n,w,p:parseInt(p)}); updateBadge(); }
+// PREMIUM CART ANIMATION
+function add(n,w,p) { 
+    cart.push({n,w,p:parseInt(p)}); 
+    updateBadge(); 
+    let cartBtn = document.getElementById('nav-cart');
+    cartBtn.classList.add('animate__animated', 'animate__jello');
+    setTimeout(() => cartBtn.classList.remove('animate__animated', 'animate__jello'), 500);
+}
+
 function updateBadge() { document.getElementById('b-count').innerText = cart.length; }
 
 function renderCart() {
     let h = '', t = 0;
-    cart.forEach((x, i) => { t += x.p; h += `<div class="item-row"><div style="flex:1"><b>${x.n}</b> (${x.w})<br>₹${x.p}</div><button onclick="remove(${i})" style="color:red;border:none;background:none;">X</button></div>`; });
-    document.getElementById('list-cart').innerHTML = h || "Cart Khali Hai";
-    document.getElementById('total-cart').innerText = "Total Bill: ₹" + t;
+    cart.forEach((x, i) => { t += x.p; h += `<div class="item-row"><div class="item-info"><b>${x.n}</b><span>${x.w}</span><br>₹${x.p}</div><button onclick="remove(${i})" style="color:var(--red);border:none;background:none;"><i class="fas fa-trash-alt"></i></button></div>`; });
+    document.getElementById('list-cart').innerHTML = h || "Bag Khali Hai";
+    document.getElementById('total-cart').innerText = "Total: ₹" + t;
 }
 
 function remove(i) { cart.splice(i,1); updateBadge(); renderCart(); }
@@ -160,42 +203,36 @@ async function processOrder() {
     const addr = document.getElementById('u-address').value;
     const btn = document.getElementById('final-btn');
 
-    if(!name || !mobile || !addr || cart.length === 0) return alert("Pura Form bharein!");
+    if(!name || !mobile || !addr || cart.length === 0) return alert("Poori detail bharein!");
 
-    btn.innerText = "Saving Order...";
-    btn.disabled = true;
+    btn.innerText = "Order Save Ho Raha Hai..."; btn.disabled = true;
 
-    let itemsStr = ""; let total = 0; let waMsg = `*Naya Order: Rana Ji*\n\n*Naam:* ${name}\n*Mobile:* ${mobile}\n*Pata:* ${addr}\n\n*Saman:*\n`;
-    cart.forEach(x => { 
-        itemsStr += `${x.n} (${x.w}), `; 
-        waMsg += `- ${x.n} (${x.w}): ₹${x.p}\n`;
-        total += x.p; 
-    });
+    let itemsStr = ""; let total = 0; let waMsg = `*Naya Order: Rana Ji Chakki*\n\n*Customer:* ${name}\n*Mobile:* ${mobile}\n*Pata:* ${addr}\n\n*Saman:*\n`;
+    cart.forEach(x => { itemsStr += `${x.n} (${x.w}), `; waMsg += `- ${x.n} (${x.w}): ₹${x.p}\n`; total += x.p; });
     waMsg += `\n*Total Bill: ₹${total}*`;
 
     try {
-        // 1. Save to Google Sheet
-        await fetch(WID, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({ name: name, mobile: mobile, address: addr, details: itemsStr, total: total })
-        });
-
-        // 2. Show Bill on App
-        document.getElementById('bill-content').innerHTML = `<b>Bill Details:</b><hr><b>Naam:</b> ${name}<br><b>Mobile:</b> ${mobile}<br><b>Address:</b> ${addr}<br><b>Saman:</b> ${itemsStr}<hr><b>Total: ₹${total}</b>`;
+        await fetch(WID, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name, mobile, address: addr, details: itemsStr, total }) });
         
-        cart = []; updateBadge();
-        showView('view-success');
-
-        // 3. Open WhatsApp
+        // Show Bill & Order ID
+        document.getElementById('bill-content').innerHTML = `
+            <div style="text-align:right; font-size:11px; color:#999;">Date: ${new Date().toLocaleDateString()}</div>
+            <b>Order Summary</b><hr>
+            <b>Customer:</b> ${name}<br>
+            <b>Items:</b> ${itemsStr}<hr>
+            <b style="font-size:18px;">Total: ₹${total}</b>
+        `;
+        
+        cart = []; updateBadge(); showView('view-success');
         setTimeout(() => { window.open(`https://wa.me/918923357537?text=${encodeURIComponent(waMsg)}`); }, 1000);
+    } catch (e) { alert("Error! Net check karein."); }
+    finally { btn.innerText = "Order Confirm Karein"; btn.disabled = false; }
+}
 
-    } catch (error) {
-        alert("Error saving order, check internet!");
-    } finally {
-        btn.innerText = "Order Final Karein";
-        btn.disabled = false;
-    }
+function cancelOrder() {
+    const name = document.getElementById('u-name').value;
+    const msg = `*ORDER CANCELLATION*\n\nBhaiya, main *${name}* bol raha hoon. Mujhse galti se order ho gaya hai, please mera order cancel kar dijiye.`;
+    window.open(`https://wa.me/918923357537?text=${encodeURIComponent(msg)}`);
 }
 
 window.onload = init;
