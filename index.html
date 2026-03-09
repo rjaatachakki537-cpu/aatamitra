@@ -38,23 +38,19 @@
         .item-info b { font-size: 15px; display: block; color: #333; }
         .item-info span { font-size: 13px; color: #777; }
         .add-btn { background: var(--main); border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 3px 6px rgba(244,180,26,0.2); }
-        .add-btn:active { transform: scale(0.9); }
 
-        /* Navigation & Cart Animation */
+        /* Navigation */
         .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1000; }
         .nav-item { text-align: center; color: #bbb; flex: 1; font-size: 12px; position: relative; transition: 0.3s; }
         .nav-item.active { color: var(--dark); font-weight: bold; }
         .nav-item i { font-size: 20px; margin-bottom: 3px; }
         .badge { background: var(--red); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; top: -5px; right: 28%; border: 2px solid white; }
         
-        /* Animation class for cart */
-        .cart-pop { animation: jello; animation-duration: 0.5s; }
-
         /* Form & Success */
         input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-size: 15px; background: #fafafa; }
         .order-btn { background: var(--accent); color: white; border: none; padding: 16px; width: 100%; border-radius: 15px; font-weight: bold; font-size: 16px; box-shadow: 0 6px 12px rgba(46, 204, 113, 0.2); }
         .bill-box { background: #fff; padding: 18px; border-radius: 15px; border: 2px dashed #ddd; margin: 15px 0; text-align: left; line-height: 1.6; }
-        .cancel-btn { background: none; border: 1.5px solid var(--red); color: var(--red); padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-top: 10px; }
+        .cancel-btn { background: none; border: 1.5px solid var(--red); color: var(--red); padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -96,7 +92,7 @@
         <i class="fas fa-check-circle animate__animated animate__bounceIn" style="font-size: 70px; color: var(--accent);"></i>
         <h2 style="color:var(--accent); margin-top:15px;">Order Done!</h2>
         <div id="bill-content" class="bill-box"></div>
-        <button onclick="cancelOrder()" class="cancel-btn">❌ Order Galti Se Ho Gaya? Cancel Karein</button>
+        <button id="cancel-btn-id" onclick="cancelOrder()" class="cancel-btn">❌ Order Galti Se Ho Gaya? Cancel Karein</button>
     </div>
     <button class="order-btn" style="background:var(--dark); margin-top:20px;" onclick="showView('view-home')">Wapas Home</button>
 </div>
@@ -113,7 +109,7 @@ const SID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
 const WID = 'https://script.google.com/macros/s/AKfycbyuk5iFgCDNF9kuyrqKo-vhgp0GSKz9Up-PKTIobgOU3Mm9GnGhC88rVEs4A4zlvOYj/exec';
 const URL = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=Products`;
 
-let data = [], cart = [], currentOrderId = "";
+let data = [], cart = [];
 
 async function init() {
     setTimeout(() => { document.getElementById('welcome-screen').style.opacity = '0'; setTimeout(()=> {document.getElementById('welcome-screen').style.display = 'none';}, 500); }, 2500);
@@ -177,7 +173,6 @@ function loadProds(main, subOrItem) {
     showView('view-prod');
 }
 
-// PREMIUM CART ANIMATION
 function add(n,w,p) { 
     cart.push({n,w,p:parseInt(p)}); 
     updateBadge(); 
@@ -202,37 +197,36 @@ async function processOrder() {
     const mobile = document.getElementById('u-mobile').value;
     const addr = document.getElementById('u-address').value;
     const btn = document.getElementById('final-btn');
-
     if(!name || !mobile || !addr || cart.length === 0) return alert("Poori detail bharein!");
-
     btn.innerText = "Order Save Ho Raha Hai..."; btn.disabled = true;
-
     let itemsStr = ""; let total = 0; let waMsg = `*Naya Order: Rana Ji Chakki*\n\n*Customer:* ${name}\n*Mobile:* ${mobile}\n*Pata:* ${addr}\n\n*Saman:*\n`;
     cart.forEach(x => { itemsStr += `${x.n} (${x.w}), `; waMsg += `- ${x.n} (${x.w}): ₹${x.p}\n`; total += x.p; });
     waMsg += `\n*Total Bill: ₹${total}*`;
-
     try {
         await fetch(WID, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name, mobile, address: addr, details: itemsStr, total }) });
-        
-        // Show Bill & Order ID
-        document.getElementById('bill-content').innerHTML = `
-            <div style="text-align:right; font-size:11px; color:#999;">Date: ${new Date().toLocaleDateString()}</div>
-            <b>Order Summary</b><hr>
-            <b>Customer:</b> ${name}<br>
-            <b>Items:</b> ${itemsStr}<hr>
-            <b style="font-size:18px;">Total: ₹${total}</b>
-        `;
-        
-        cart = []; updateBadge(); showView('view-success');
+        document.getElementById('bill-content').innerHTML = `<div style="text-align:right; font-size:11px; color:#999;">Date: ${new Date().toLocaleDateString()}</div><b>Order Summary</b><hr><b>Customer:</b> ${name}<br><b>Items:</b> ${itemsStr}<hr><b style="font-size:18px;">Total: ₹${total}</b>`;
+        updateBadge(); showView('view-success');
         setTimeout(() => { window.open(`https://wa.me/918923357537?text=${encodeURIComponent(waMsg)}`); }, 1000);
     } catch (e) { alert("Error! Net check karein."); }
     finally { btn.innerText = "Order Confirm Karein"; btn.disabled = false; }
 }
 
-function cancelOrder() {
+async function cancelOrder() {
     const name = document.getElementById('u-name').value;
-    const msg = `*ORDER CANCELLATION*\n\nBhaiya, main *${name}* bol raha hoon. Mujhse galti se order ho gaya hai, please mera order cancel kar dijiye.`;
-    window.open(`https://wa.me/918923357537?text=${encodeURIComponent(msg)}`);
+    const mobile = document.getElementById('u-mobile').value;
+    const cbtn = document.getElementById('cancel-btn-id');
+    if(!name) return;
+    cbtn.innerText = "Cancelling Request Sent..."; cbtn.disabled = true;
+    try {
+        await fetch(WID, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ type: "cancel", name: name, mobile: mobile })
+        });
+        alert("Cancellation Mail bhej diya gaya hai!");
+        cbtn.innerText = "✅ Cancel Mail Sent";
+        cbtn.style.borderColor = "#ccc"; cbtn.style.color = "#ccc";
+    } catch (e) { alert("Error sending mail!"); cbtn.disabled = false; }
 }
 
 window.onload = init;
