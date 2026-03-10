@@ -5,185 +5,227 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rana Ji Aata Chakki | VIP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        :root { --main: #2874f0; --dark: #4a2c2a; --bg: #f1f3f6; --accent: #2ecc71; --red: #e74c3c; }
+        :root { --main: #2874f0; --dark: #4a2c2a; --bg: #f1f3f6; --accent: #2ecc71; --red: #e74c3c; --yellow: #f4b41a; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
         
+        /* Headers */
+        .header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
+        .search-box { background: var(--main); padding: 10px 15px; position: sticky; top: 50px; z-index: 999; }
+        #search-input { width: 100%; padding: 10px 20px; border-radius: 5px; border: none; outline: none; }
+
         /* Login Screen */
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .login-box { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        #login-screen { position: fixed; inset: 0; background: white; z-index: 10000; display: flex; flex-direction: column; }
+        .login-top { background: var(--main); height: 30%; color: white; padding: 30px; display: flex; flex-direction: column; justify-content: center; }
+        .login-form { padding: 30px; flex: 1; background: white; border-top-left-radius: 20px; border-top-right-radius: 20px; margin-top: -20px; }
         
-        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: 0.5s; }
-        #welcome-screen img { width: 100%; height: 100%; object-fit: cover; }
-
-        .header { background: var(--main); color: white; padding: 18px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .header h3 { margin: 0; font-size: 20px; font-weight: 700; text-transform: uppercase; }
-        
-        .view { display: none; padding: 15px; animation: fadeIn 0.4s; }
+        /* Views */
+        .view { display: none; padding: 15px; animation: fadeIn 0.3s; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Flipkart Style Profile */
-        .profile-header { background: var(--main); color: white; padding: 30px 20px; display: flex; align-items: center; gap: 20px; margin: -15px -15px 15px -15px; }
-        .profile-img-box { position: relative; width: 80px; height: 80px; }
-        .profile-img-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid white; background: white; }
-        .cam-icon { position: absolute; bottom: 0; right: 0; background: white; color: var(--main); border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; }
-        
-        .menu-list { background: white; border-radius: 10px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .menu-item { padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; color: #444; }
-        .menu-item i { width: 20px; color: var(--main); }
-        .menu-item:last-child { border: none; }
-
+        /* Product Cards */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; padding: 20px 10px; border-radius: 20px; text-align: center; box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1000; }
-        .nav-item { text-align: center; color: #bbb; flex: 1; font-size: 12px; cursor: pointer; }
+        .card { background: white; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
+        .card i { font-size: 30px; color: var(--yellow); margin-bottom: 10px; }
+        
+        .item-row { background: white; padding: 12px; margin-bottom: 10px; border-radius: 10px; display: flex; align-items: center; gap: 12px; }
+        .item-row img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+        .add-btn { background: var(--yellow); border: none; padding: 5px 15px; border-radius: 5px; font-weight: bold; }
+
+        /* Profile Style */
+        .profile-header { background: white; padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #ddd; margin-bottom: 10px; }
+        .profile-img-box { position: relative; width: 70px; height: 70px; }
+        .profile-img-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #eee; }
+        .cam-btn { position: absolute; bottom: 0; right: 0; background: white; border-radius: 50%; padding: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 10px; }
+        
+        .menu-item { background: white; padding: 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+
+        /* Nav */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; padding: 10px 0; color: #666; font-size: 12px; cursor: pointer; }
         .nav-item.active { color: var(--main); font-weight: bold; }
         
-        input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; }
-        .order-btn { background: var(--accent); color: white; border: none; padding: 16px; width: 100%; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .blue-btn { background: #fb641b; color: white; border: none; padding: 15px; width: 100%; border-radius: 2px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
-    <div class="login-box">
-        <img src="https://i.postimg.cc/28dsdD1S/Gemini-Generated-Image-14ju3v14ju3v14ju.png" style="width:80px; border-radius:50%; margin-bottom:15px;">
-        <h2>Namaste!</h2>
-        <input type="text" id="login-name" placeholder="Apna Naam">
-        <input type="number" id="login-mobile" placeholder="Mobile Number">
-        <input type="text" id="login-address" placeholder="Address">
-        <div id="otp-area" style="display:none;">
-            <p>OTP: <b id="show-otp"></b></p>
-            <input type="number" id="input-otp" placeholder="Enter OTP">
-        </div>
-        <button class="order-btn" id="login-main-btn" onclick="handleLogin()">Login Karein</button>
+    <div class="login-top"><h1>Login</h1><p>Experience the best of Rana Ji Aata Chakki</p></div>
+    <div class="login-form">
+        <input type="text" id="l-name" placeholder="Full Name">
+        <input type="number" id="l-mobile" placeholder="Mobile Number">
+        <input type="text" id="l-address" placeholder="Delivery Address">
+        <div id="otp-area" style="display:none;"><p>Enter OTP: <b id="show-otp"></b></p><input type="number" id="i-otp"></div>
+        <button class="blue-btn" onclick="handleLogin()">Continue</button>
     </div>
 </div>
 
-<div id="welcome-screen"><img src="https://i.postimg.cc/28dsdD1S/Gemini-Generated-Image-14ju3v14ju3v14ju.png"></div>
 <div class="header"><h3>RANA JI AATA CHAKKI</h3></div>
+<div class="search-box"><input type="text" id="search-input" placeholder="Search for Aata, Masale..." onkeyup="searchProduct()"></div>
 
 <div id="view-home" class="view active">
     <div class="grid">
         <div class="card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn"></i><h3>Aata</h3></div>
         <div class="card" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet"></i><h3>Oil</h3></div>
+        <div class="card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot"></i><h3>Masale</h3></div>
+        <div class="card" onclick="window.open('tel:8923357537')"><i class="fas fa-headset"></i><h3>Help</h3></div>
     </div>
 </div>
 
+<div id="view-sub" class="view"><button onclick="showView('view-home')">← Back</button><div id="list-sub" class="grid" style="margin-top:15px;"></div></div>
+<div id="view-prod" class="view"><button id="back-to-sub">← Back</button><div id="list-prod" style="margin-top:15px;"></div></div>
+<div id="view-search" class="view"><div id="list-search"></div></div>
+
 <div id="view-cart" class="view">
-    <h3>Mera Bag</h3>
+    <h3>My Bag</h3>
     <div id="list-cart"></div>
-    <div style="background:white; padding:15px; border-radius:15px; margin-top:15px;">
-        <p><b>Deliver to:</b> <span id="u-address-display"></span></p>
-        <button class="order-btn" onclick="processOrder()">Order Confirm</button>
+    <div style="background:white; padding:15px; border-radius:10px; margin-top:15px;">
+        <p><b>Address:</b> <span id="cart-addr"></span></p>
+        <button class="blue-btn" onclick="processOrder()">Place Order</button>
     </div>
 </div>
 
 <div id="view-profile" class="view">
     <div class="profile-header">
         <div class="profile-img-box">
-            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" id="user-pic">
-            <label for="img-input" class="cam-icon"><i class="fas fa-camera"></i></label>
-            <input type="file" id="img-input" style="display:none" accept="image/*" onchange="updatePhoto(this)">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" id="u-pic">
+            <label for="pic-in" class="cam-btn"><i class="fas fa-camera"></i></label>
+            <input type="file" id="pic-in" style="display:none" accept="image/*" onchange="uploadPic(this)">
         </div>
-        <div>
-            <h2 id="p-name-display" style="margin:0">User Name</h2>
-            <p id="p-mobile-display" style="margin:0; opacity:0.8">9999999999</p>
-        </div>
+        <div><h2 id="u-name-show" style="margin:0">User</h2><p id="u-mob-show" style="margin:0; color:#777"></p></div>
     </div>
-
-    <div class="menu-list">
-        <div class="menu-item" onclick="alert('No orders yet!')"><i class="fas fa-box"></i> My Orders</div>
-        <div class="menu-item" onclick="showEdit()"><i class="fas fa-user-edit"></i> Edit Profile</div>
-        <div class="menu-item" onclick="window.open('tel:8923357537')"><i class="fas fa-headset"></i> Help Center</div>
-    </div>
-
-    <div class="menu-list" id="edit-box" style="display:none; padding:15px;">
-        <input type="text" id="edit-name" placeholder="Naya Naam">
-        <input type="text" id="edit-address" placeholder="Naya Address">
-        <button class="order-btn" style="background:var(--main)" onclick="saveProfile()">Save Changes</button>
-    </div>
-
-    <button class="order-btn" style="background:var(--red); margin-top:10px;" onclick="logout()">Logout</button>
+    <div class="menu-item" onclick="showView('view-home')"><i class="fas fa-shopping-bag"></i> Shop Products</div>
+    <div class="menu-item" onclick="editProfile()"><i class="fas fa-map-marker-alt"></i> Edit My Address</div>
+    <div class="menu-item" style="color:red" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
 </div>
 
 <div class="nav">
     <div class="nav-item active" onclick="showView('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" onclick="showView('view-cart')"><i class="fas fa-shopping-basket"></i><br>Cart</div>
-    <div class="nav-item" onclick="showView('view-profile')"><i class="fas fa-user-circle"></i><br>Account</div>
+    <div class="nav-item" onclick="showView('view-cart')"><i class="fas fa-shopping-cart"></i><br>Cart</div>
+    <div class="nav-item" onclick="showView('view-profile')"><i class="fas fa-user"></i><br>Account</div>
 </div>
 
 <script>
+const SID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
 const WID = 'https://script.google.com/macros/s/AKfycby1XeN6zH3_bjWWkrBR8vlb4NW1r5cBHc0BYC6JJPsSHYZsY7QHKZTID0m1wRQWZoIA/exec';
-let currentUser = JSON.parse(localStorage.getItem('ranaUser')) || null;
-let generatedOTP = null;
+const URL = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=Products`;
 
-window.onload = function() {
-    setTimeout(() => { document.getElementById('welcome-screen').style.display = 'none'; }, 2000);
+let data = [], cart = [], generatedOTP = null;
+let currentUser = JSON.parse(localStorage.getItem('ranaUser')) || null;
+
+async function init() {
     if(currentUser) {
         document.getElementById('login-screen').style.display = 'none';
         updateUI();
     }
+    const r = await fetch(URL); const t = await r.text();
+    const j = JSON.parse(t.substring(47, t.length - 2));
+    data = j.table.rows;
 }
 
 function handleLogin() {
-    const n = document.getElementById('login-name').value;
-    const m = document.getElementById('login-mobile').value;
-    const a = document.getElementById('login-address').value;
-    if(!n || m.length < 10) return alert("Puri detail bharein!");
-
+    const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value;
+    if(!n || m.length < 10) return alert("Details bharein!");
     if(!generatedOTP) {
-        generatedOTP = Math.floor(1000 + Math.random() * 9000);
+        generatedOTP = Math.floor(1000 + Math.random()*9000);
         document.getElementById('show-otp').innerText = generatedOTP;
         document.getElementById('otp-area').style.display = 'block';
         return;
     }
-
-    if(document.getElementById('input-otp').value != generatedOTP) return alert("Wrong OTP!");
-
-    currentUser = { name: n, mobile: m, address: a, pic: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" };
+    if(document.getElementById('i-otp').value != generatedOTP) return alert("Wrong OTP!");
+    currentUser = {name: n, mobile: m, address: a, pic: ""};
     localStorage.setItem('ranaUser', JSON.stringify(currentUser));
     location.reload();
 }
 
 function updateUI() {
-    document.getElementById('p-name-display').innerText = currentUser.name;
-    document.getElementById('p-mobile-display').innerText = currentUser.mobile;
-    document.getElementById('u-address-display').innerText = currentUser.address;
-    document.getElementById('user-pic').src = currentUser.pic;
+    document.getElementById('u-name-show').innerText = currentUser.name;
+    document.getElementById('u-mob-show').innerText = "+91 " + currentUser.mobile;
+    document.getElementById('cart-addr').innerText = currentUser.address;
+    if(currentUser.pic) document.getElementById('u-pic').src = currentUser.pic;
 }
 
-function updatePhoto(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('user-pic').src = e.target.result;
-            currentUser.pic = e.target.result;
-            localStorage.setItem('ranaUser', JSON.stringify(currentUser));
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
+function loadSubs(main) {
+    let subs = {}; let lastM = "";
+    data.forEach(r => {
+        let m = r.c[2]?.v || lastM; if(m) lastM = m;
+        if(lastM.toLowerCase().includes(main.toLowerCase().substring(0,3))) {
+            let b = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v;
+            let img = r.c[6]?.v; if(b && !subs[b]) subs[b] = img;
+        }
+    });
+    let h = '';
+    for(let s in subs) h += `<div class="card" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%;height:80px;object-fit:cover;"><br><h3>${s}</h3></div>`;
+    document.getElementById('list-sub').innerHTML = h; showView('view-sub');
 }
 
-function showEdit() { document.getElementById('edit-box').style.display = 'block'; }
+function loadProds(main, sub) {
+    let h = ''; let lM="", lN="", lS="", lI="";
+    data.forEach(r => {
+        let n = r.c[1]?.v || lN; if(n) lN=n;
+        let m = r.c[2]?.v || lM; if(m) lM=m;
+        let s = r.c[3]?.v || lS; if(s) lS=s;
+        let i = r.c[6]?.v || lI; if(i) lI=i;
+        if((main === 'Masale' ? lN===sub : lS===sub)) {
+            h += `<div class="item-row"><img src="${lI}"><div><b>${lN}</b><br>${r.c[4]?.v} - ₹${r.c[5]?.v}</div><button class="add-btn" onclick="add('${lN}','${r.c[4]?.v}','${r.c[5]?.v}')">ADD</button></div>`;
+        }
+    });
+    document.getElementById('list-prod').innerHTML = h;
+    document.getElementById('back-to-sub').onclick = () => loadSubs(main);
+    showView('view-prod');
+}
 
-function saveProfile() {
-    currentUser.name = document.getElementById('edit-name').value || currentUser.name;
-    currentUser.address = document.getElementById('edit-address').value || currentUser.address;
-    localStorage.setItem('ranaUser', JSON.stringify(currentUser));
-    updateUI();
-    alert("Updated!");
-    document.getElementById('edit-box').style.display = 'none';
+function add(n,w,p) { cart.push({n,w,p}); alert("Added!"); }
+
+function renderCart() {
+    let h = '', t = 0;
+    cart.forEach((x, i) => { t += parseInt(x.p); h += `<div class="item-row"><b>${x.n}</b> (${x.w}) - ₹${x.p} <button onclick="cart.splice(${i},1);renderCart();">❌</button></div>`; });
+    document.getElementById('list-cart').innerHTML = h || "Bag khali hai";
+}
+
+function searchProduct() {
+    let val = document.getElementById('search-input').value.toLowerCase();
+    if(val.length < 2) return showView('view-home');
+    let h = '', lN="", lI="";
+    data.forEach(r => {
+        let n = r.c[1]?.v || lN; if(n) lN=n;
+        let i = r.c[6]?.v || lI; if(i) lI=i;
+        if(lN.toLowerCase().includes(val)) h += `<div class="item-row"><img src="${lI}"><b>${lN}</b> - ${r.c[4]?.v} ₹${r.c[5]?.v} <button class="add-btn" onclick="add('${lN}','${r.c[4]?.v}','${r.c[5]?.v}')">ADD</button></div>`;
+    });
+    document.getElementById('list-search').innerHTML = h; showView('view-search');
+}
+
+function uploadPic(input) {
+    let reader = new FileReader();
+    reader.onload = (e) => { 
+        document.getElementById('u-pic').src = e.target.result; 
+        currentUser.pic = e.target.result; localStorage.setItem('ranaUser', JSON.stringify(currentUser));
+    };
+    reader.readAsDataURL(input.files[0]);
 }
 
 function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    if(id==='view-cart') renderCart();
+}
+
+async function processOrder() {
+    let items = cart.map(x => x.n + " " + x.w).join(", ");
+    await fetch(WID, {method:'POST', mode:'no-cors', body: JSON.stringify({name:currentUser.name, mobile:currentUser.mobile, address:currentUser.address, details:items, total:0})});
+    window.open(`https://wa.me/918923357537?text=Order: ${items}`);
 }
 
 function logout() { localStorage.clear(); location.reload(); }
+function editProfile() {
+    let a = prompt("New Address:", currentUser.address);
+    if(a) { currentUser.address = a; localStorage.setItem('ranaUser', JSON.stringify(currentUser)); updateUI(); }
+}
+
+window.onload = init;
 </script>
 </body>
 </html>
