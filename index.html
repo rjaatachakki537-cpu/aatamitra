@@ -15,7 +15,7 @@
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Status Colors */
+        /* Status Badges */
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; float: right; text-transform: uppercase; }
         .s-PENDING { background: #fff3e0; color: #ff9800; }
         .s-CONFIRMED { background: #e3f2fd; color: #1976d2; }
@@ -47,7 +47,6 @@
         .nav-item { flex: 1; text-align: center; padding: 12px; color: #888; font-size: 12px; cursor: pointer; }
         .nav-item.active { color: var(--main); font-weight: bold; }
         
-        /* Admin Section Style */
         #admin-view { background: #f1f3f6; color: #333; height: 100vh; overflow-y: auto; display: none; padding: 20px; }
         .admin-card { background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 10px; border-left: 5px solid #000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .admin-status-btn { padding: 8px; margin: 4px; border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; font-size: 11px; }
@@ -130,7 +129,8 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwjnaS-3JK9xVrCoGXng_eafQs9Zs4XTrSpZ63AOEqwP-6MzWZuUkoWj16ea7GWlgAk/exec';
+// --- UPDATE SCRIPT URL ---
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwXpnLfxex5KKlWaAGcuElpBN3eHVfXtia_ninNKmgCRg4eCkUoZ98f1xsqB7HfQb_/exec';
 const DATA_URL = `https://docs.google.com/spreadsheets/d/15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx/gviz/tq?tqx=out:json&sheet=Products`;
 
 let masterData = [], cart = [], user = JSON.parse(localStorage.getItem('ranaUser')), genOtp = null, userMapLink = "";
@@ -201,7 +201,7 @@ async function fetchAdminOrders() {
             <p>${o.details} | <b>₹${o.total}</b></p>
             <div style="background:#eee; padding:5px; border-radius:5px; margin-bottom:5px;">Status: <b>${o.status}</b></div>
             <button class="admin-status-btn" style="background:blue" onclick="updateLiveStatus('${o.id}', 'CONFIRMED')">Confirm</button>
-            <button class="admin-status-btn" style="background:orange" onclick="updateLiveStatus('${o.id}', 'OUT FOR DELIVERY')">Out</button>
+            <button class="admin-status-btn" style="background:orange" onclick="updateLiveStatus('${o.id}', 'SHIPPING')">Out</button>
             <button class="admin-status-btn" style="background:green" onclick="updateLiveStatus('${o.id}', 'DELIVERED')">Done</button>
         </div>`;
     });
@@ -220,8 +220,9 @@ async function updateLiveStatus(id, newStatus) {
 
 async function confirmOrder() {
     if(!cart.length) return alert("Bag khali hai!");
-    let id = Date.now();
+    let id = Date.now().toString().slice(-6); // Unique ID
     let details = cart.map(i => `${i.n}(${i.w})`).join(", ");
+    let note = document.getElementById('order-custom-note').value;
     let total = cart.reduce((a,b)=>a+b.p,0);
     
     showToast("Order Bhej rahe hain... 🚀");
@@ -230,7 +231,7 @@ async function confirmOrder() {
         method: 'POST',
         body: JSON.stringify({
             action: "create", id: id, name: user.name, mobile: user.mobile,
-            address: user.address, details: details, total: total
+            address: user.address + (note ? " | NOTE: "+note : ""), details: details, total: total
         })
     });
 
@@ -239,9 +240,9 @@ async function confirmOrder() {
     setTimeout(() => { showPage('view-profile'); syncStatuses(); }, 1000);
 }
 
-// Reuse other functions from your code
+// Global functions
 function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => t.className = "", 2500); }
-function askLocation() { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { userMapLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`; document.getElementById('loc-status').innerText = "Location Pin Ho Gayi! ✅"; }, () => alert("GPS ON karo bhai!")); } }
+function askLocation() { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { userMapLink = `http://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`; document.getElementById('loc-status').innerText = "Location Pin Ho Gayi! ✅"; }, () => alert("GPS ON karo bhai!")); } }
 function handleLogin() { const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value; if(!n || m.length < 10) return alert("Sahi detail bharo!"); if(!genOtp) { genOtp = Math.floor(1000 + Math.random() * 9000); document.getElementById('display-otp').innerText = genOtp; document.getElementById('otp-box').style.display = 'block'; } else { if(document.getElementById('i-otp').value == genOtp) { user = { name: n, mobile: m, address: a, map: userMapLink }; localStorage.setItem('ranaUser', JSON.stringify(user)); location.reload(); } else alert("Galat OTP!"); } }
 function showPage(id) { document.getElementById('admin-view').style.display = 'none'; document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); if(id==='admin-view') { document.getElementById('admin-view').style.display = 'block'; } else { document.getElementById(id).classList.add('active'); } if(id==='view-cart') renderCart(); if(id==='view-profile') syncStatuses(); }
 function loadSubs(main) { let subs = {}; let lastM = ""; masterData.forEach(r => { let m = r.c[2]?.v || lastM; lastM = m; if(m.toLowerCase().includes(main.toLowerCase().substring(0,3))) { let s = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v; if(s && !subs[s]) subs[s] = r.c[6]?.v || ""; } }); let html = ''; for(let s in subs) html += `<div style="background:white; padding:15px; border-radius:15px; text-align:center;" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%; height:60px; object-fit:cover; border-radius:10px;"><br><b>${s}</b></div>`; document.getElementById('sub-list').innerHTML = html; showPage('view-sub'); }
