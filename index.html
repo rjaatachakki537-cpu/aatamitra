@@ -6,180 +6,187 @@
     <title>Rana Ji Aata Chakki | VIP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --main: #1e3c72; --orange: #fb641b; --bg: #f1f3f6; --accent: #2ecc71; --red: #e74c3c; --yellow: #f4b41a; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
+        :root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; --red: #e74c3c; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 70px; }
         
-        .header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; font-weight: bold; }
-        .search-box { background: var(--main); padding: 10px 15px; position: sticky; top: 52px; z-index: 999; }
-        #search-input { width: 100%; padding: 12px; border-radius: 8px; border: none; outline: none; box-sizing: border-box; }
-
-        .view { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        /* Banner & Hero */
+        .banner-slider { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 30px 15px; text-align: center; margin: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        /* Big Category Cards */
+        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
+        .cat-card { background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        .cat-card i { font-size: 40px; color: var(--yellow); margin-bottom: 10px; }
+        
+        /* Profile Flipkart Style */
+        .prof-header { background: white; padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #ddd; }
+        .prof-img { width: 60px; height: 60px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #aaa; }
+        .order-card { background: white; padding: 15px; margin: 10px; border-radius: 10px; border-left: 5px solid var(--main); position: relative; }
+        
+        .view { display: none; animation: fadeIn 0.3s; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Order Card */
-        .order-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid var(--main); }
-        .cancel-btn { background: var(--red); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; margin-top: 10px; cursor: pointer; }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer; }
-        .item-row { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-        .item-row img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
-
-        .add-btn { background: var(--yellow); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .blue-btn { background: var(--orange); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; height: 65px; }
-        .nav-item { flex: 1; text-align: center; padding: 10px 0; color: #777; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; height: 60px; border-top: 1px solid #ddd; }
+        .nav-item { flex: 1; text-align: center; padding: 10px; font-size: 12px; color: #666; cursor: pointer; }
         .nav-item.active { color: var(--main); font-weight: bold; }
+        
+        /* Buttons & Inputs */
+        input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .blue-btn { background: #fb641b; color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .loc-btn { background: #e3f2fd; color: #1976d2; border: 1px solid #1976d2; padding: 10px; border-radius: 8px; margin-bottom: 15px; width: 100%; font-weight: bold; cursor: pointer; }
 
-        #login-screen { position: fixed; inset: 0; background: white; z-index: 10000; display: flex; flex-direction: column; }
-        #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; display: none; z-index: 2000; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="toast"></div>
-
-<div id="login-screen">
-    <div style="background:var(--main); color:white; padding:40px 20px; text-align:center;"><h1>Namaste 🙏</h1></div>
-    <div style="padding:30px;">
-        <input type="text" id="l-name" placeholder="Pura Naam" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
-        <input type="number" id="l-mobile" placeholder="Mobile Number" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
-        <button class="blue-btn" style="background:#e3f2fd; color:#1976d2; margin-bottom:15px;" onclick="getLocation()">Add Location</button>
-        <input type="text" id="l-address" placeholder="Delivery Address" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
-        <div id="otp-area" style="display:none; text-align:center; margin-bottom:10px;">
-            Code: <b id="show-otp"></b>
-            <input type="number" id="i-otp" placeholder="Enter Code" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;">
+<div id="login-screen" style="position:fixed; inset:0; background:white; z-index:10000; padding:30px;">
+    <h2 style="color:var(--main);">Namaste! 🙏</h2>
+    <p>Apni detail bharein</p>
+    <input type="text" id="l-name" placeholder="Pura Naam">
+    <input type="number" id="l-mobile" placeholder="Mobile Number">
+    <button class="loc-btn" onclick="getLocation()"><i class="fas fa-map-marker-alt"></i> <span id="loc-text">Add Live Location</span></button>
+    <input type="text" id="l-address" placeholder="Pura Address">
+    
+    <div id="otp-area" style="display:none;">
+        <div id="fake-otp-box" style="background:#fff3e0; padding:10px; border-radius:8px; margin-bottom:10px;">
+            Login Code: <b id="show-otp" style="font-size:20px; color:var(--yellow);"></b>
         </div>
-        <button class="blue-btn" onclick="handleLogin()">Login Karein</button>
+        <input type="number" id="i-otp" placeholder="Enter OTP">
     </div>
+    <button class="blue-btn" id="login-btn-main" onclick="handleLogin()">Login Karein</button>
 </div>
 
-<div class="header">RANA JI AATA CHAKKI</div>
+<div class="header" style="background:var(--main); color:white; padding:15px; text-align:center;">
+    <b>RANA JI AATA CHAKKI</b>
+</div>
 
 <div id="view-home" class="view active">
-    <div class="grid">
-        <div class="card" onclick="loadSubs('Aata')"><h3>Aata</h3></div>
-        <div class="card" onclick="loadSubs('Mustered oil')"><h3>Oil</h3></div>
-        <div class="card" onclick="loadSubs('Masale')"><h3>Masale</h3></div>
-        <div class="card" onclick="confirmCall()"><h3>Support</h3></div>
+    <div class="banner-slider">
+        <h2 style="margin:0;">Shuddh Chakki Fresh</h2>
+        <p style="opacity:0.9;">Ghar Jaisa Swad aur Shuddhta</p>
     </div>
-</div>
-
-<div id="view-cart" class="view">
-    <h3>Mera Bag 🛍️</h3>
-    <div id="list-cart"></div>
-    <div style="background:white; padding:15px; border-radius:15px; margin-top:15px;">
-        <p>Total: ₹<span id="total-price">0</span></p>
-        <button class="blue-btn" id="place-order-btn" onclick="processOrder()">Order Confirm Karein</button>
+    
+    <div class="cat-grid">
+        <div class="cat-card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn"></i><br><b>Aata</b></div>
+        <div class="cat-card" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet"></i><br><b>Oil</b></div>
+        <div class="cat-card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot"></i><br><b>Masale</b></div>
+        <div class="cat-card" onclick="window.open('tel:8923357537')"><i class="fas fa-headset"></i><br><b>Support</b></div>
     </div>
 </div>
 
 <div id="view-profile" class="view">
-    <div style="background:white; padding:20px; border-radius:15px; text-align:center; margin-bottom:20px;">
-        <h3 id="u-name-show">User</h3>
-        <button onclick="logout()" style="color:red; background:none; border:none;">Logout</button>
+    <div class="prof-header">
+        <div class="prof-img"><i class="fas fa-user"></i></div>
+        <div>
+            <b id="p-name-show">User Name</b><br>
+            <small id="p-mob-show">+91 </small>
+        </div>
     </div>
-    <h4>📦 Mere Orders</h4>
-    <div id="my-orders-list"></div>
+    <div style="padding:15px;">
+        <h4>📦 Mere Orders</h4>
+        <div id="my-orders-list"></div>
+        <button class="blue-btn" style="background:#ccc; margin-top:20px;" onclick="logout()">Logout</button>
+    </div>
 </div>
 
-<div id="view-success" class="view" style="text-align:center; padding-top:50px;">
+<div id="view-success" class="view" style="text-align:center; padding:50px 20px;">
     <i class="fas fa-check-circle" style="font-size:70px; color:var(--accent);"></i>
     <h2>Order Confirm! ✅</h2>
-    <p>Aapka order mil gaya hai.</p>
+    <p>Aapka order note kar liya gaya hai.</p>
     <button class="blue-btn" onclick="showView('view-home')">Aur Saman Jodein</button>
 </div>
 
 <div class="nav">
-    <div class="nav-item active" id="nav-home" onclick="showView('view-home')"><i class="fas fa-home"></i>Home</div>
-    <div class="nav-item" id="nav-cart" onclick="showView('view-cart')"><i class="fas fa-shopping-cart"></i>Cart</div>
-    <div class="nav-item" id="nav-profile" onclick="showView('view-profile')"><i class="fas fa-history"></i>Orders</div>
+    <div class="nav-item active" onclick="showView('view-home')"><i class="fas fa-home"></i><br>Home</div>
+    <div class="nav-item" onclick="showView('view-cart')"><i class="fas fa-shopping-cart"></i><br>Cart</div>
+    <div class="nav-item" onclick="showView('view-profile')"><i class="fas fa-user"></i><br>Profile</div>
 </div>
 
 <script>
-const WID = 'https://script.google.com/macros/s/AKfycby1XeN6zH3_bjWWkrBR8vlb4NW1r5cBHc0BYC6JJPsSHYZsY7QHKZTID0m1wRQWZoIA/exec';
-let cart = [], orders = JSON.parse(localStorage.getItem('ranaOrders')) || [];
+const MY_NUMBER = "8923357537";
+const WID = 'TERA_APPS_SCRIPT_URL_YAHAN';
 let currentUser = JSON.parse(localStorage.getItem('ranaUser'));
+let orders = JSON.parse(localStorage.getItem('ranaOrders')) || [];
+let userLoc = "";
+let genOtp = null;
 
 async function init() {
-    if(currentUser) document.getElementById('login-screen').style.display = 'none';
-    // Load Product Data logic yahan rahega...
+    if(currentUser) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('p-name-show').innerText = currentUser.name;
+        document.getElementById('p-mob-show').innerText = "+91 " + currentUser.mobile;
+    }
+}
+
+function getLocation() {
+    navigator.geolocation.getCurrentPosition(p => {
+        userLoc = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+        document.getElementById('loc-text').innerText = "Location Added ✅";
+    });
+}
+
+async function handleLogin() {
+    const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value;
+    if(!n || m.length < 10) return alert("Detail bharein!");
+
+    if(m === MY_NUMBER) { // ADMIN LOGIN
+        if(!genOtp) {
+            genOtp = "WAITING";
+            await fetch(WID, {method:'POST', body: JSON.stringify({type:'get_admin_otp'})});
+            alert("Admin detected! OTP tere GMAIL par gaya hai.");
+            document.getElementById('otp-area').style.display = 'block';
+            document.getElementById('fake-otp-box').style.display = 'none';
+        } else {
+            let res = await fetch(WID, {method:'POST', body: JSON.stringify({type:'verify_admin_otp', otp: document.getElementById('i-otp').value})});
+            // Handle Admin Success
+        }
+    } else { // USER LOGIN
+        if(!genOtp) {
+            genOtp = Math.floor(1000 + Math.random()*9000);
+            document.getElementById('show-otp').innerText = genOtp;
+            document.getElementById('otp-area').style.display = 'block';
+        } else {
+            if(document.getElementById('i-otp').value == genOtp) {
+                currentUser = {name:n, mobile:m, address: a + " | Map: " + userLoc};
+                localStorage.setItem('ranaUser', JSON.stringify(currentUser));
+                location.reload();
+            } else { alert("Wrong OTP"); }
+        }
+    }
 }
 
 function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(id === 'view-cart') renderCart();
     if(id === 'view-profile') renderOrders();
-}
-
-function add(n,w,p) {
-    cart.push({n,w,p:parseInt(p)});
-    let t = document.getElementById('toast');
-    t.innerText = n + " joda gaya!"; t.style.display='block';
-    setTimeout(()=>t.style.display='none', 2000);
-}
-
-function renderCart() {
-    let h = '', t = 0;
-    cart.forEach((x, i) => { 
-        t += x.p; 
-        h += `<div class="item-row"><b>${x.n}</b><br>₹${x.p} <i class="fas fa-trash" onclick="cart.splice(${i},1);renderCart()" style="margin-left:auto; color:red;"></i></div>`; 
-    });
-    document.getElementById('list-cart').innerHTML = h || "Bag khali hai";
-    document.getElementById('total-price').innerText = t;
 }
 
 function renderOrders() {
     let h = '';
     orders.forEach((o, i) => {
         h += `<div class="order-card">
-            <b>Order ID: #${o.id}</b><br><small>${o.date}</small>
-            <p>${o.details}</p>
-            <b>Total: ₹${o.total}</b><br>
-            <button class="cancel-btn" onclick="cancelOrder(${i})">Cancel Order</button>
+            <b>ID: #${o.id}</b> | <small>${o.date}</small><br>
+            <p>${o.items}</p>
+            <button onclick="cancelOrder(${i})" style="color:red; border:none; background:none; font-weight:bold;">Cancel Order</button>
         </div>`;
     });
-    document.getElementById('my-orders-list').innerHTML = h || "Koi order nahi hai.";
+    document.getElementById('my-orders-list').innerHTML = h || "No orders yet.";
 }
 
-function cancelOrder(i) {
+async function cancelOrder(i) {
     if(confirm("Order cancel karein?")) {
+        let order = orders[i];
         orders.splice(i, 1);
         localStorage.setItem('ranaOrders', JSON.stringify(orders));
         renderOrders();
+        // Auto-Update Sheet Status
+        fetch(WID, {method:'POST', mode:'no-cors', body: JSON.stringify({type:'cancel_order', mobile: currentUser.mobile, name: currentUser.name})});
     }
 }
 
 async function processOrder() {
-    if(cart.length === 0) return;
-    const items = cart.map(x => `${x.n}(${x.w})`).join(", ");
-    const total = cart.reduce((s, x) => s + x.p, 0);
-    const newOrder = { id: Math.floor(1000 + Math.random()*9000), details: items, total: total, date: new Date().toLocaleString() };
-    
-    orders.push(newOrder);
-    localStorage.setItem('ranaOrders', JSON.stringify(orders));
-
-    // Send to Sheet & Trigger Email
-    await fetch(WID, {
-        method:'POST', 
-        mode:'no-cors', 
-        body: JSON.stringify({
-            name: currentUser.name, 
-            mobile: currentUser.mobile, 
-            details: items, 
-            total: total,
-            email: "Aapka_Email@gmail.com" // Yahan apni mail daal dena
-        })
-    });
-
-    cart = [];
-    showView('view-success');
+    // Purana order logic with History Save...
 }
 
-function confirmCall() { if(confirm("Rana Ji ko call karein?")) window.open('tel:8923357537'); }
 function logout() { localStorage.clear(); location.reload(); }
 window.onload = init;
 </script>
