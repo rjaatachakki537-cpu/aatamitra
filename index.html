@@ -15,16 +15,21 @@
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Order Cards */
-        .order-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--main); box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: relative; }
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; float: right; background: #fff3e0; color: #ff9800; text-transform: uppercase; }
-        .status-cancelled { background: #ffebee; color: #d32f2f; }
+        /* Status Colors */
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; float: right; text-transform: uppercase; }
+        .s-pending { background: #fff3e0; color: #ff9800; }
+        .s-confirmed { background: #e3f2fd; color: #1976d2; }
+        .s-shipping { background: #f3e5f5; color: #9c27b0; animation: blink 1s infinite; }
+        .s-delivered { background: #e8f5e9; color: #2e7d32; }
+        .s-cancelled { background: #ffebee; color: #d32f2f; }
         
-        /* Buttons */
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        .order-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--main); box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: relative; }
         .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .chat-btn { background: var(--green); color: white; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 13px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .repeat-btn { background: var(--yellow); color: #000; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .cancel-btn { background: #f4433620; color: #d32f2f; border: 1px solid #d32f2f; padding: 8px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 12px; }
+        .cancel-btn { background: #f4433615; color: #d32f2f; border: 1px solid #d32f2f; padding: 8px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 11px; }
 
         .item-card { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
         .item-card img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; }
@@ -41,6 +46,10 @@
         .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 999; }
         .nav-item { flex: 1; text-align: center; padding: 12px; color: #888; font-size: 12px; cursor: pointer; }
         .nav-item.active { color: var(--main); font-weight: bold; }
+        
+        /* Admin Section Style */
+        #admin-view { background: #000; color: #fff; height: 100vh; overflow-y: auto; display: none; padding: 20px; }
+        .admin-card { background: #222; padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #444; }
     </style>
 </head>
 <body>
@@ -63,7 +72,7 @@
     <button class="submit-btn" id="login-action-btn" onclick="handleLogin()">Aage Badhein</button>
 </div>
 
-<div class="header"><b>RANA JI AATA CHAKKI</b></div>
+<div class="header"><b onclick="adminCounter()">RANA JI AATA CHAKKI</b></div>
 
 <div id="view-home" class="view active">
     <div style="background: linear-gradient(135deg,#1e3c72,#2a5298); color:white; padding:30px; border-radius:20px; text-align:center; margin-bottom:20px;">
@@ -102,9 +111,16 @@
         <span id="p-mob" style="color:#666;">+91 0000000000</span><br>
         <small id="p-addr" style="color:#888;"></small>
     </div>
-    <h4 style="margin-top:25px;">Mere Pichle Orders</h4>
+    <h4 style="margin-top:25px;">Mere Pichle Orders <button onclick="syncStatuses()" style="float:right; border:none; background:none; color:var(--main); font-size:12px;"><i class="fas fa-sync"></i> Refresh</button></h4>
     <div id="order-history"></div>
     <button onclick="logout()" style="width:100%; margin-top:30px; border:none; color:gray; background:none;">Logout Account</button>
+</div>
+
+<div id="admin-view" class="view">
+    <h3>Rana Ji Admin Panel</h3>
+    <p>Yahan se status badlein:</p>
+    <div id="admin-orders-list"></div>
+    <button onclick="showPage('view-home')" style="width:100%; padding:10px; margin-top:20px;">Back to App</button>
 </div>
 
 <div class="nav">
@@ -126,6 +142,7 @@ async function init() {
         document.getElementById('p-name').innerText = user.name;
         document.getElementById('p-mob').innerText = "+91 " + user.mobile;
         document.getElementById('p-addr').innerText = user.address;
+        syncStatuses(); // Auto-check status on start
     }
     const res = await fetch(DATA_URL);
     const text = await res.text();
@@ -133,154 +150,103 @@ async function init() {
     renderHistory();
 }
 
-function showToast(msg) {
-    let t = document.getElementById("toast"); t.innerText = msg;
-    t.className = "show"; setTimeout(() => t.className = t.className.replace("show", ""), 2500);
+// --- NEW STATUS SYNC LOGIC ---
+async function syncStatuses() {
+    if(!historyData.length) return;
+    showToast("Checking Status... 🔄");
+    // Note: In real setup, you would fetch a "Status" sheet from Google
+    // For now, we simulate the live feel.
+    renderHistory();
 }
 
-function askLocation() {
-    if(navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(p => {
-            userMapLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-            document.getElementById('loc-status').innerText = "Location Pin Ho Gayi! ✅";
-        }, () => alert("GPS ON karo bhai!"));
-    }
-}
-
-function handleLogin() {
-    const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value;
-    if(!n || m.length < 10) return alert("Sahi detail bharo!");
-    if(!genOtp) {
-        genOtp = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById('display-otp').innerText = genOtp;
-        document.getElementById('otp-box').style.display = 'block';
-    } else {
-        if(document.getElementById('i-otp').value == genOtp) {
-            user = { name: n, mobile: m, address: a, map: userMapLink };
-            localStorage.setItem('ranaUser', JSON.stringify(user));
-            location.reload();
-        } else alert("Galat OTP!");
-    }
-}
-
-function showPage(id) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    if(id==='view-cart') renderCart();
-    if(id==='view-profile') renderHistory();
-}
-
-function loadSubs(main) {
-    let subs = {}; let lastM = "";
-    masterData.forEach(r => {
-        let m = r.c[2]?.v || lastM; lastM = m;
-        if(m.toLowerCase().includes(main.toLowerCase().substring(0,3))) {
-            let s = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v;
-            if(s && !subs[s]) subs[s] = r.c[6]?.v || "";
-        }
-    });
-    let html = '';
-    for(let s in subs) html += `<div style="background:white; padding:15px; border-radius:15px; text-align:center;" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%; height:60px; object-fit:cover; border-radius:10px;"><br><b>${s}</b></div>`;
-    document.getElementById('sub-list').innerHTML = html;
-    showPage('view-sub');
-}
-
-function loadProds(cat, sub) {
-    let html = ''; let lM="", lN="", lS="", lI="";
-    masterData.forEach(r => {
-        let n=r.c[1]?.v||lN; lN=n; let m=r.c[2]?.v||lM; lM=m; let s=r.c[3]?.v||lS; lS=s; let i=r.c[6]?.v||lI; lI=i;
-        let match = (cat==='Masale') ? (lN===sub) : (lM.includes(cat.substring(0,3)) && lS===sub);
-        if(match && r.c[4]?.v) {
-            html += `<div class="item-card"><img src="${lI}"><div><b>${lN}</b><br><small>${r.c[4].v}</small><br><b>₹${r.c[5].v}</b></div><button class="add-btn" onclick="addToBag('${lN}','${r.c[4].v}',${r.c[5].v})">ADD</button></div>`;
-        }
-    });
-    document.getElementById('prod-list').innerHTML = html;
-    showPage('view-prod');
-}
-
-function addToBag(n, w, p) {
-    cart.push({n, w, p});
-    showToast(`${n} Bag mein juda! 🛒`);
-}
-
-function renderCart() {
-    let html = '', total = 0;
-    cart.forEach((item, i) => {
-        total += item.p;
-        html += `<div class="item-card"><div><b>${item.n}</b> (${item.w})<br>₹${item.p}</div><button onclick="cart.splice(${i},1);renderCart()" style="margin-left:auto; color:red; border:none; background:none;"><i class="fas fa-trash"></i></button></div>`;
-    });
-    document.getElementById('cart-items-display').innerHTML = html || "<p style='text-align:center;'>Bag khali hai!</p>";
-    document.getElementById('cart-total-display').innerText = "Total: ₹" + total;
-}
-
-async function confirmOrder() {
-    if(!cart.length) return alert("Bag khali hai!");
-    let details = cart.map(i => `${i.n}(${i.w})`).join(", ");
-    let note = document.getElementById('order-custom-note').value;
-    let total = cart.reduce((a,b)=>a+b.p,0);
-    
-    let newOrder = { id: Date.now(), items: details, rawItems: JSON.parse(JSON.stringify(cart)), total: total, date: new Date().toLocaleString(), status: 'PENDING' };
-    historyData.unshift(newOrder);
-    localStorage.setItem('ranaHistory', JSON.stringify(historyData));
-
-    fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({
-        name: user.name, mobile: user.mobile, address: user.address + (user.map ? " | GPS: "+user.map : ""), details: details + (note ? " | NOTE: "+note : ""), total: total
-    })});
-    
-    showToast("Order Done! ✅ Profile mein dekhein.");
-    cart = [];
-    setTimeout(() => showPage('view-profile'), 1500);
-}
-
-// --- NEW CANCEL FEATURE ---
-function cancelOrder(id) {
-    let order = historyData.find(o => o.id === id);
-    if(!order) return;
-
-    if(confirm("Bhai, kya sach mein order cancel karna hai?")) {
-        order.status = 'CANCELLED';
-        localStorage.setItem('ranaHistory', JSON.stringify(historyData));
-        
-        let waMsg = `RANA JI, main apna Order Cancel karna chahta hoon.\nOrder ID: #${id.toString().slice(-4)}\nItems: ${order.items}`;
-        window.open(`https://wa.me/918923357537?text=${encodeURIComponent(waMsg)}`, '_blank');
-        
-        showToast("Order Cancelled! Rana Ji ko khabar bhej di gayi hai.");
-        renderHistory();
-    }
-}
-
-function repeatOrder(id) {
-    let old = historyData.find(o => o.id === id);
-    if(old) { cart = JSON.parse(JSON.stringify(old.rawItems)); showToast("Purana saaman add ho gaya!"); showPage('view-cart'); }
+function getStatusClass(status) {
+    if(status === 'PENDING') return 's-pending';
+    if(status === 'CONFIRMED') return 's-confirmed';
+    if(status === 'OUT FOR DELIVERY') return 's-shipping';
+    if(status === 'DELIVERED') return 's-delivered';
+    if(status === 'CANCELLED') return 's-cancelled';
+    return '';
 }
 
 function renderHistory() {
     let html = '';
     historyData.forEach(o => {
-        let isCancelled = o.status === 'CANCELLED';
-        let waMsg = `Namaste Rana Ji! Order #${o.id.toString().slice(-4)} ka update chahiye.\nSaaman: ${o.items}\nTotal: ₹${o.total}`;
-        let waUrl = `https://wa.me/918923357537?text=${encodeURIComponent(waMsg)}`;
+        let sClass = getStatusClass(o.status);
+        let waUrl = `https://wa.me/918923357537?text=Update for Order #${o.id.toString().slice(-4)}`;
         
-        html += `<div class="order-card" style="opacity:${isCancelled ? '0.6' : '1'}">
-            <span class="status-badge ${isCancelled ? 'status-cancelled' : ''}">${o.status}</span>
+        html += `<div class="order-card">
+            <span class="status-badge ${sClass}">${o.status}</span>
             <b>ID: #${o.id.toString().slice(-4)}</b><br>
-            <small>${o.date}</small><br>
-            <div style="font-size:13px; margin:5px 0;">${o.items}</div>
-            <div style="font-weight:bold;">Total: ₹${o.total}</div>
+            <small>${o.date}</small>
+            <div style="font-size:13px; margin:8px 0;">${o.items}</div>
             
-            ${!isCancelled ? `
-                <div class="btn-row">
-                    <button class="repeat-btn" onclick="repeatOrder(${o.id})"><i class="fas fa-redo"></i> Repeat</button>
-                    <a href="${waUrl}" class="chat-btn"><i class="fab fa-whatsapp"></i> Chat</a>
-                </div>
-                <button class="cancel-btn" onclick="cancelOrder(${o.id})">Cancel Order</button>
-            ` : `<button class="repeat-btn" style="width:100%; margin-top:10px;" onclick="repeatOrder(${o.id})">Re-Order Again</button>`}
+            ${o.status === 'OUT FOR DELIVERY' ? `<div style="color:var(--main); font-size:12px; margin-bottom:10px;"><i class="fas fa-motorcycle"></i> Rana Ji raste mein hain!</div>` : ''}
+
+            <div class="btn-row">
+                <button class="repeat-btn" onclick="repeatOrder(${o.id})"><i class="fas fa-redo"></i> Repeat</button>
+                <a href="${waUrl}" class="chat-btn"><i class="fab fa-whatsapp"></i> Support</a>
+            </div>
+            ${o.status === 'PENDING' ? `<button class="cancel-btn" onclick="cancelOrder(${o.id})">Cancel Order</button>` : ''}
         </div>`;
     });
-    document.getElementById('order-history').innerHTML = html || "<p style='text-align:center;'>Koi order nahi mila.</p>";
+    document.getElementById('order-history').innerHTML = html || "<p style='text-align:center;'>Bag khali hai.</p>";
 }
 
+// --- ADMIN JUGAAD (Sirf Aapke Liye) ---
+let clickCount = 0;
+function adminCounter() {
+    clickCount++;
+    if(clickCount >= 5) {
+        clickCount = 0;
+        openAdmin();
+    }
+}
+
+function openAdmin() {
+    let pass = prompt("Enter Rana Ji Secret Pin:");
+    if(pass === "1234") { // Apna secret pin yahan badal sakte ho
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('admin-view').style.display = 'block';
+        renderAdminOrders();
+    }
+}
+
+function renderAdminOrders() {
+    let html = '';
+    historyData.forEach(o => {
+        html += `<div class="admin-card">
+            <b>Order #${o.id.toString().slice(-4)}</b> - ${o.status}<br>
+            <small>${o.items}</small><br><br>
+            <button onclick="updateStatus(${o.id}, 'CONFIRMED')" style="background:blue; color:white; border:none; padding:5px; margin-right:5px;">Confirm</button>
+            <button onclick="updateStatus(${o.id}, 'OUT FOR DELIVERY')" style="background:orange; border:none; padding:5px; margin-right:5px;">Out for Delivery</button>
+            <button onclick="updateStatus(${o.id}, 'DELIVERED')" style="background:green; color:white; border:none; padding:5px;">Delivered</button>
+        </div>`;
+    });
+    document.getElementById('admin-orders-list').innerHTML = html || "No orders to manage.";
+}
+
+function updateStatus(id, newStatus) {
+    let order = historyData.find(o => o.id === id);
+    if(order) {
+        order.status = newStatus;
+        localStorage.setItem('ranaHistory', JSON.stringify(historyData));
+        showToast("Status Updated!");
+        renderAdminOrders();
+    }
+}
+
+// All previous functions (loadSubs, loadProds, addToBag, confirmOrder etc.) keep them as they were.
+function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => t.className = t.className.replace("show", ""), 2500); }
+function askLocation() { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { userMapLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`; document.getElementById('loc-status').innerText = "Location Pin Ho Gayi! ✅"; }, () => alert("GPS ON karo bhai!")); } }
+function handleLogin() { const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value; if(!n || m.length < 10) return alert("Sahi detail bharo!"); if(!genOtp) { genOtp = Math.floor(1000 + Math.random() * 9000); document.getElementById('display-otp').innerText = genOtp; document.getElementById('otp-box').style.display = 'block'; } else { if(document.getElementById('i-otp').value == genOtp) { user = { name: n, mobile: m, address: a, map: userMapLink }; localStorage.setItem('ranaUser', JSON.stringify(user)); location.reload(); } else alert("Galat OTP!"); } }
+function showPage(id) { document.getElementById('admin-view').style.display = 'none'; document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id==='view-cart') renderCart(); if(id==='view-profile') renderHistory(); }
+function loadSubs(main) { let subs = {}; let lastM = ""; masterData.forEach(r => { let m = r.c[2]?.v || lastM; lastM = m; if(m.toLowerCase().includes(main.toLowerCase().substring(0,3))) { let s = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v; if(s && !subs[s]) subs[s] = r.c[6]?.v || ""; } }); let html = ''; for(let s in subs) html += `<div style="background:white; padding:15px; border-radius:15px; text-align:center;" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%; height:60px; object-fit:cover; border-radius:10px;"><br><b>${s}</b></div>`; document.getElementById('sub-list').innerHTML = html; showPage('view-sub'); }
+function loadProds(cat, sub) { let html = ''; let lM="", lN="", lS="", lI=""; masterData.forEach(r => { let n=r.c[1]?.v||lN; lN=n; let m=r.c[2]?.v||lM; lM=m; let s=r.c[3]?.v||lS; lS=s; let i=r.c[6]?.v||lI; lI=i; let match = (cat==='Masale') ? (lN===sub) : (lM.includes(cat.substring(0,3)) && lS===sub); if(match && r.c[4]?.v) { html += `<div class="item-card"><img src="${lI}"><div><b>${lN}</b><br><small>${r.c[4].v}</small><br><b>₹${r.c[5].v}</b></div><button class="add-btn" onclick="addToBag('${lN}','${r.c[4].v}',${r.c[5].v})">ADD</button></div>`; } }); document.getElementById('prod-list').innerHTML = html; showPage('view-prod'); }
+function addToBag(n, w, p) { cart.push({n, w, p}); showToast(`${n} Bag mein juda! 🛒`); }
+function renderCart() { let html = '', total = 0; cart.forEach((item, i) => { total += item.p; html += `<div class="item-card"><div><b>${item.n}</b> (${item.w})<br>₹${item.p}</div><button onclick="cart.splice(${i},1);renderCart()" style="margin-left:auto; color:red; border:none; background:none;"><i class="fas fa-trash"></i></button></div>`; }); document.getElementById('cart-items-display').innerHTML = html || "<p style='text-align:center;'>Bag khali hai!</p>"; document.getElementById('cart-total-display').innerText = "Total: ₹" + total; }
+async function confirmOrder() { if(!cart.length) return alert("Bag khali hai!"); let details = cart.map(i => `${i.n}(${i.w})`).join(", "); let note = document.getElementById('order-custom-note').value; let total = cart.reduce((a,b)=>a+b.p,0); let newOrder = { id: Date.now(), items: details, rawItems: JSON.parse(JSON.stringify(cart)), total: total, date: new Date().toLocaleString(), status: 'PENDING' }; historyData.unshift(newOrder); localStorage.setItem('ranaHistory', JSON.stringify(historyData)); fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({ name: user.name, mobile: user.mobile, address: user.address + (user.map ? " | GPS: "+user.map : ""), details: details + (note ? " | NOTE: "+note : ""), total: total })}); showToast("Order Done! ✅"); cart = []; setTimeout(() => showPage('view-profile'), 1500); }
+function cancelOrder(id) { let order = historyData.find(o => o.id === id); if(!order) return; if(confirm("Cancel order?")) { order.status = 'CANCELLED'; localStorage.setItem('ranaHistory', JSON.stringify(historyData)); window.open(`https://wa.me/918923357537?text=Cancel Order #${id.toString().slice(-4)}`, '_blank'); renderHistory(); } }
+function repeatOrder(id) { let old = historyData.find(o => o.id === id); if(old) { cart = JSON.parse(JSON.stringify(old.rawItems)); showToast("Added to bag!"); showPage('view-cart'); } }
 function logout() { localStorage.clear(); location.reload(); }
 window.onload = init;
 </script>
