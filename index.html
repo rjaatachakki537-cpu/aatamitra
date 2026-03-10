@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rana Ji VIP | Master</title>
+    <title>Rana Ji VIP | Delivery Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; --red: #fb641b; --green: #25D366; }
@@ -22,6 +22,7 @@
         /* Buttons */
         .chat-btn { background: var(--green); color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 14px; }
         .repeat-btn { background: var(--yellow); color: #000; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
+        .loc-indicator { font-size: 12px; color: #2e7d32; font-weight: bold; margin-bottom: 10px; display: block; }
 
         .item-card { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
         .item-card img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; background: #eee; }
@@ -32,7 +33,8 @@
         @keyframes fadeinout { 0%, 100% { opacity: 0; bottom: 50px; } 20%, 80% { opacity: 1; bottom: 100px; } }
 
         input, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 15px; }
-        .loc-btn { background: #e3f2fd; color: #1976d2; border: 1px dashed #1976d2; padding: 12px; border-radius: 10px; margin-bottom: 15px; cursor: pointer; width: 100%; font-weight: bold; }
+        .loc-btn { background: #e3f2fd; color: #1976d2; border: 1px dashed #1976d2; padding: 12px; border-radius: 10px; margin-bottom: 15px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; }
+        .loc-btn.success { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
         .submit-btn { background: var(--red); color: white; border: none; padding: 16px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
 
         .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 999; }
@@ -46,12 +48,14 @@
 
 <div id="login-screen" class="full-screen">
     <h2 style="color:var(--main);">Namaste! 🙏</h2>
-    <p>Apni detail bharein shuru karne ke liye</p>
+    <p>Apni detail bharein (Blinkit Style Delivery ke liye)</p>
     <input type="text" id="l-name" placeholder="Pura Naam">
     <input type="number" id="l-mobile" placeholder="Mobile Number">
-    <button class="loc-btn" onclick="askLocation()">
-        <i class="fas fa-map-marker-alt"></i> <span id="loc-status">Add Live Location (Jaruri Hai)</span>
+    
+    <button id="gps-button" class="loc-btn" onclick="askLocation()">
+        <i class="fas fa-location-arrow"></i> <span id="loc-status">Allow Live Location (Jaruri Hai)</span>
     </button>
+    
     <input type="text" id="l-address" placeholder="Ghar ka Pata (Address)">
     <div id="otp-box" style="display:none;">
         <div style="background:#fff3e0; padding:10px; border-radius:8px; margin-bottom:10px; text-align:center;">
@@ -100,7 +104,8 @@
     <div style="background:white; padding:20px; border-radius:15px; border-left:5px solid var(--main);">
         <b id="p-name">Loading...</b><br>
         <span id="p-mob" style="color:#666;">+91 0000000000</span><br>
-        <small id="p-addr" style="color:#888;"></small>
+        <small id="p-addr" style="color:#888;"></small><br>
+        <span id="loc-verified" class="loc-indicator" style="display:none;">📍 GPS Location Verified</span>
     </div>
     <h4 style="margin-top:25px;">Mere Pichle Orders</h4>
     <div id="order-history"></div>
@@ -109,7 +114,7 @@
 
 <div class="nav">
     <div class="nav-item active" id="n-home" onclick="showPage('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" id="n-cart" onclick="showPage('n-cart'); showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
+    <div class="nav-item" id="n-cart" onclick="showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
     <div class="nav-item" id="n-profile" onclick="showPage('view-profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
 </div>
 
@@ -117,7 +122,7 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1XeN6zH3_bjWWkrBR8vlb4NW1r5cBHc0BYC6JJPsSHYZsY7QHKZTID0m1wRQWZoIA/exec';
 const DATA_URL = `https://docs.google.com/spreadsheets/d/15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx/gviz/tq?tqx=out:json&sheet=Products`;
 
-let masterData = [], cart = [], user = JSON.parse(localStorage.getItem('ranaUser')), genOtp = null, mapLink = "";
+let masterData = [], cart = [], user = JSON.parse(localStorage.getItem('ranaUser')), genOtp = null;
 let historyData = JSON.parse(localStorage.getItem('ranaHistory')) || [];
 
 async function init() {
@@ -126,6 +131,7 @@ async function init() {
         document.getElementById('p-name').innerText = user.name;
         document.getElementById('p-mob').innerText = "+91 " + user.mobile;
         document.getElementById('p-addr').innerText = user.address;
+        if(user.map) document.getElementById('loc-verified').style.display = 'block';
     }
     const res = await fetch(DATA_URL);
     const text = await res.text();
@@ -140,19 +146,27 @@ function showToast(msg) {
     setTimeout(() => t.className = t.className.replace("show", ""), 2500);
 }
 
+// --- GPS FUNCTION ---
+let userMapLink = "";
 function askLocation() {
     if(navigator.geolocation) {
+        showToast("Location access ho rahi hai...");
         navigator.geolocation.getCurrentPosition(p => {
-            mapLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-            document.getElementById('loc-status').innerText = "Location Added ✅";
-            document.getElementById('loc-status').parentElement.style.background = "#e8f5e9";
-        }, () => alert("GPS ON karo bhai!"));
+            userMapLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+            let btn = document.getElementById('gps-button');
+            btn.innerHTML = "<i class='fas fa-check-circle'></i> Location Pin Ho Gayi!";
+            btn.classList.add('success');
+            showToast("📍 Location Locked!");
+        }, () => alert("Bhai, GPS ON kar do taaki hum aapka ghar dhund sakein!"));
+    } else {
+        alert("Aapka browser location support nahi karta.");
     }
 }
 
 function handleLogin() {
     const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value;
     if(!n || m.length < 10) return alert("Sahi detail bharo!");
+    
     if(!genOtp) {
         genOtp = Math.floor(1000 + Math.random() * 9000);
         document.getElementById('display-otp').innerText = genOtp;
@@ -160,7 +174,7 @@ function handleLogin() {
         document.getElementById('login-action-btn').innerText = "Verify & Start";
     } else {
         if(document.getElementById('i-otp').value == genOtp) {
-            user = { name: n, mobile: m, address: a + (mapLink ? " | Map: " + mapLink : "") };
+            user = { name: n, mobile: m, address: a, map: userMapLink };
             localStorage.setItem('ranaUser', JSON.stringify(user));
             location.reload();
         } else { alert("Galat OTP!"); }
@@ -171,7 +185,6 @@ function showPage(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    
     if(id==='view-home') document.getElementById('n-home').classList.add('active');
     if(id==='view-cart') { document.getElementById('n-cart').classList.add('active'); renderCart(); }
     if(id==='view-profile') { document.getElementById('n-profile').classList.add('active'); renderHistory(); }
@@ -207,7 +220,7 @@ function loadProds(cat, sub) {
 }
 
 function addToBag(n, w, p) {
-    cart.push({n, w, p, rawPrice: p});
+    cart.push({n, w, p});
     showToast(`${n} Bag mein juda! 🛒`);
 }
 
@@ -227,17 +240,22 @@ async function confirmOrder() {
     let note = document.getElementById('order-custom-note').value;
     let total = cart.reduce((a,b)=>a+b.p,0);
     
-    let rawItems = JSON.parse(JSON.stringify(cart)); // For Repeat Feature
+    let rawItems = JSON.parse(JSON.stringify(cart));
 
     let newOrder = { id: Date.now(), items: details, rawItems: rawItems, note: note, total: total, date: new Date().toLocaleString(), status: 'PENDING' };
     historyData.unshift(newOrder);
     localStorage.setItem('ranaHistory', JSON.stringify(historyData));
 
+    // Sending Order + Live Map Link to Google Sheet
     fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({
-        name: user.name, mobile: user.mobile, address: user.address, details: details + (note ? " | NOTE: "+note : ""), total: total
+        name: user.name, 
+        mobile: user.mobile, 
+        address: user.address + (user.map ? " | MAP: " + user.map : ""), 
+        details: details + (note ? " | NOTE: "+note : ""), 
+        total: total
     })});
     
-    showToast("Order Done! ✅ Profile mein check karein.");
+    showToast("Order Done! ✅");
     cart = [];
     document.getElementById('order-custom-note').value = "";
     setTimeout(() => showPage('view-profile'), 1500);
@@ -245,9 +263,9 @@ async function confirmOrder() {
 
 function repeatOrder(orderId) {
     let oldOrder = historyData.find(o => o.id === orderId);
-    if(oldOrder && oldOrder.rawItems) {
+    if(oldOrder) {
         cart = JSON.parse(JSON.stringify(oldOrder.rawItems));
-        showToast("Purana saaman Bag mein add ho gaya! 🛒");
+        showToast("Purana saaman add ho gaya! 🛒");
         setTimeout(() => showPage('view-cart'), 1000);
     }
 }
@@ -255,7 +273,8 @@ function repeatOrder(orderId) {
 function renderHistory() {
     let html = '';
     historyData.forEach(o => {
-        let waMsg = `Namaste Rana Ji! Mera Order ID #${o.id.toString().slice(-4)} check karein.\nDetails: ${o.items}\nNote: ${o.note || 'None'}\nTotal: ₹${o.total}`;
+        // Message includes Map Link for you to click
+        let waMsg = `Namaste Rana Ji! Order #${o.id.toString().slice(-4)}.\nSaaman: ${o.items}\nNote: ${o.note || 'N/A'}\nTotal: ₹${o.total}\nLocation: ${user.map || 'Manual Address'}`;
         let waUrl = `https://wa.me/918923357537?text=${encodeURIComponent(waMsg)}`;
         
         html += `<div class="order-card">
@@ -264,8 +283,8 @@ function renderHistory() {
             <small>${o.date}</small><br><br>
             <div style="font-size:13px;">${o.items}</div>
             <div style="font-weight:bold; margin-top:5px;">Total: ₹${o.total}</div>
-            <button class="repeat-btn" onclick="repeatOrder(${o.id})"><i class="fas fa-redo"></i> Repeat This Order</button>
-            <a href="${waUrl}" class="chat-btn"><i class="fab fa-whatsapp"></i> Rana Ji se Chat Karein</a>
+            <button class="repeat-btn" onclick="repeatOrder(${o.id})"><i class="fas fa-redo"></i> Repeat Order</button>
+            <a href="${waUrl}" class="chat-btn"><i class="fab fa-whatsapp"></i> Chat & Share Location</a>
         </div>`;
     });
     document.getElementById('order-history').innerHTML = html || "<p style='text-align:center;'>Koi order nahi mila.</p>";
