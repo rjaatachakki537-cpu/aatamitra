@@ -10,54 +10,67 @@
         :root { --main: #f4b41a; --dark: #4a2c2a; --bg: #fffbf0; --accent: #2ecc71; --red: #e74c3c; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
         
-        /* Splash Screen */
+        /* Login Screen */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .login-box { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        
         #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: 0.5s; }
         #welcome-screen img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Header & Search */
         .header { background: var(--dark); color: var(--main); padding: 18px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .header h3 { margin: 0; font-size: 20px; font-weight: 700; text-transform: uppercase; }
         .search-container { padding: 12px 15px; background: var(--dark); position: sticky; top: 58px; z-index: 999; }
         #search-input { width: 100%; padding: 12px 20px; border-radius: 50px; border: none; outline: none; font-size: 15px; box-sizing: border-box; }
 
         .view { display: none; padding: 15px; animation: fadeIn 0.4s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Category Cards with Icons */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .card { background: white; padding: 20px 10px; border-radius: 20px; text-align: center; box-shadow: 0 6px 15px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid rgba(0,0,0,0.03); transition: 0.3s; }
-        .card:active { transform: scale(0.92); }
+        .card { background: white; padding: 20px 10px; border-radius: 20px; text-align: center; box-shadow: 0 6px 15px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid rgba(0,0,0,0.03); }
         .card i { font-size: 35px; color: var(--main); margin-bottom: 12px; display: block; }
-        .card h3 { margin: 0; font-size: 15px; color: var(--dark); font-weight: 600; }
+        .card h3 { margin: 0; font-size: 15px; color: var(--dark); }
 
-        /* Items Display */
-        .item-row { background: white; border-radius: 18px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
+        .item-row { background: white; border-radius: 18px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid #f0f0f0; }
         .item-row img { width: 65px; height: 65px; border-radius: 12px; object-fit: cover; }
         .item-info { flex: 1; }
-        .item-info b { font-size: 15px; display: block; color: #333; }
-        .item-info span { font-size: 13px; color: #777; }
-        .add-btn { background: var(--main); border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 3px 6px rgba(244,180,26,0.2); }
+        .add-btn { background: var(--main); border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; }
 
-        /* Navigation */
+        /* Bottom Nav */
         .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1000; }
-        .nav-item { text-align: center; color: #bbb; flex: 1; font-size: 12px; position: relative; transition: 0.3s; }
+        .nav-item { text-align: center; color: #bbb; flex: 1; font-size: 12px; position: relative; cursor: pointer; }
         .nav-item.active { color: var(--dark); font-weight: bold; }
-        .nav-item i { font-size: 20px; margin-bottom: 3px; }
         .badge { background: var(--red); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; top: -5px; right: 28%; border: 2px solid white; }
         
-        /* Form & Success */
-        input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-size: 15px; background: #fafafa; }
-        .order-btn { background: var(--accent); color: white; border: none; padding: 16px; width: 100%; border-radius: 15px; font-weight: bold; font-size: 16px; box-shadow: 0 6px 12px rgba(46, 204, 113, 0.2); }
-        .bill-box { background: #fff; padding: 18px; border-radius: 15px; border: 2px dashed #ddd; margin: 15px 0; text-align: left; line-height: 1.6; }
-        .cancel-btn { background: none; border: 1.5px solid var(--red); color: var(--red); padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-size: 15px; }
+        .order-btn { background: var(--accent); color: white; border: none; padding: 16px; width: 100%; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        
+        /* Profile Style */
+        .profile-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--main); margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
+<div id="login-screen">
+    <div class="login-box">
+        <img src="https://i.postimg.cc/28dsdD1S/Gemini-Generated-Image-14ju3v14ju3v14ju.png" style="width:80px; border-radius:50%; margin-bottom:15px;">
+        <h2 style="margin:0;">Namaste!</h2>
+        <p style="color:#777; font-size:14px; margin-bottom:20px;">Shuru karne ke liye detail bharein</p>
+        <input type="text" id="login-name" placeholder="Apna Naam">
+        <input type="number" id="login-mobile" placeholder="Mobile Number">
+        <input type="text" id="login-address" placeholder="Poora Pata (Address)">
+        <div id="otp-area" style="display:none;">
+            <p style="color:var(--accent); font-weight:bold; margin-bottom:5px;">OTP: <span id="show-otp"></span></p>
+            <input type="number" id="input-otp" placeholder="Upar wala OTP daalein">
+        </div>
+        <button class="order-btn" id="login-main-btn" onclick="handleLogin()">Aage Badhein</button>
+    </div>
+</div>
+
 <div id="welcome-screen"><img src="https://i.postimg.cc/28dsdD1S/Gemini-Generated-Image-14ju3v14ju3v14ju.png"></div>
 <div class="header"><h3>RANA JI AATA CHAKKI</h3></div>
-<div class="search-container"><input type="text" id="search-input" placeholder="Kuch dhoondhna hai?" onkeyup="searchProduct()"></div>
+<div class="search-container"><input type="text" id="search-input" placeholder="Search products..." onkeyup="searchProduct()"></div>
 
 <div id="view-home" class="view active">
     <div class="grid">
@@ -66,9 +79,6 @@
         <div class="card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot"></i><h3>Masale</h3></div>
         <div class="card" onclick="window.open('tel:+918923357537')"><i class="fas fa-headset"></i><h3>Help</h3></div>
     </div>
-    <div style="margin-top: 25px; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
-        <img src="https://i.postimg.cc/bNTh0VpS/Gemini-Generated-Image-44x2jo44x2jo44x2.png" style="width: 100%; display: block;">
-    </div>
 </div>
 
 <div id="view-search" class="view"><button onclick="closeSearch()" style="border:none;background:none;font-weight:bold;">← WAPAS</button><div id="list-search" style="margin-top:15px;"></div></div>
@@ -76,72 +86,124 @@
 <div id="view-prod" class="view"><button id="back-to-sub" style="border:none;background:none;font-weight:bold;">← WAPAS</button><div id="list-prod" style="margin-top:15px;"></div></div>
 
 <div id="view-cart" class="view">
-    <h3 style="margin-top:0;"><i class="fas fa-shopping-bag"></i> Mera Bag</h3>
+    <h3 style="margin-top:0;">Mera Bag</h3>
     <div id="list-cart"></div>
     <div id="total-cart" style="font-weight:bold; margin:20px 0; text-align:right; font-size:20px; color:var(--dark);"></div>
-    <div style="background:white; padding:20px; border-radius:20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <input type="text" id="u-name" placeholder="Apna Naam">
-        <input type="number" id="u-mobile" placeholder="Mobile Number">
-        <input type="text" id="u-address" placeholder="Delivery ka Pata">
+    <div style="background:white; padding:20px; border-radius:20px;">
+        <p style="font-size:12px; color:#777; margin-bottom:10px;">Delivery Address (Profile mein change karein)</p>
+        <input type="text" id="u-name" readonly>
+        <input type="text" id="u-address" readonly>
         <button class="order-btn" id="final-btn" onclick="processOrder()">Order Confirm Karein</button>
     </div>
 </div>
 
+<div id="view-profile" class="view">
+    <div class="profile-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="profile-img">
+        <h3 style="margin-bottom:20px;">Meri Profile</h3>
+        <input type="text" id="p-name" placeholder="Naam">
+        <input type="number" id="p-mobile" placeholder="Mobile" readonly style="background:#f0f0f0;">
+        <input type="text" id="p-address" placeholder="Address">
+        <button class="order-btn" style="background:var(--dark);" onclick="updateProfile()">Detail Update Karein</button>
+        <p style="font-size:11px; color:var(--red); margin-top:15px;">*Mobile number change nahi ho sakta.</p>
+    </div>
+</div>
+
 <div id="view-success" class="view" style="text-align:center;">
-    <div style="background:white; padding:25px; border-radius:25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-        <i class="fas fa-check-circle animate__animated animate__bounceIn" style="font-size: 70px; color: var(--accent);"></i>
-        <h2 style="color:var(--accent); margin-top:15px;">Order Done!</h2>
-        <div id="bill-content" class="bill-box"></div>
-        <button id="cancel-btn-id" onclick="cancelOrder()" class="cancel-btn">❌ Order Galti Se Ho Gaya? Cancel Karein</button>
+    <div style="background:white; padding:25px; border-radius:25px;">
+        <i class="fas fa-check-circle" style="font-size:70px; color:var(--accent);"></i>
+        <h2>Order Done!</h2>
+        <div id="bill-content" style="text-align:left; border:1px dashed #ccc; padding:10px;"></div>
     </div>
     <button class="order-btn" style="background:var(--dark); margin-top:20px;" onclick="showView('view-home')">Wapas Home</button>
 </div>
 
 <div class="nav">
     <div class="nav-item active" onclick="showView('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" id="nav-cart" onclick="showView('view-cart')">
-        <i class="fas fa-shopping-basket"></i><span class="badge" id="b-count">0</span><br>Cart
-    </div>
+    <div class="nav-item" onclick="showView('view-cart')"><i class="fas fa-shopping-basket"></i><span class="badge" id="b-count">0</span><br>Cart</div>
+    <div class="nav-item" onclick="showView('view-profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
 </div>
 
 <script>
 const SID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
-// NAYA URL UPDATED HERE
 const WID = 'https://script.google.com/macros/s/AKfycby1XeN6zH3_bjWWkrBR8vlb4NW1r5cBHc0BYC6JJPsSHYZsY7QHKZTID0m1wRQWZoIA/exec';
 const URL = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=Products`;
 
-let data = [], cart = [];
+let data = [], cart = [], generatedOTP = null;
+let currentUser = JSON.parse(localStorage.getItem('ranaUser')) || null;
 
 async function init() {
-    setTimeout(() => { document.getElementById('welcome-screen').style.opacity = '0'; setTimeout(()=> {document.getElementById('welcome-screen').style.display = 'none';}, 500); }, 2500);
-    try {
-        const r = await fetch(URL); const t = await r.text();
-        const j = JSON.parse(t.substring(47, t.length - 2));
-        data = j.table.rows;
-    } catch(e) { console.log("Load Error"); }
+    setTimeout(() => { document.getElementById('welcome-screen').style.display = 'none'; }, 2000);
+    if(currentUser) {
+        document.getElementById('login-screen').style.display = 'none';
+        fillUserFields();
+    }
+    const r = await fetch(URL); const t = await r.text();
+    const j = JSON.parse(t.substring(47, t.length - 2));
+    data = j.table.rows;
+}
+
+function handleLogin() {
+    const n = document.getElementById('login-name').value;
+    const m = document.getElementById('login-mobile').value;
+    const a = document.getElementById('login-address').value;
+    if(!n || m.length < 10 || !a) return alert("Sahi detail bharein!");
+
+    if(!generatedOTP) {
+        generatedOTP = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('show-otp').innerText = generatedOTP;
+        document.getElementById('otp-area').style.display = 'block';
+        document.getElementById('login-main-btn').innerText = "Verify OTP";
+        return;
+    }
+
+    if(document.getElementById('input-otp').value != generatedOTP) return alert("Galat OTP!");
+
+    fetch(WID, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ type: 'login', name: n, mobile: m, address: a }) });
+    currentUser = { name: n, mobile: m, address: a };
+    localStorage.setItem('ranaUser', JSON.stringify(currentUser));
+    document.getElementById('login-screen').style.display = 'none';
+    fillUserFields();
+}
+
+function fillUserFields() {
+    // For Cart
+    document.getElementById('u-name').value = currentUser.name;
+    document.getElementById('u-address').value = currentUser.address;
+    // For Profile
+    document.getElementById('p-name').value = currentUser.name;
+    document.getElementById('p-mobile').value = currentUser.mobile;
+    document.getElementById('p-address').value = currentUser.address;
+}
+
+function updateProfile() {
+    const newName = document.getElementById('p-name').value;
+    const newAddr = document.getElementById('p-address').value;
+    if(!newName || !newAddr) return alert("Fields khali nahi chhod sakte!");
+
+    currentUser.name = newName;
+    currentUser.address = newAddr;
+    localStorage.setItem('ranaUser', JSON.stringify(currentUser));
+    
+    // Server Update
+    fetch(WID, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ type: 'login', name: newName, mobile: currentUser.mobile, address: newAddr }) });
+    
+    fillUserFields();
+    alert("Profile Update Ho Gayi!");
+    showView('view-home');
 }
 
 function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    if(id === 'view-home') document.querySelectorAll('.nav-item')[0].classList.add('active');
-    if(id === 'view-cart') { renderCart(); document.getElementById('nav-cart').classList.add('active'); }
+    // Set active nav icon
+    if(id==='view-home') document.querySelectorAll('.nav-item')[0].classList.add('active');
+    if(id==='view-cart') { renderCart(); document.querySelectorAll('.nav-item')[1].classList.add('active'); }
+    if(id==='view-profile') document.querySelectorAll('.nav-item')[2].classList.add('active');
 }
 
-function searchProduct() {
-    let q = document.getElementById('search-input').value.toLowerCase();
-    if(q.length < 2) return;
-    showView('view-search');
-    let h = '';
-    data.forEach(r => {
-        let n = r.c[1]?.v || ""; let w = r.c[4]?.v || ""; let p = r.c[5]?.v || ""; let i = r.c[6]?.v || "";
-        if(n.toLowerCase().includes(q)) h += `<div class="item-row"><img src="${i}"><div class="item-info"><b>${n}</b><span>${w}</span><br><b>₹${p}</b></div><button class="add-btn" onclick="add('${n}','${w}','${p}')">ADD +</button></div>`;
-    });
-    document.getElementById('list-search').innerHTML = h || "Saman nahi mila!";
-}
-function closeSearch() { document.getElementById('search-input').value = ""; showView('view-home'); }
-
+// ... Baki functions (loadSubs, loadProds, add, renderCart, processOrder) same rahenge ...
 function loadSubs(main) {
     let subs = {}; let lastM = "";
     data.forEach(r => {
@@ -174,60 +236,24 @@ function loadProds(main, subOrItem) {
     showView('view-prod');
 }
 
-function add(n,w,p) { 
-    cart.push({n,w,p:parseInt(p)}); 
-    updateBadge(); 
-    let cartBtn = document.getElementById('nav-cart');
-    cartBtn.classList.add('animate__animated', 'animate__jello');
-    setTimeout(() => cartBtn.classList.remove('animate__animated', 'animate__jello'), 500);
-}
-
+function add(n,w,p) { cart.push({n,w,p:parseInt(p)}); updateBadge(); }
 function updateBadge() { document.getElementById('b-count').innerText = cart.length; }
 
 function renderCart() {
     let h = '', t = 0;
-    cart.forEach((x, i) => { t += x.p; h += `<div class="item-row"><div class="item-info"><b>${x.n}</b><span>${x.w}</span><br>₹${x.p}</div><button onclick="remove(${i})" style="color:var(--red);border:none;background:none;"><i class="fas fa-trash-alt"></i></button></div>`; });
+    cart.forEach((x, i) => { t += x.p; h += `<div class="item-row"><div><b>${x.n}</b><br>₹${x.p}</div><button onclick="cart.splice(${i},1);renderCart();updateBadge();">❌</button></div>`; });
     document.getElementById('list-cart').innerHTML = h || "Bag Khali Hai";
     document.getElementById('total-cart').innerText = "Total: ₹" + t;
 }
 
-function remove(i) { cart.splice(i,1); updateBadge(); renderCart(); }
-
 async function processOrder() {
-    const name = document.getElementById('u-name').value;
-    const mobile = document.getElementById('u-mobile').value;
-    const addr = document.getElementById('u-address').value;
-    const btn = document.getElementById('final-btn');
-    if(!name || !mobile || !addr || cart.length === 0) return alert("Poori detail bharein!");
-    btn.innerText = "Order Save Ho Raha Hai..."; btn.disabled = true;
-    let itemsStr = ""; let total = 0; let waMsg = `*Naya Order: Rana Ji Chakki*\n\n*Customer:* ${name}\n*Mobile:* ${mobile}\n*Pata:* ${addr}\n\n*Saman:*\n`;
-    cart.forEach(x => { itemsStr += `${x.n} (${x.w}), `; waMsg += `- ${x.n} (${x.w}): ₹${x.p}\n`; total += x.p; });
-    waMsg += `\n*Total Bill: ₹${total}*`;
-    try {
-        await fetch(WID, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name, mobile, address: addr, details: itemsStr, total }) });
-        document.getElementById('bill-content').innerHTML = `<div style="text-align:right; font-size:11px; color:#999;">Date: ${new Date().toLocaleDateString()}</div><b>Order Summary</b><hr><b>Customer:</b> ${name}<br><b>Items:</b> ${itemsStr}<hr><b style="font-size:18px;">Total: ₹${total}</b>`;
-        updateBadge(); showView('view-success');
-        setTimeout(() => { window.open(`https://wa.me/918923357537?text=${encodeURIComponent(waMsg)}`); }, 1000);
-    } catch (e) { alert("Error! Net check karein."); }
-    finally { btn.innerText = "Order Confirm Karein"; btn.disabled = false; }
-}
-
-async function cancelOrder() {
-    const name = document.getElementById('u-name').value;
-    const mobile = document.getElementById('u-mobile').value;
-    const cbtn = document.getElementById('cancel-btn-id');
-    if(!name) return alert("Error: Naam missing!");
-    cbtn.innerText = "Mail Bhej rahe hain..."; cbtn.disabled = true;
-    try {
-        await fetch(WID, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({ type: "cancel", name: name, mobile: mobile })
-        });
-        alert("Cancellation Request aapki email (rjaatachakki537@gmail.com) par bhej di gayi hai!");
-        cbtn.innerText = "✅ Cancel Mail Sent";
-        cbtn.style.borderColor = "#ccc"; cbtn.style.color = "#ccc";
-    } catch (e) { alert("Error: Mail nahi ja paya!"); cbtn.disabled = false; }
+    if(cart.length === 0) return;
+    let items = cart.map(x => `${x.n} (${x.w})`).join(", ");
+    let total = cart.reduce((s, x) => s + x.p, 0);
+    await fetch(WID, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser.name, mobile: currentUser.mobile, address: currentUser.address, details: items, total }) });
+    document.getElementById('bill-content').innerHTML = `<b>Items:</b> ${items}<br><b>Total: ₹${total}</b>`;
+    showView('view-success');
+    window.open(`https://wa.me/918923357537?text=Naya Order: ${items} (Total: ${total})`);
 }
 
 window.onload = init;
