@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rana Ji VIP</title>
-    <link rel="stylesheet" href="https://ranaji-vip.github.io/app/style.css">
+    <link rel="stylesheet" href="https://rjaatachakki537-cpu.github.io/aatamitra/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -14,29 +14,35 @@
 <div id="login-screen" class="full-screen">
     <h2>Namaste Rana Ji VIP! 🙏</h2>
     <input type="text" id="l-name" placeholder="Pura Naam">
-    <input type="number" id="l-mobile" placeholder="Mobile Number">
+    <input type="number" id="l-mobile" placeholder="WhatsApp Number">
+    <input type="email" id="l-email" placeholder="Email (Notification ke liye)">
     <input type="text" id="l-address" placeholder="Address">
-    <button class="submit-btn" onclick="handleLogin()">Login</button>
+    <button class="submit-btn" onclick="handleLogin()">Login Karein</button>
 </div>
 
 <div class="header"><b>RANA JI AATA CHAKKI</b></div>
 
 <div id="view-home" class="view active">
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div class="item-card" onclick="loadSubs('Aata')"><b>Aata</b></div>
-        <div class="item-card" onclick="loadSubs('Mustered oil')"><b>Oil</b></div>
-        <div class="item-card" onclick="loadSubs('Masale')"><b>Masale</b></div>
+        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Aata')"><b>Aata</b></div>
+        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Mustered oil')"><b>Oil</b></div>
+        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Masale')"><b>Masale</b></div>
     </div>
 </div>
 
-<div id="view-sub" class="view"><div id="sub-list"></div></div>
-<div id="view-prod" class="view"><div id="prod-list"></div></div>
+<div id="view-sub" class="view"><button onclick="showPage('view-home')">BACK</button><div id="sub-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:10px;"></div></div>
+<div id="view-prod" class="view"><button onclick="showPage('view-sub')">BACK</button><div id="prod-list"></div></div>
+
 <div id="view-cart" class="view">
+    <h3 id="cart-header">Mera Shopping Bag</h3>
     <div id="cart-items-display"></div>
-    <div id="cart-total-display"></div>
-    <button class="submit-btn" onclick="confirmOrder()">Confirm Order</button>
+    <div id="cart-total-display" style="font-weight:bold; text-align:right;">Total: ₹0</div>
+    <textarea id="order-custom-note" placeholder="Extra note..."></textarea>
+    <button class="submit-btn" id="confirm-btn-text" onclick="confirmOrder()">Confirm Order</button>
 </div>
+
 <div id="view-profile" class="view">
+    <b id="p-name">Loading...</b>
     <div id="order-history"></div>
 </div>
 
@@ -46,7 +52,7 @@
     <div class="nav-item" onclick="showPage('view-profile')">Profile</div>
 </div>
 
-<script src="https://ranaji-vip.github.io/app/script.js"></script>
+<script src="https://rjaatachakki537-cpu.github.io/aatamitra/script.js"></script>
 
 </body>
 </html>
