@@ -3,245 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rana Ji VIP | Order Management</title>
+    <title>Rana Ji VIP</title>
+    <link rel="stylesheet" href="https://ranaji-vip.github.io/app/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; --red: #fb641b; --green: #25D366; --gray: #777; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
-        
-        .header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
-        .full-screen { position: fixed; inset: 0; background: white; z-index: 10000; padding: 25px; display: flex; flex-direction: column; overflow-y: auto; }
-        .view { display: none; padding: 10px; animation: fadeIn 0.3s; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Status Badges */
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; float: right; text-transform: uppercase; }
-        .s-PENDING { background: #fff3e0; color: #ff9800; }
-        .s-CONFIRMED { background: #e3f2fd; color: #1976d2; }
-        .s-SHIPPING { background: #f3e5f5; color: #9c27b0; animation: blink 1s infinite; }
-        .s-DELIVERED { background: #e8f5e9; color: #2e7d32; }
-        .s-CANCELLED { background: #ffebee; color: #d32f2f; }
-        
-        @keyframes blink { 50% { opacity: 0.5; } }
-
-        .order-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--main); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        
-        /* Action Buttons */
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-        .action-btn { padding: 10px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; border: 1px solid transparent; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; }
-        .btn-modify { background: #e3f2fd; color: #1976d2; border-color: #1976d2; }
-        .btn-cancel { background: #fff1f1; color: #d32f2f; border-color: #d32f2f; }
-        .btn-repeat { background: #fff9e6; color: #f4b41a; border-color: #f4b41a; }
-        .btn-chat { background: #e8fbf0; color: #25D366; border-color: #25D366; }
-
-        .item-card { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
-        .item-card img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; }
-        .add-btn { background: var(--yellow); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; margin-left: auto; cursor: pointer; }
-
-        #toast { visibility: hidden; min-width: 250px; background: #333; color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 10001; left: 50%; bottom: 100px; transform: translateX(-50%); }
-        #toast.show { visibility: visible; }
-
-        input, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        .submit-btn { background: var(--red); color: white; border: none; padding: 16px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
-
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 999; }
-        .nav-item { flex: 1; text-align: center; padding: 12px; color: #888; font-size: 12px; cursor: pointer; }
-        .nav-item.active { color: var(--main); font-weight: bold; }
-    </style>
 </head>
 <body>
 
 <div id="toast"></div>
 
 <div id="login-screen" class="full-screen">
-    <h2 style="color:var(--main);">Namaste Rana Ji VIP! 🙏</h2>
-    <p style="font-size: 13px; color: #666;">Detail bharein taaki order ki update mil sake.</p>
-    <input type="text" id="l-name" placeholder="Aapka Pura Naam">
-    <input type="number" id="l-mobile" placeholder="WhatsApp Number">
-    <input type="email" id="l-email" placeholder="Email ID (Notification ke liye - Optional)">
-    <input type="text" id="l-address" placeholder="Ghar ka Pata (Address)">
-    <div id="otp-box" style="display:none; background: #eee; padding: 10px; border-radius: 10px; margin-bottom: 10px; text-align: center;">
-        Login Code: <b id="display-otp" style="color:var(--red);"></b>
-        <input type="number" id="i-otp" placeholder="Upar wala code yahan likhein" style="margin-top:10px;">
-    </div>
-    <button class="submit-btn" id="login-btn" onclick="handleLogin()">Login Karein</button>
+    <h2>Namaste Rana Ji VIP! 🙏</h2>
+    <input type="text" id="l-name" placeholder="Pura Naam">
+    <input type="number" id="l-mobile" placeholder="Mobile Number">
+    <input type="text" id="l-address" placeholder="Address">
+    <button class="submit-btn" onclick="handleLogin()">Login</button>
 </div>
 
 <div class="header"><b>RANA JI AATA CHAKKI</b></div>
 
 <div id="view-home" class="view active">
-    <div style="background: linear-gradient(135deg,#1e3c72,#2a5298); color:white; padding:25px; border-radius:20px; text-align:center; margin-bottom:20px;">
-        <h2 style="margin:0">Pure & Fresh</h2>
-        <p style="font-size:12px;">Seedha Chakki Se Aapke Ghar Tak</p>
-    </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn" style="color:var(--yellow); font-size:30px;"></i><br><b>Aata</b></div>
-        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet" style="color:var(--main); font-size:30px;"></i><br><b>Oil</b></div>
-        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot" style="color:var(--red); font-size:30px;"></i><br><b>Masale</b></div>
-        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="window.location.href='tel:8923357537'"><i class="fas fa-phone" style="color:var(--green); font-size:30px;"></i><br><b>Call</b></div>
+        <div class="item-card" onclick="loadSubs('Aata')"><b>Aata</b></div>
+        <div class="item-card" onclick="loadSubs('Mustered oil')"><b>Oil</b></div>
+        <div class="item-card" onclick="loadSubs('Masale')"><b>Masale</b></div>
     </div>
 </div>
 
-<div id="view-sub" class="view"><button onclick="showPage('view-home')" style="border:none; background:none; font-weight:bold;">← BACK</button><div id="sub-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:10px;"></div></div>
-<div id="view-prod" class="view"><button onclick="showPage('view-sub')" style="border:none; background:none; font-weight:bold;">← BACK</button><div id="prod-list" style="margin-top:10px;"></div></div>
-
+<div id="view-sub" class="view"><div id="sub-list"></div></div>
+<div id="view-prod" class="view"><div id="prod-list"></div></div>
 <div id="view-cart" class="view">
-    <h3 id="cart-header">Mera Shopping Bag</h3>
     <div id="cart-items-display"></div>
-    <div id="cart-total-display" style="font-weight:bold; text-align:right; font-size:18px; padding:15px 0;">Total: ₹0</div>
-    <textarea id="order-custom-note" placeholder="Saman mein kuch badlav ya instruction?"></textarea>
-    <button class="submit-btn" id="confirm-btn-text" onclick="confirmOrder()">Order Confirm Karein</button>
+    <div id="cart-total-display"></div>
+    <button class="submit-btn" onclick="confirmOrder()">Confirm Order</button>
 </div>
-
 <div id="view-profile" class="view">
-    <div style="background:white; padding:15px; border-radius:15px; margin-bottom:20px;">
-        <b id="p-name" style="font-size:18px;">User Name</b><br>
-        <span id="p-email" style="font-size:12px; color:gray;">No Email Added</span>
-    </div>
-    <h4>Mere Orders</h4>
     <div id="order-history"></div>
-    <button onclick="logout()" style="width:100%; margin-top:30px; border:none; background:none; color:gray;">Logout Account</button>
 </div>
 
 <div class="nav">
-    <div class="nav-item active" id="n-home" onclick="showPage('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" id="n-cart" onclick="showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
-    <div class="nav-item" id="n-profile" onclick="showPage('view-profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
+    <div class="nav-item active" onclick="showPage('view-home')">Home</div>
+    <div class="nav-item" onclick="showPage('view-cart')">Bag</div>
+    <div class="nav-item" onclick="showPage('view-profile')">Profile</div>
 </div>
 
-<script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwXpnLfxex5KKlWaAGcuElpBN3eHVfXtia_ninNKmgCRg4eCkUoZ98f1xsqB7HfQb_/exec';
-const DATA_URL = `https://docs.google.com/spreadsheets/d/15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx/gviz/tq?tqx=out:json&sheet=Products`;
+<script src="https://ranaji-vip.github.io/app/script.js"></script>
 
-let masterData = [], cart = [], user = JSON.parse(localStorage.getItem('ranaUser')), activeModificationId = null, genOtp = null;
-let historyData = JSON.parse(localStorage.getItem('ranaHistory')) || [];
-
-async function init() {
-    if(user) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('p-name').innerText = user.name;
-        document.getElementById('p-email').innerText = user.email || "No Email Added";
-        syncStatuses();
-    }
-    const res = await fetch(DATA_URL);
-    const text = await res.text();
-    masterData = JSON.parse(text.substring(47, text.length-2)).table.rows;
-    renderHistory();
-}
-
-// --- ORDER ACTIONS (REPEAT, CANCEL, MODIFY) ---
-
-function repeatOrder(details) {
-    if(!confirm("Kya aap ye purana order wapas cart mein dalna chahte hain?")) return;
-    // Logic: String parse karke cart mein add karo (Simplified for UX)
-    alert("Purana saman Cart mein joda gaya!");
-    document.getElementById('order-custom-note').value = "REPEAT ORDER: " + details;
-    showPage('view-cart');
-}
-
-async function cancelOrder(id) {
-    if(!confirm("Kya aap ye order cancel karna chahte hain?")) return;
-    showToast("Cancelling... ⏳");
-    await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: "updateStatus", id: id, newStatus: "CANCELLED" })
-    });
-    showToast("Order Cancelled! ❌");
-    syncStatuses();
-}
-
-function startCustomization(orderId, oldDetails) {
-    if(!confirm("Is order mein kuch aur jodein?")) return;
-    activeModificationId = orderId;
-    document.getElementById('cart-header').innerText = "Modifying Order #" + orderId.slice(-5);
-    document.getElementById('confirm-btn-text').innerText = "Update Order Karein";
-    document.getElementById('order-custom-note').value = "JODNA HAI: " + oldDetails;
-    showPage('view-home');
-    showToast("Ab saman add karein!");
-}
-
-async function confirmOrder() {
-    if(!cart.length && !activeModificationId) return alert("Bag khali hai!");
-    let id = activeModificationId || Date.now().toString().slice(-6);
-    let details = cart.map(i => `${i.n}(${i.w})`).join(", ");
-    let note = document.getElementById('order-custom-note').value;
-    let total = cart.reduce((a,b)=>a+b.p,0);
-    
-    showToast("Bheja ja raha hai... 🚀");
-    await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            action: activeModificationId ? "update" : "create",
-            id: id, name: user.name, mobile: user.mobile, email: user.email || "",
-            address: user.address + (note ? " | " + note : ""), details: details, total: total
-        })
-    });
-
-    activeModificationId = null; cart = [];
-    showToast("Order Success! ✅");
-    window.open(`https://wa.me/918923357537?text=Hi, Mera Order ID ${id} hai.`, '_blank');
-    setTimeout(() => { showPage('view-profile'); syncStatuses(); }, 1000);
-}
-
-// --- TERA CORE LOGIC (READING SHEET) ---
-
-function renderHistory() {
-    let html = '';
-    historyData.slice().reverse().forEach(o => {
-        let s = o.status || 'PENDING';
-        html += `<div class="order-card">
-            <span class="status-badge s-${s}">${s}</span>
-            <b>ID: #${o.id.toString().slice(-6)}</b><br>
-            <small>${o.details}</small><br>
-            <b>Total: ₹${o.total}</b>
-            <div class="btn-grid">
-                ${s === 'PENDING' ? `<button class="action-btn btn-modify" onclick="startCustomization('${o.id}', '${o.details}')"><i class="fas fa-edit"></i> Modify</button>` : ''}
-                ${s === 'PENDING' ? `<button class="action-btn btn-cancel" onclick="cancelOrder('${o.id}')"><i class="fas fa-times"></i> Cancel</button>` : ''}
-                <button class="action-btn btn-repeat" onclick="repeatOrder('${o.details}')"><i class="fas fa-redo"></i> Repeat</button>
-                <a href="https://wa.me/918923357537?text=Order %23${o.id} ki jankari chahiye" class="action-btn btn-chat"><i class="fab fa-whatsapp"></i> Chat</a>
-            </div>
-        </div>`;
-    });
-    document.getElementById('order-history').innerHTML = html || "No orders found.";
-}
-
-async function syncStatuses() {
-    if(!user) return;
-    try {
-        const res = await fetch(`${SCRIPT_URL}?mobile=${user.mobile}`);
-        historyData = await res.json();
-        localStorage.setItem('ranaHistory', JSON.stringify(historyData));
-        renderHistory();
-    } catch(e) { console.log("Sync Error"); }
-}
-
-function handleLogin() {
-    const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, e = document.getElementById('l-email').value, a = document.getElementById('l-address').value;
-    if(!n || m.length < 10) return alert("Sahi detail daalein!");
-    if(!genOtp) {
-        genOtp = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById('display-otp').innerText = genOtp;
-        document.getElementById('otp-box').style.display = 'block';
-        document.getElementById('login-btn').innerText = "Confirm OTP";
-    } else {
-        if(document.getElementById('i-otp').value == genOtp) {
-            user = { name: n, mobile: m, email: e, address: a };
-            localStorage.setItem('ranaUser', JSON.stringify(user));
-            location.reload();
-        } else alert("Galat OTP!");
-    }
-}
-
-// Sheet reading logic (UNCHANGED)
-function loadSubs(main) { let subs = {}; let lastM = ""; masterData.forEach(r => { let m = r.c[2]?.v || lastM; lastM = m; if(m.toLowerCase().includes(main.toLowerCase().substring(0,3))) { let s = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v; if(s && !subs[s]) subs[s] = r.c[6]?.v || ""; } }); let html = ''; for(let s in subs) html += `<div style="background:white; padding:15px; border-radius:15px; text-align:center;" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%; height:60px; object-fit:cover; border-radius:10px;"><br><b>${s}</b></div>`; document.getElementById('sub-list').innerHTML = html; showPage('view-sub'); }
-function loadProds(cat, sub) { let html = ''; let lM="", lN="", lS="", lI=""; masterData.forEach(r => { let n=r.c[1]?.v||lN; lN=n; let m=r.c[2]?.v||lM; lM=m; let s=r.c[3]?.v||lS; lS=s; let i=r.c[6]?.v||lI; lI=i; let match = (cat==='Masale') ? (lN===sub) : (lM.includes(cat.substring(0,3)) && lS===sub); if(match && r.c[4]?.v) { html += `<div class="item-card"><img src="${lI}"><div><b>${lN}</b><br><small>${r.c[4].v}</small><br><b>₹${r.c[5].v}</b></div><button class="add-btn" onclick="addToBag('${lN}','${r.c[4].v}',${r.c[5].v})">ADD</button></div>`; } }); document.getElementById('prod-list').innerHTML = html; showPage('view-prod'); }
-function showPage(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id==='view-cart') renderCart(); }
-function addToBag(n, w, p) { cart.push({n, w, p}); showToast(`${n} Bag mein!`); }
-function renderCart() { let html = '', total = 0; cart.forEach((item, i) => { total += item.p; html += `<div class="item-card"><b>${item.n}</b><br>₹${item.p}<button onclick="cart.splice(${i},1);renderCart()" style="margin-left:auto; border:none; background:none; color:red;">🗑️</button></div>`; }); document.getElementById('cart-items-display').innerHTML = html || "Bag khali hai!"; document.getElementById('cart-total-display').innerText = "Total: ₹" + total; }
-function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => t.className = "", 2500); }
-function logout() { localStorage.clear(); location.reload(); }
-window.onload = init;
-</script>
 </body>
 </html>
