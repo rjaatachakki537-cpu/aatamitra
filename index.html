@@ -6,36 +6,34 @@
     <title>Rana Ji VIP | Master</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; --red: #fb641b; }
+        :root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; --red: #fb641b; --green: #25D366; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
         
-        /* Header */
         .header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
-        
-        /* Login Screen */
         .full-screen { position: fixed; inset: 0; background: white; z-index: 10000; padding: 25px; display: flex; flex-direction: column; }
-        
-        /* View Management */
         .view { display: none; padding: 10px; animation: fadeIn 0.3s; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Cards & Rows */
-        .item-card { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* Order Cards & Status */
+        .order-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--main); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; float: right; background: #fff3e0; color: #ff9800; text-transform: uppercase; }
+        
+        /* WhatsApp Chat Button */
+        .chat-btn { background: var(--green); color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 14px; }
+
+        .item-card { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
         .item-card img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; background: #eee; }
         .add-btn { background: var(--yellow); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; margin-left: auto; cursor: pointer; }
 
-        /* Toast Popup Fix */
         #toast { visibility: hidden; min-width: 200px; background: #333; color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 10001; left: 50%; bottom: 100px; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadeinout 2s; }
         @keyframes fadeinout { 0%, 100% { opacity: 0; bottom: 50px; } 20%, 80% { opacity: 1; bottom: 100px; } }
 
-        /* Form Elements */
         input, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 15px; }
         .loc-btn { background: #e3f2fd; color: #1976d2; border: 1px dashed #1976d2; padding: 12px; border-radius: 10px; margin-bottom: 15px; cursor: pointer; width: 100%; font-weight: bold; }
         .submit-btn { background: var(--red); color: white; border: none; padding: 16px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
 
-        /* Bottom Nav */
         .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 999; }
         .nav-item { flex: 1; text-align: center; padding: 12px; color: #888; font-size: 12px; cursor: pointer; }
         .nav-item.active { color: var(--main); font-weight: bold; }
@@ -50,20 +48,16 @@
     <p>Apni detail bharein shuru karne ke liye</p>
     <input type="text" id="l-name" placeholder="Pura Naam">
     <input type="number" id="l-mobile" placeholder="Mobile Number">
-    
     <button class="loc-btn" onclick="askLocation()">
         <i class="fas fa-map-marker-alt"></i> <span id="loc-status">Add Live Location (Jaruri Hai)</span>
     </button>
-    
     <input type="text" id="l-address" placeholder="Ghar ka Pata (Address)">
-    
     <div id="otp-box" style="display:none;">
         <div style="background:#fff3e0; padding:10px; border-radius:8px; margin-bottom:10px; text-align:center;">
             Login Code: <b id="display-otp" style="font-size:20px; color:var(--red);"></b>
         </div>
         <input type="number" id="i-otp" placeholder="Upar wala code daalein">
     </div>
-    
     <button class="submit-btn" id="login-action-btn" onclick="handleLogin()">Aage Badhein</button>
 </div>
 
@@ -96,7 +90,8 @@
     <h3 style="margin-bottom:15px;">Mera Shopping Bag</h3>
     <div id="cart-items-display"></div>
     <div id="cart-total-display" style="font-weight:bold; font-size:20px; padding:20px 0; text-align:right;">Total: ₹0</div>
-    <textarea id="order-custom-note" placeholder="Kuch aur add karwana hai? Ya koi special instruction?"></textarea>
+    <p><b>Bhai ko kuch bolna hai? (Chat Box)</b></p>
+    <textarea id="order-custom-note" placeholder="Yahan likhein: Jaise Aata barik pisna, ya kuch aur mangwana ho..."></textarea>
     <button class="submit-btn" onclick="confirmOrder()">Order Confirm Karein</button>
 </div>
 
@@ -112,9 +107,9 @@
 </div>
 
 <div class="nav">
-    <div class="nav-item active" onclick="showPage('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" onclick="showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
-    <div class="nav-item" onclick="showPage('view-profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
+    <div class="nav-item active" id="n-home" onclick="showPage('view-home')"><i class="fas fa-home"></i><br>Home</div>
+    <div class="nav-item" id="n-cart" onclick="showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
+    <div class="nav-item" id="n-profile" onclick="showPage('view-profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
 </div>
 
 <script>
@@ -122,6 +117,7 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1XeN6zH3_bjWWkrBR8
 const DATA_URL = `https://docs.google.com/spreadsheets/d/15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx/gviz/tq?tqx=out:json&sheet=Products`;
 
 let masterData = [], cart = [], user = JSON.parse(localStorage.getItem('ranaUser')), genOtp = null, mapLink = "";
+let historyData = JSON.parse(localStorage.getItem('ranaHistory')) || [];
 
 async function init() {
     if(user) {
@@ -133,9 +129,9 @@ async function init() {
     const res = await fetch(DATA_URL);
     const text = await res.text();
     masterData = JSON.parse(text.substring(47, text.length-2)).table.rows;
+    renderHistory();
 }
 
-// LOCATION
 function askLocation() {
     if(navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(p => {
@@ -146,11 +142,9 @@ function askLocation() {
     }
 }
 
-// LOGIN
 function handleLogin() {
     const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value;
     if(!n || m.length < 10) return alert("Sahi detail bharo!");
-
     if(!genOtp) {
         genOtp = Math.floor(1000 + Math.random() * 9000);
         document.getElementById('display-otp').innerText = genOtp;
@@ -169,10 +163,13 @@ function showPage(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(id === 'view-cart') renderCart();
+    
+    // Highlight active nav
+    if(id==='view-home') document.getElementById('n-home').classList.add('active');
+    if(id==='view-cart') { document.getElementById('n-cart').classList.add('active'); renderCart(); }
+    if(id==='view-profile') { document.getElementById('n-profile').classList.add('active'); renderHistory(); }
 }
 
-// DATA LOADING
 function loadSubs(main) {
     let subs = {}; let lastM = "";
     masterData.forEach(r => {
@@ -223,13 +220,40 @@ async function confirmOrder() {
     if(!cart.length) return alert("Bag khali hai!");
     let details = cart.map(i => `${i.n}(${i.w})`).join(", ");
     let note = document.getElementById('order-custom-note').value;
+    let total = cart.reduce((a,b)=>a+b.p,0);
     
+    // Save to Local History
+    let newOrder = { id: Date.now(), items: details, note: note, total: total, date: new Date().toLocaleString(), status: 'PENDING' };
+    historyData.unshift(newOrder);
+    localStorage.setItem('ranaHistory', JSON.stringify(historyData));
+
+    // Send to Sheet
     await fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({
-        name: user.name, mobile: user.mobile, address: user.address, details: details + (note ? " | NOTE: "+note : ""), total: cart.reduce((a,b)=>a+b.p,0)
+        name: user.name, mobile: user.mobile, address: user.address, details: details + (note ? " | NOTE: "+note : ""), total: total
     })});
     
-    alert("Order Done! Rana Ji ko khabar bhej di gayi hai.");
-    cart = []; showPage('view-home');
+    alert("Order Done! ✅ Profile mein check karein.");
+    cart = [];
+    document.getElementById('order-custom-note').value = "";
+    showPage('view-profile');
+}
+
+function renderHistory() {
+    let html = '';
+    historyData.forEach(o => {
+        let waMsg = `Namaste Rana Ji! Mera Order ID #${o.id.toString().slice(-4)} check karein.\nDetails: ${o.items}\nNote: ${o.note || 'None'}\nTotal: ₹${o.total}`;
+        let waUrl = `https://wa.me/918923357537?text=${encodeURIComponent(waMsg)}`;
+        
+        html += `<div class="order-card">
+            <span class="status-badge">${o.status}</span>
+            <b>ID: #${o.id.toString().slice(-4)}</b><br>
+            <small>${o.date}</small><br><br>
+            <div style="font-size:13px;">${o.items}</div>
+            <div style="font-weight:bold; margin-top:5px;">Total: ₹${o.total}</div>
+            <a href="${waUrl}" class="chat-btn"><i class="fab fa-whatsapp"></i> Rana Ji se Chat Karein</a>
+        </div>`;
+    });
+    document.getElementById('order-history').innerHTML = html || "<p style='text-align:center;'>Koi order nahi mila.</p>";
 }
 
 function logout() { localStorage.clear(); location.reload(); }
