@@ -9,56 +9,76 @@
         :root { --main: #1e3c72; --orange: #fb641b; --bg: #f1f3f6; --accent: #2ecc71; --red: #e74c3c; --yellow: #f4b41a; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
         
-        .header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
-        .search-box { background: var(--main); padding: 10px 15px; position: sticky; top: 50px; z-index: 999; }
-        #search-input { width: 100%; padding: 10px 20px; border-radius: 5px; border: none; outline: none; box-sizing: border-box; }
+        /* Header & Search */
+        .header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; font-weight: bold; }
+        .search-box { background: var(--main); padding: 10px 15px; position: sticky; top: 52px; z-index: 999; }
+        #search-input { width: 100%; padding: 12px; border-radius: 8px; border: none; outline: none; box-sizing: border-box; }
 
-        /* VIP Code Banner (No Image) */
+        /* VIP Banner */
         .hero-banner { 
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             margin: 15px; border-radius: 15px; padding: 25px 15px;
             color: white; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        #login-screen { position: fixed; inset: 0; background: white; z-index: 10000; display: flex; flex-direction: column; }
-        .login-top { background: var(--main); height: 25%; color: white; padding: 30px; display: flex; flex-direction: column; justify-content: center; }
-        .login-form { padding: 30px; flex: 1; }
-        
+        /* Support Popup/Modal */
+        #call-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center; padding:20px; }
+        .modal-box { background:white; padding:25px; border-radius:20px; text-align:center; width:100%; max-width:300px; }
+
+        /* Navigation */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; height: 65px; }
+        .nav-item { flex: 1; text-align: center; padding: 10px 0; color: #777; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .nav-item.active { color: var(--main); font-weight: bold; }
+
+        /* Product & Rows */
         .view { display: none; padding: 15px; animation: fadeIn 0.3s; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
-        .card i { font-size: 30px; color: var(--orange); margin-bottom: 10px; }
+        .card { background: white; padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer; }
+        .item-row { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
+        .item-row img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
         
-        .item-row { background: white; padding: 12px; margin-bottom: 10px; border-radius: 10px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-        .item-row img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background: #eee; }
-        .add-btn { background: var(--yellow); border: none; padding: 5px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; height: 65px; }
-        .nav-item { flex: 1; text-align: center; padding: 10px 0; color: #666; font-size: 12px; cursor: pointer; }
-        .nav-item.active { color: var(--main); font-weight: bold; }
+        .add-btn { background: var(--yellow); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .blue-btn { background: var(--orange); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
         
-        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .blue-btn { background: var(--orange); color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        /* Login & Toast */
+        #login-screen { position: fixed; inset: 0; background: white; z-index: 10000; display: flex; flex-direction: column; }
+        .loc-btn { background: #e3f2fd; color: #1976d2; border: 1px solid #1976d2; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 15px; cursor: pointer; font-weight: bold; }
+        #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; display: none; z-index: 2000; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="login-screen">
-    <div class="login-top"><h1>Namaste</h1><p>Login to Rana Ji Aata Chakki</p></div>
-    <div class="login-form">
-        <input type="text" id="l-name" placeholder="Pura Naam">
-        <input type="number" id="l-mobile" placeholder="Mobile Number">
-        <input type="text" id="l-address" placeholder="Delivery Address">
-        <div id="otp-area" style="display:none;"><p>OTP: <b id="show-otp"></b></p><input type="number" id="i-otp" placeholder="Enter OTP"></div>
-        <button class="blue-btn" id="login-btn-main" onclick="handleLogin()">Aage Badhein</button>
+<div id="toast">Item joda gaya!</div>
+
+<div id="call-modal">
+    <div class="modal-box">
+        <i class="fas fa-phone-alt" style="font-size:40px; color:var(--main); margin-bottom:15px;"></i>
+        <h3>Call Rana Ji?</h3>
+        <p style="color:#666;">Kya aap order ya help ke liye call karna chahte hain?</p>
+        <button class="blue-btn" onclick="makeCall()" style="margin-bottom:10px;">Haan, Call Karein</button>
+        <button onclick="closeModal()" style="border:none; background:none; color:red; font-weight:bold;">Nahi, Cancel</button>
     </div>
 </div>
 
-<div class="header"><h3>RANA JI AATA CHAKKI</h3></div>
-<div class="search-box"><input type="text" id="search-input" placeholder="Aata, Oil, Masale..." onkeyup="searchProduct()"></div>
+<div id="login-screen">
+    <div style="background:var(--main); color:white; padding:40px 20px; text-align:center;"><h1>Namaste 🙏</h1></div>
+    <div style="padding:30px;">
+        <input type="text" id="l-name" placeholder="Aapka Naam" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+        <input type="number" id="l-mobile" placeholder="Mobile Number" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+        <button class="loc-btn" onclick="getLocation()"><i class="fas fa-location-arrow"></i> <span id="loc-text">Add Delivery Location</span></button>
+        <input type="text" id="l-address" placeholder="Pura Address" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+        <div id="otp-area" style="display:none; text-align:center; margin-bottom:15px;">
+            <p>Code: <b id="show-otp" style="color:var(--orange); font-size:20px;"></b></p>
+            <input type="number" id="i-otp" placeholder="Enter Code" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;">
+        </div>
+        <button class="blue-btn" id="login-btn-main" onclick="handleLogin()">Login</button>
+    </div>
+</div>
+
+<div class="header">RANA JI AATA CHAKKI</div>
+<div class="search-box"><input type="text" id="search-input" placeholder="Dhoondhein: Aata, Oil..." onkeyup="searchProduct()"></div>
 
 <div id="view-home" class="view active">
     <div class="hero-banner">
@@ -69,34 +89,42 @@
         <div class="card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn"></i><h3>Aata</h3></div>
         <div class="card" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet"></i><h3>Oil</h3></div>
         <div class="card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot"></i><h3>Masale</h3></div>
-        <div class="card" onclick="window.open('tel:8923357537')"><i class="fas fa-headset"></i><h3>Support</h3></div>
+        <div class="card" onclick="openCallModal()"><i class="fas fa-phone-alt" style="color:var(--accent);"></i><h3>Support</h3></div>
     </div>
 </div>
 
-<div id="view-sub" class="view"><button onclick="showView('view-home')" style="border:none; background:none; font-weight:bold; color:var(--main);">← BACK</button><div id="list-sub" class="grid" style="margin-top:15px;"></div></div>
-<div id="view-prod" class="view"><button id="back-to-sub" style="border:none; background:none; font-weight:bold; color:var(--main);">← BACK</button><div id="list-prod" style="margin-top:15px;"></div></div>
-<div id="view-search" class="view"><div id="list-search"></div></div>
+<div id="view-sub" class="view"><button onclick="showView('view-home')" style="border:none; background:none; font-weight:bold; color:var(--main); padding:10px 0;">← Back</button><div id="list-sub" class="grid"></div></div>
+<div id="view-prod" class="view"><button id="back-to-sub" style="border:none; background:none; font-weight:bold; color:var(--main); padding:10px 0;">← Back</button><div id="list-prod"></div></div>
 
 <div id="view-cart" class="view">
     <h3>Mera Bag 🛍️</h3>
     <div id="list-cart"></div>
-    <div style="background:white; padding:15px; border-radius:10px; margin-top:15px;">
+    <div id="cart-summary" style="background:white; padding:15px; border-radius:15px; margin-top:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
         <p><b>Total:</b> ₹<span id="total-price">0</span></p>
         <button class="blue-btn" id="place-order-btn" onclick="processOrder()">Order Confirm Karein</button>
     </div>
 </div>
 
+<div id="view-profile" class="view">
+    <div style="background:white; padding:25px; border-radius:20px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+        <i class="fas fa-user-circle" style="font-size:60px; color:var(--main);"></i>
+        <h2 id="u-name-show" style="margin:10px 0;">Rana Ji Customer</h2>
+        <p id="u-mob-show" style="color:#666;"></p>
+        <button onclick="logout()" style="margin-top:20px; color:red; border:none; background:none; font-weight:bold;">Logout</button>
+    </div>
+</div>
+
 <div id="view-success" class="view" style="text-align:center; padding-top:50px;">
     <i class="fas fa-check-circle" style="font-size:80px; color:var(--accent);"></i>
-    <h2>Order Done!</h2>
-    <p>Hum jald hi aap se sampark karenge.</p>
-    <button class="blue-btn" style="background:var(--main)" onclick="showView('view-home')">Wapas Home</button>
+    <h2>Order Confirm! ✅</h2>
+    <p>Aapka order mil gaya hai.</p>
+    <button class="blue-btn" style="background:var(--main)" onclick="showView('view-home')">Wapas Shopping Karein</button>
 </div>
 
 <div class="nav">
-    <div class="nav-item active" onclick="showView('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" onclick="showView('view-cart')"><i class="fas fa-shopping-cart"></i><br>Cart</div>
-    <div class="nav-item" onclick="location.reload()"><i class="fas fa-user"></i><br>Profile</div>
+    <div class="nav-item active" id="nav-home" onclick="showView('view-home')"><i class="fas fa-home"></i>Home</div>
+    <div class="nav-item" id="nav-cart" onclick="showView('view-cart')"><i class="fas fa-shopping-cart"></i>Cart</div>
+    <div class="nav-item" id="nav-profile" onclick="showView('view-profile')"><i class="fas fa-user"></i>Profile</div>
 </div>
 
 <script>
@@ -104,39 +132,82 @@ const SID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
 const WID = 'https://script.google.com/macros/s/AKfycby1XeN6zH3_bjWWkrBR8vlb4NW1r5cBHc0BYC6JJPsSHYZsY7QHKZTID0m1wRQWZoIA/exec';
 const URL = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=Products`;
 
-let data = [], cart = [], generatedOTP = null;
+let data = [], cart = [], generatedOTP = null, userLoc = "";
 let currentUser = JSON.parse(localStorage.getItem('ranaUser')) || null;
 
 async function init() {
-    if(currentUser) document.getElementById('login-screen').style.display = 'none';
+    if(currentUser) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('u-name-show').innerText = currentUser.name;
+        document.getElementById('u-mob-show').innerText = "+91 " + currentUser.mobile;
+    }
     const r = await fetch(URL); const t = await r.text();
     const j = JSON.parse(t.substring(47, t.length - 2));
     data = j.table.rows;
 }
 
+// Support Modal Functions
+function openCallModal() { document.getElementById('call-modal').style.display = 'flex'; }
+function closeModal() { document.getElementById('call-modal').style.display = 'none'; }
+function makeCall() { window.open('tel:8923357537'); closeModal(); }
+
+function getLocation() {
+    if (navigator.geolocation) {
+        document.getElementById('loc-text').innerText = "Locating...";
+        navigator.geolocation.getCurrentPosition((pos) => {
+            userLoc = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+            document.getElementById('loc-text').innerText = "Location Added ✅";
+        }, () => { alert("Location access denied."); });
+    }
+}
+
 function handleLogin() {
     const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value;
-    if(!n || m.length < 10) return alert("Details bharein!");
+    if(!n || m.length < 10) return alert("Sahi details bharein!");
     if(!generatedOTP) {
         generatedOTP = Math.floor(1000 + Math.random()*9000);
         document.getElementById('show-otp').innerText = generatedOTP;
         document.getElementById('otp-area').style.display = 'block';
         return;
     }
-    if(document.getElementById('i-otp').value != generatedOTP) return alert("Galat OTP!");
-    currentUser = {name: n, mobile: m, address: a};
+    if(document.getElementById('i-otp').value != generatedOTP) return alert("Wrong OTP!");
+    currentUser = {name: n, mobile: m, address: a, location: userLoc};
     localStorage.setItem('ranaUser', JSON.stringify(currentUser));
     location.reload();
 }
 
+function add(n,w,p) { 
+    cart.push({n,w,p:parseInt(p)}); 
+    const t = document.getElementById('toast');
+    t.innerText = n + " bag mein joda gaya!";
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 2000);
+}
+
+function renderCart() {
+    let h = '', t = 0;
+    cart.forEach((x, i) => { t += x.p; h += `<div class="item-row"><div><b>${x.n}</b> (${x.w})<br>₹${x.p}</div><button onclick="cart.splice(${i},1);renderCart();" style="border:none; color:red; background:none; margin-left:auto;"><i class="fas fa-trash"></i></button></div>`; });
+    document.getElementById('list-cart').innerHTML = h || "<p style='text-align:center;'>Bag khali hai</p>";
+    document.getElementById('total-price').innerText = t;
+}
+
+function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if(id==='view-home') document.getElementById('nav-home').classList.add('active');
+    if(id==='view-cart') { document.getElementById('nav-cart').classList.add('active'); renderCart(); }
+    if(id==='view-profile') document.getElementById('nav-profile').classList.add('active');
+}
+
+// Baki data loading functions (loadSubs, loadProds) same hain
 function loadSubs(main) {
     let subs = {}; let lastM = "";
     data.forEach(r => {
-        let m = r.c[2]?.v || lastM; if(m) lastM = m;
+        let m = r.c[2]?.v || lastM; if(r.c[2]?.v) lastM = m;
         if(lastM.toLowerCase().includes(main.toLowerCase().substring(0,3))) {
             let b = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v;
-            let img = r.c[6]?.v || "";
-            if(b && !subs[b]) subs[b] = img;
+            if(b && !subs[b]) subs[b] = r.c[6]?.v || "";
         }
     });
     let h = '';
@@ -145,63 +216,35 @@ function loadSubs(main) {
 }
 
 function loadProds(main, sub) {
-    let h = ''; 
-    let lM="", lN="", lS="", lI="";
+    let h = ''; let lN="", lI="", lS="", lM="";
     data.forEach(r => {
-        let n = r.c[1]?.v || lN; if(r.c[1]?.v) lN=n;
-        let m = r.c[2]?.v || lM; if(r.c[2]?.v) lM=m;
-        let s = r.c[3]?.v || lS; if(r.c[3]?.v) lS=s;
-        let i = r.c[6]?.v || lI; if(r.c[6]?.v) lI=i;
-
-        // Correct matching logic for Masale vs Others
+        if(r.c[1]?.v) lN=r.c[1].v;
+        if(r.c[2]?.v) lM=r.c[2].v;
+        if(r.c[3]?.v) lS=r.c[3].v;
+        if(r.c[6]?.v) lI=r.c[6].v;
         let isMatch = (main === 'Masale') ? (lN === sub) : (lS === sub);
-        
-        if(isMatch && r.c[4]?.v && r.c[5]?.v) {
-            h += `<div class="item-row"><img src="${lI}"><div><b>${lN}</b><br>${r.c[4]?.v} - ₹${r.c[5]?.v}</div><button class="add-btn" onclick="add('${lN}','${r.c[4]?.v}','${r.c[5]?.v}')">ADD +</button></div>`;
+        if(isMatch && r.c[4]?.v) {
+            h += `<div class="item-row"><img src="${lI}"><div><b>${lN}</b><br>${r.c[4].v} - ₹${r.c[5].v}</div><button class="add-btn" onclick="add('${lN}','${r.c[4].v}','${r.c[5].v}')">ADD +</button></div>`;
         }
     });
-    document.getElementById('list-prod').innerHTML = h || "<p style='padding:20px;'>Saman load ho raha hai...</p>";
+    document.getElementById('list-prod').innerHTML = h;
     document.getElementById('back-to-sub').onclick = () => loadSubs(main);
     showView('view-prod');
 }
 
-function add(n,w,p) { cart.push({n,w,p:parseInt(p)}); alert(n + " bag mein joda gaya!"); }
-
-function renderCart() {
-    let h = '', t = 0;
-    cart.forEach((x, i) => { t += x.p; h += `<div class="item-row"><div><b>${x.n}</b> (${x.w})<br>₹${x.p}</div><button onclick="cart.splice(${i},1);renderCart();" style="border:none; color:red; background:none; margin-left:auto;"><i class="fas fa-trash"></i></button></div>`; });
-    document.getElementById('list-cart').innerHTML = h || "Bag khali hai";
-    document.getElementById('total-price').innerText = t;
-}
-
-function searchProduct() {
-    let val = document.getElementById('search-input').value.toLowerCase();
-    if(val.length < 2) return;
-    let h = '', lN="", lI="";
-    data.forEach(r => {
-        let n = r.c[1]?.v || lN; if(r.c[1]?.v) lN=n;
-        let i = r.c[6]?.v || lI; if(r.c[6]?.v) lI=i;
-        if(lN.toLowerCase().includes(val) && r.c[4]?.v) h += `<div class="item-row"><img src="${lI}"><b>${lN}</b> - ${r.c[4]?.v} ₹${r.c[5]?.v} <button class="add-btn" onclick="add('${lN}','${r.c[4]?.v}','${r.c[5]?.v}')">ADD</button></div>`;
-    });
-    document.getElementById('list-search').innerHTML = h; showView('view-search');
-}
-
 async function processOrder() {
-    if(cart.length === 0) return alert("Bag khali hai!");
+    if(cart.length === 0) return alert("Pehle kuch add karein!");
     const btn = document.getElementById('place-order-btn');
     btn.innerText = "Processing..."; btn.disabled = true;
-    let items = cart.map(x => `${x.n} (${x.w})`).join(", ");
+    let items = cart.map(x => `${x.n}(${x.w})`).join(", ");
     let total = cart.reduce((s, x) => s + x.p, 0);
-    await fetch(WID, {method:'POST', mode:'no-cors', body: JSON.stringify({name: currentUser.name, mobile: currentUser.mobile, address: currentUser.address, details: items, total: total})});
+    let fullAddress = currentUser.address + " | Map: " + (currentUser.location || "N/A");
+    await fetch(WID, {method:'POST', mode:'no-cors', body: JSON.stringify({name: currentUser.name, mobile: currentUser.mobile, address: fullAddress, details: items, total: total})});
     cart = []; showView('view-success');
     btn.innerText = "Order Confirm Karein"; btn.disabled = false;
 }
 
-function showView(id) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
+function logout() { localStorage.clear(); location.reload(); }
 window.onload = init;
 </script>
 </body>
