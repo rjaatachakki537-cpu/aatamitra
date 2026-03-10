@@ -3,158 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rana Ji Aata Chakki</title>
+    <title>Rana Ji VIP | Master</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 70px; }
+        :root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; --red: #fb641b; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
+        
+        /* Header */
         .header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
-        .banner { background: linear-gradient(45deg, #1e3c72, #2a5298); color: white; padding: 25px; margin: 10px; border-radius: 15px; text-align: center; }
-        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px; }
-        .cat-card { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .item-row { background: white; padding: 10px; margin: 10px; border-radius: 10px; display: flex; align-items: center; gap: 10px; }
-        .item-row img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
-        .view { display: none; animation: fadeIn 0.3s; }
+        
+        /* Login Screen */
+        .full-screen { position: fixed; inset: 0; background: white; z-index: 10000; padding: 25px; display: flex; flex-direction: column; }
+        
+        /* View Management */
+        .view { display: none; padding: 10px; animation: fadeIn 0.3s; }
         .active { display: block; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; }
-        .nav-item { flex: 1; text-align: center; padding: 10px; color: #666; font-size: 12px; }
-        .nav-item.active { color: var(--main); font-weight: bold; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
-        .btn { background: #fb641b; color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
+        /* Cards & Rows */
+        .item-card { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .item-card img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; background: #eee; }
+        .add-btn { background: var(--yellow); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; margin-left: auto; cursor: pointer; }
+
+        /* Toast Popup Fix */
+        #toast { visibility: hidden; min-width: 200px; background: #333; color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 10001; left: 50%; bottom: 100px; transform: translateX(-50%); }
+        #toast.show { visibility: visible; animation: fadeinout 2s; }
+        @keyframes fadeinout { 0%, 100% { opacity: 0; bottom: 50px; } 20%, 80% { opacity: 1; bottom: 100px; } }
+
+        /* Form Elements */
+        input, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 15px; }
+        .loc-btn { background: #e3f2fd; color: #1976d2; border: 1px dashed #1976d2; padding: 12px; border-radius: 10px; margin-bottom: 15px; cursor: pointer; width: 100%; font-weight: bold; }
+        .submit-btn { background: var(--red); color: white; border: none; padding: 16px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+
+        /* Bottom Nav */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 999; }
+        .nav-item { flex: 1; text-align: center; padding: 12px; color: #888; font-size: 12px; cursor: pointer; }
+        .nav-item.active { color: var(--main); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="login-screen" style="position:fixed; inset:0; background:white; z-index:10000; padding:25px;">
-    <h2>Namaste! 🙏</h2>
+<div id="toast">Item Bag mein juda! 🛒</div>
+
+<div id="login-screen" class="full-screen">
+    <h2 style="color:var(--main);">Namaste! 🙏</h2>
+    <p>Apni detail bharein shuru karne ke liye</p>
     <input type="text" id="l-name" placeholder="Pura Naam">
     <input type="number" id="l-mobile" placeholder="Mobile Number">
-    <button onclick="getLocation()" style="background:#e3f2fd; border:1px solid #1976d2; padding:10px; width:100%; margin-bottom:10px; border-radius:8px;">📍 Add Live Location</button>
-    <input type="text" id="l-address" placeholder="Pura Address">
-    <div id="otp-area" style="display:none;">
-        <div id="u-otp-box" style="background:#fff3e0; padding:10px; margin-bottom:10px; border-radius:8px;">Login Code: <b id="show-otp"></b></div>
-        <input type="number" id="i-otp" placeholder="Enter OTP">
+    
+    <button class="loc-btn" onclick="askLocation()">
+        <i class="fas fa-map-marker-alt"></i> <span id="loc-status">Add Live Location (Jaruri Hai)</span>
+    </button>
+    
+    <input type="text" id="l-address" placeholder="Ghar ka Pata (Address)">
+    
+    <div id="otp-box" style="display:none;">
+        <div style="background:#fff3e0; padding:10px; border-radius:8px; margin-bottom:10px; text-align:center;">
+            Login Code: <b id="display-otp" style="font-size:20px; color:var(--red);"></b>
+        </div>
+        <input type="number" id="i-otp" placeholder="Upar wala code daalein">
     </div>
-    <button class="btn" onclick="handleLogin()">Login Karein</button>
+    
+    <button class="submit-btn" id="login-action-btn" onclick="handleLogin()">Aage Badhein</button>
 </div>
 
 <div class="header"><b>RANA JI AATA CHAKKI</b></div>
 
 <div id="view-home" class="view active">
-    <div class="banner"><h3>100% Shuddh Maal</h3><p>Chakki Fresh Items</p></div>
-    <div class="cat-grid">
-        <div class="cat-card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn" style="font-size:30px; color:var(--yellow);"></i><br>Aata</div>
-        <div class="cat-card" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet" style="font-size:30px; color:var(--yellow);"></i><br>Oil</div>
-        <div class="cat-card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot" style="font-size:30px; color:var(--yellow);"></i><br>Masale</div>
-        <div class="cat-card" onclick="window.open('tel:8923357537')"><i class="fas fa-phone" style="font-size:30px; color:var(--main);"></i><br>Support</div>
+    <div style="background: linear-gradient(135deg,#1e3c72,#2a5298); color:white; padding:30px; border-radius:20px; text-align:center; margin-bottom:20px;">
+        <h2 style="margin:0">Pure & Fresh</h2>
+        <p>Seedha Chakki Se Aapke Ghar Tak</p>
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn" style="color:var(--yellow); font-size:35px;"></i><br><b>Aata</b></div>
+        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet" style="color:var(--main); font-size:35px;"></i><br><b>Oil</b></div>
+        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot" style="color:var(--red); font-size:35px;"></i><br><b>Masale</b></div>
+        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="window.location.href='tel:8923357537'"><i class="fas fa-headset" style="color:green; font-size:35px;"></i><br><b>Support</b></div>
     </div>
 </div>
 
-<div id="view-sub" class="view"><button onclick="showView('view-home')" style="border:none; padding:10px;">← Back</button><div id="list-sub" class="cat-grid"></div></div>
-<div id="view-prod" class="view"><button id="back-to-sub" style="border:none; padding:10px;">← Back</button><div id="list-prod"></div></div>
+<div id="view-sub" class="view">
+    <button onclick="showPage('view-home')" style="border:none; padding:10px; font-weight:bold; background:none;">← BACK</button>
+    <div id="sub-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:10px;"></div>
+</div>
+
+<div id="view-prod" class="view">
+    <button id="back-to-sub-btn" style="border:none; padding:10px; font-weight:bold; background:none;">← BACK</button>
+    <div id="prod-list" style="margin-top:10px;"></div>
+</div>
 
 <div id="view-cart" class="view">
-    <h3 style="padding:15px;">Mera Bag</h3>
-    <div id="list-cart"></div>
-    <div style="padding:15px; background:white;"><button class="btn" onclick="processOrder()">Confirm Order</button></div>
+    <h3 style="margin-bottom:15px;">Mera Shopping Bag</h3>
+    <div id="cart-items-display"></div>
+    <div id="cart-total-display" style="font-weight:bold; font-size:20px; padding:20px 0; text-align:right;">Total: ₹0</div>
+    <textarea id="order-custom-note" placeholder="Kuch aur add karwana hai? Ya koi special instruction?"></textarea>
+    <button class="submit-btn" onclick="confirmOrder()">Order Confirm Karein</button>
 </div>
 
 <div id="view-profile" class="view">
-    <div style="background:white; padding:20px; border-bottom:1px solid #ddd;"><b>Account: </b><span id="p-name"></span></div>
-    <div id="my-orders" style="padding:15px;"></div>
+    <div style="background:white; padding:20px; border-radius:15px; border-left:5px solid var(--main);">
+        <b id="p-name">Loading...</b><br>
+        <span id="p-mob" style="color:#666;">+91 0000000000</span><br>
+        <small id="p-addr" style="color:#888;"></small>
+    </div>
+    <h4 style="margin-top:25px;">Mere Pichle Orders</h4>
+    <div id="order-history"></div>
+    <button onclick="logout()" style="width:100%; margin-top:30px; border:none; color:gray; background:none;">Logout Account</button>
 </div>
 
 <div class="nav">
-    <div class="nav-item active" onclick="showView('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" onclick="showView('view-cart')"><i class="fas fa-shopping-cart"></i><br>Cart</div>
-    <div class="nav-item" onclick="showView('view-profile')"><i class="fas fa-user"></i><br>Profile</div>
+    <div class="nav-item active" onclick="showPage('view-home')"><i class="fas fa-home"></i><br>Home</div>
+    <div class="nav-item" onclick="showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
+    <div class="nav-item" onclick="showPage('view-profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
 </div>
 
 <script>
-const SID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
-const WID = 'TERA_URL_YAHAN';
-const URL = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=Products`;
-let data = [], cart = [], currentUser = JSON.parse(localStorage.getItem('ranaUser')), genOtp = null, userLoc = "";
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1XeN6zH3_bjWWkrBR8vlb4NW1r5cBHc0BYC6JJPsSHYZsY7QHKZTID0m1wRQWZoIA/exec';
+const DATA_URL = `https://docs.google.com/spreadsheets/d/15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx/gviz/tq?tqx=out:json&sheet=Products`;
+
+let masterData = [], cart = [], user = JSON.parse(localStorage.getItem('ranaUser')), genOtp = null, mapLink = "";
 
 async function init() {
-    if(currentUser) {
-        document.getElementById('login-screen').style.display='none';
-        document.getElementById('p-name').innerText = currentUser.name;
+    if(user) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('p-name').innerText = user.name;
+        document.getElementById('p-mob').innerText = "+91 " + user.mobile;
+        document.getElementById('p-addr').innerText = user.address;
     }
-    const r = await fetch(URL); const t = await r.text();
-    data = JSON.parse(t.substring(47, t.length-2)).table.rows;
+    const res = await fetch(DATA_URL);
+    const text = await res.text();
+    masterData = JSON.parse(text.substring(47, text.length-2)).table.rows;
 }
 
-function getLocation() {
-    navigator.geolocation.getCurrentPosition(p => {
-        userLoc = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-        alert("Location Saved!");
-    });
-}
-
-async function handleLogin() {
-    let n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value;
-    if(m === "8923357537") { // Admin
-        if(!genOtp) { 
-            genOtp="WAIT"; await fetch(WID, {method:'POST', body:JSON.stringify({type:'get_admin_otp'})});
-            document.getElementById('otp-area').style.display='block';
-            document.getElementById('u-otp-box').innerText="OTP GMAIL PAR GAYA";
-        } else { /* Admin Verify Logic */ }
-    } else { // User
-        if(!genOtp) {
-            genOtp = Math.floor(1000+Math.random()*9000);
-            document.getElementById('show-otp').innerText = genOtp;
-            document.getElementById('otp-area').style.display='block';
-        } else {
-            if(document.getElementById('i-otp').value == genOtp) {
-                currentUser = {name:n, mobile:m, address: document.getElementById('l-address').value + " Map: " + userLoc};
-                localStorage.setItem('ranaUser', JSON.stringify(currentUser));
-                location.reload();
-            }
-        }
+// LOCATION
+function askLocation() {
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(p => {
+            mapLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+            document.getElementById('loc-status').innerText = "Location Added ✅";
+            document.getElementById('loc-status').parentElement.style.background = "#e8f5e9";
+        }, () => alert("GPS ON karo bhai!"));
     }
 }
 
+// LOGIN
+function handleLogin() {
+    const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value;
+    if(!n || m.length < 10) return alert("Sahi detail bharo!");
+
+    if(!genOtp) {
+        genOtp = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('display-otp').innerText = genOtp;
+        document.getElementById('otp-box').style.display = 'block';
+        document.getElementById('login-action-btn').innerText = "Verify & Start";
+    } else {
+        if(document.getElementById('i-otp').value == genOtp) {
+            user = { name: n, mobile: m, address: a + (mapLink ? " | Map: " + mapLink : "") };
+            localStorage.setItem('ranaUser', JSON.stringify(user));
+            location.reload();
+        } else { alert("Galat OTP!"); }
+    }
+}
+
+function showPage(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id === 'view-cart') renderCart();
+}
+
+// DATA LOADING
 function loadSubs(main) {
     let subs = {}; let lastM = "";
-    data.forEach(r => {
-        let m = r.c[2]?.v || lastM; if(m) lastM = m;
-        if(lastM.toLowerCase().includes(main.toLowerCase().substring(0,3))) {
-            let b = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v;
-            if(b && !subs[b]) subs[b] = r.c[6]?.v || "";
+    masterData.forEach(r => {
+        let m = r.c[2]?.v || lastM; lastM = m;
+        if(m.toLowerCase().includes(main.toLowerCase().substring(0,3))) {
+            let s = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v;
+            if(s && !subs[s]) subs[s] = r.c[6]?.v || "";
         }
     });
-    let h = '';
-    for(let s in subs) h += `<div class="cat-card" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%;height:60px;object-fit:cover;border-radius:10px;"><br>${s}</div>`;
-    document.getElementById('list-sub').innerHTML = h; showView('view-sub');
+    let html = '';
+    for(let s in subs) html += `<div style="background:white; padding:15px; border-radius:15px; text-align:center;" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%; height:60px; object-fit:cover; border-radius:10px;"><br><b>${s}</b></div>`;
+    document.getElementById('sub-list').innerHTML = html;
+    showPage('view-sub');
 }
 
-function loadProds(main, sub) {
-    let h = ''; let lM="", lN="", lS="", lI="";
-    data.forEach(r => {
+function loadProds(cat, sub) {
+    let html = ''; let lM="", lN="", lS="", lI="";
+    masterData.forEach(r => {
         let n=r.c[1]?.v||lN; lN=n; let m=r.c[2]?.v||lM; lM=m; let s=r.c[3]?.v||lS; lS=s; let i=r.c[6]?.v||lI; lI=i;
-        let match = (main==='Masale')?(lN===sub):(lM.includes(main.substring(0,3)) && lS===sub);
-        if(match && r.c[4]?.v) h+=`<div class="item-row"><img src="${lI}"><div><b>${lN}</b><br>${r.c[4].v} - ₹${r.c[5].v}</div><button onclick="add('${lN}','${r.c[4].v}','${r.c[5].v}')" style="margin-left:auto; background:var(--yellow); border:none; padding:5px 10px; border-radius:5px;">ADD</button></div>`;
+        let match = (cat==='Masale') ? (lN===sub) : (lM.includes(cat.substring(0,3)) && lS===sub);
+        if(match && r.c[4]?.v) {
+            html += `<div class="item-card"><img src="${lI}"><div><b>${lN}</b><br><small>${r.c[4].v}</small><br><b>₹${r.c[5].v}</b></div><button class="add-btn" onclick="addToBag('${lN}','${r.c[4].v}',${r.c[5].v})">ADD</button></div>`;
+        }
     });
-    document.getElementById('list-prod').innerHTML = h; showView('view-prod');
-    document.getElementById('back-to-sub').onclick = () => loadSubs(main);
+    document.getElementById('prod-list').innerHTML = html;
+    document.getElementById('back-to-sub-btn').onclick = () => loadSubs(cat);
+    showPage('view-prod');
 }
 
-function add(n,w,p) { cart.push({n,w,p:parseInt(p)}); alert(n+" added!"); }
-
-function showView(id) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+function addToBag(n, w, p) {
+    cart.push({n, w, p});
+    let t = document.getElementById("toast");
+    t.className = "show";
+    setTimeout(() => t.className = t.className.replace("show", ""), 2000);
 }
 
-async function processOrder() {
-    let items = cart.map(x => `${x.n}(${x.w})`).join(", ");
-    let total = cart.reduce((s,x)=>s+x.p,0);
-    await fetch(WID, {method:'POST', mode:'no-cors', body:JSON.stringify({name:currentUser.name, mobile:currentUser.mobile, address:currentUser.address, details:items, total:total})});
-    alert("Order Sent!"); cart=[]; showView('view-home');
+function renderCart() {
+    let html = '', total = 0;
+    cart.forEach((item, i) => {
+        total += item.p;
+        html += `<div class="item-card"><div><b>${item.n}</b> (${item.w})<br>₹${item.p}</div><button onclick="cart.splice(${i},1);renderCart()" style="margin-left:auto; color:red; border:none; background:none;"><i class="fas fa-trash"></i></button></div>`;
+    });
+    document.getElementById('cart-items-display').innerHTML = html || "<p style='text-align:center;'>Bag khali hai!</p>";
+    document.getElementById('cart-total-display').innerText = "Total: ₹" + total;
 }
 
+async function confirmOrder() {
+    if(!cart.length) return alert("Bag khali hai!");
+    let details = cart.map(i => `${i.n}(${i.w})`).join(", ");
+    let note = document.getElementById('order-custom-note').value;
+    
+    await fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({
+        name: user.name, mobile: user.mobile, address: user.address, details: details + (note ? " | NOTE: "+note : ""), total: cart.reduce((a,b)=>a+b.p,0)
+    })});
+    
+    alert("Order Done! Rana Ji ko khabar bhej di gayi hai.");
+    cart = []; showPage('view-home');
+}
+
+function logout() { localStorage.clear(); location.reload(); }
 window.onload = init;
 </script>
 </body>
