@@ -3,96 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rana Ji Aata Chakki | VIP</title>
+    <title>Rana Ji Aata Chakki</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; --red: #e74c3c; }
+        :root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 70px; }
-        
-        /* Banner & Hero */
-        .banner-slider { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 30px 15px; text-align: center; margin: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        /* Big Category Cards */
-        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-        .cat-card { background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        .cat-card i { font-size: 40px; color: var(--yellow); margin-bottom: 10px; }
-        
-        /* Profile Flipkart Style */
-        .prof-header { background: white; padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #ddd; }
-        .prof-img { width: 60px; height: 60px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #aaa; }
-        .order-card { background: white; padding: 15px; margin: 10px; border-radius: 10px; border-left: 5px solid var(--main); position: relative; }
-        
+        .header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
+        .banner { background: linear-gradient(45deg, #1e3c72, #2a5298); color: white; padding: 25px; margin: 10px; border-radius: 15px; text-align: center; }
+        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px; }
+        .cat-card { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .item-row { background: white; padding: 10px; margin: 10px; border-radius: 10px; display: flex; align-items: center; gap: 10px; }
+        .item-row img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
         .view { display: none; animation: fadeIn 0.3s; }
         .active { display: block; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; height: 60px; border-top: 1px solid #ddd; }
-        .nav-item { flex: 1; text-align: center; padding: 10px; font-size: 12px; color: #666; cursor: pointer; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; padding: 10px; color: #666; font-size: 12px; }
         .nav-item.active { color: var(--main); font-weight: bold; }
-        
-        /* Buttons & Inputs */
-        input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .blue-btn { background: #fb641b; color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        .loc-btn { background: #e3f2fd; color: #1976d2; border: 1px solid #1976d2; padding: 10px; border-radius: 8px; margin-bottom: 15px; width: 100%; font-weight: bold; cursor: pointer; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        .btn { background: #fb641b; color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="login-screen" style="position:fixed; inset:0; background:white; z-index:10000; padding:30px;">
-    <h2 style="color:var(--main);">Namaste! 🙏</h2>
-    <p>Apni detail bharein</p>
+<div id="login-screen" style="position:fixed; inset:0; background:white; z-index:10000; padding:25px;">
+    <h2>Namaste! 🙏</h2>
     <input type="text" id="l-name" placeholder="Pura Naam">
     <input type="number" id="l-mobile" placeholder="Mobile Number">
-    <button class="loc-btn" onclick="getLocation()"><i class="fas fa-map-marker-alt"></i> <span id="loc-text">Add Live Location</span></button>
+    <button onclick="getLocation()" style="background:#e3f2fd; border:1px solid #1976d2; padding:10px; width:100%; margin-bottom:10px; border-radius:8px;">📍 Add Live Location</button>
     <input type="text" id="l-address" placeholder="Pura Address">
-    
     <div id="otp-area" style="display:none;">
-        <div id="fake-otp-box" style="background:#fff3e0; padding:10px; border-radius:8px; margin-bottom:10px;">
-            Login Code: <b id="show-otp" style="font-size:20px; color:var(--yellow);"></b>
-        </div>
+        <div id="u-otp-box" style="background:#fff3e0; padding:10px; margin-bottom:10px; border-radius:8px;">Login Code: <b id="show-otp"></b></div>
         <input type="number" id="i-otp" placeholder="Enter OTP">
     </div>
-    <button class="blue-btn" id="login-btn-main" onclick="handleLogin()">Login Karein</button>
+    <button class="btn" onclick="handleLogin()">Login Karein</button>
 </div>
 
-<div class="header" style="background:var(--main); color:white; padding:15px; text-align:center;">
-    <b>RANA JI AATA CHAKKI</b>
-</div>
+<div class="header"><b>RANA JI AATA CHAKKI</b></div>
 
 <div id="view-home" class="view active">
-    <div class="banner-slider">
-        <h2 style="margin:0;">Shuddh Chakki Fresh</h2>
-        <p style="opacity:0.9;">Ghar Jaisa Swad aur Shuddhta</p>
-    </div>
-    
+    <div class="banner"><h3>100% Shuddh Maal</h3><p>Chakki Fresh Items</p></div>
     <div class="cat-grid">
-        <div class="cat-card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn"></i><br><b>Aata</b></div>
-        <div class="cat-card" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet"></i><br><b>Oil</b></div>
-        <div class="cat-card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot"></i><br><b>Masale</b></div>
-        <div class="cat-card" onclick="window.open('tel:8923357537')"><i class="fas fa-headset"></i><br><b>Support</b></div>
+        <div class="cat-card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn" style="font-size:30px; color:var(--yellow);"></i><br>Aata</div>
+        <div class="cat-card" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet" style="font-size:30px; color:var(--yellow);"></i><br>Oil</div>
+        <div class="cat-card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot" style="font-size:30px; color:var(--yellow);"></i><br>Masale</div>
+        <div class="cat-card" onclick="window.open('tel:8923357537')"><i class="fas fa-phone" style="font-size:30px; color:var(--main);"></i><br>Support</div>
     </div>
+</div>
+
+<div id="view-sub" class="view"><button onclick="showView('view-home')" style="border:none; padding:10px;">← Back</button><div id="list-sub" class="cat-grid"></div></div>
+<div id="view-prod" class="view"><button id="back-to-sub" style="border:none; padding:10px;">← Back</button><div id="list-prod"></div></div>
+
+<div id="view-cart" class="view">
+    <h3 style="padding:15px;">Mera Bag</h3>
+    <div id="list-cart"></div>
+    <div style="padding:15px; background:white;"><button class="btn" onclick="processOrder()">Confirm Order</button></div>
 </div>
 
 <div id="view-profile" class="view">
-    <div class="prof-header">
-        <div class="prof-img"><i class="fas fa-user"></i></div>
-        <div>
-            <b id="p-name-show">User Name</b><br>
-            <small id="p-mob-show">+91 </small>
-        </div>
-    </div>
-    <div style="padding:15px;">
-        <h4>📦 Mere Orders</h4>
-        <div id="my-orders-list"></div>
-        <button class="blue-btn" style="background:#ccc; margin-top:20px;" onclick="logout()">Logout</button>
-    </div>
-</div>
-
-<div id="view-success" class="view" style="text-align:center; padding:50px 20px;">
-    <i class="fas fa-check-circle" style="font-size:70px; color:var(--accent);"></i>
-    <h2>Order Confirm! ✅</h2>
-    <p>Aapka order note kar liya gaya hai.</p>
-    <button class="blue-btn" onclick="showView('view-home')">Aur Saman Jodein</button>
+    <div style="background:white; padding:20px; border-bottom:1px solid #ddd;"><b>Account: </b><span id="p-name"></span></div>
+    <div id="my-orders" style="padding:15px;"></div>
 </div>
 
 <div class="nav">
@@ -102,92 +72,89 @@
 </div>
 
 <script>
-const MY_NUMBER = "8923357537";
-const WID = 'TERA_APPS_SCRIPT_URL_YAHAN';
-let currentUser = JSON.parse(localStorage.getItem('ranaUser'));
-let orders = JSON.parse(localStorage.getItem('ranaOrders')) || [];
-let userLoc = "";
-let genOtp = null;
+const SID = '15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx';
+const WID = 'TERA_URL_YAHAN';
+const URL = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=Products`;
+let data = [], cart = [], currentUser = JSON.parse(localStorage.getItem('ranaUser')), genOtp = null, userLoc = "";
 
 async function init() {
     if(currentUser) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('p-name-show').innerText = currentUser.name;
-        document.getElementById('p-mob-show').innerText = "+91 " + currentUser.mobile;
+        document.getElementById('login-screen').style.display='none';
+        document.getElementById('p-name').innerText = currentUser.name;
     }
+    const r = await fetch(URL); const t = await r.text();
+    data = JSON.parse(t.substring(47, t.length-2)).table.rows;
 }
 
 function getLocation() {
     navigator.geolocation.getCurrentPosition(p => {
         userLoc = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-        document.getElementById('loc-text').innerText = "Location Added ✅";
+        alert("Location Saved!");
     });
 }
 
 async function handleLogin() {
-    const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value;
-    if(!n || m.length < 10) return alert("Detail bharein!");
-
-    if(m === MY_NUMBER) { // ADMIN LOGIN
+    let n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value;
+    if(m === "8923357537") { // Admin
+        if(!genOtp) { 
+            genOtp="WAIT"; await fetch(WID, {method:'POST', body:JSON.stringify({type:'get_admin_otp'})});
+            document.getElementById('otp-area').style.display='block';
+            document.getElementById('u-otp-box').innerText="OTP GMAIL PAR GAYA";
+        } else { /* Admin Verify Logic */ }
+    } else { // User
         if(!genOtp) {
-            genOtp = "WAITING";
-            await fetch(WID, {method:'POST', body: JSON.stringify({type:'get_admin_otp'})});
-            alert("Admin detected! OTP tere GMAIL par gaya hai.");
-            document.getElementById('otp-area').style.display = 'block';
-            document.getElementById('fake-otp-box').style.display = 'none';
-        } else {
-            let res = await fetch(WID, {method:'POST', body: JSON.stringify({type:'verify_admin_otp', otp: document.getElementById('i-otp').value})});
-            // Handle Admin Success
-        }
-    } else { // USER LOGIN
-        if(!genOtp) {
-            genOtp = Math.floor(1000 + Math.random()*9000);
+            genOtp = Math.floor(1000+Math.random()*9000);
             document.getElementById('show-otp').innerText = genOtp;
-            document.getElementById('otp-area').style.display = 'block';
+            document.getElementById('otp-area').style.display='block';
         } else {
             if(document.getElementById('i-otp').value == genOtp) {
-                currentUser = {name:n, mobile:m, address: a + " | Map: " + userLoc};
+                currentUser = {name:n, mobile:m, address: document.getElementById('l-address').value + " Map: " + userLoc};
                 localStorage.setItem('ranaUser', JSON.stringify(currentUser));
                 location.reload();
-            } else { alert("Wrong OTP"); }
+            }
         }
     }
 }
+
+function loadSubs(main) {
+    let subs = {}; let lastM = "";
+    data.forEach(r => {
+        let m = r.c[2]?.v || lastM; if(m) lastM = m;
+        if(lastM.toLowerCase().includes(main.toLowerCase().substring(0,3))) {
+            let b = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v;
+            if(b && !subs[b]) subs[b] = r.c[6]?.v || "";
+        }
+    });
+    let h = '';
+    for(let s in subs) h += `<div class="cat-card" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%;height:60px;object-fit:cover;border-radius:10px;"><br>${s}</div>`;
+    document.getElementById('list-sub').innerHTML = h; showView('view-sub');
+}
+
+function loadProds(main, sub) {
+    let h = ''; let lM="", lN="", lS="", lI="";
+    data.forEach(r => {
+        let n=r.c[1]?.v||lN; lN=n; let m=r.c[2]?.v||lM; lM=m; let s=r.c[3]?.v||lS; lS=s; let i=r.c[6]?.v||lI; lI=i;
+        let match = (main==='Masale')?(lN===sub):(lM.includes(main.substring(0,3)) && lS===sub);
+        if(match && r.c[4]?.v) h+=`<div class="item-row"><img src="${lI}"><div><b>${lN}</b><br>${r.c[4].v} - ₹${r.c[5].v}</div><button onclick="add('${lN}','${r.c[4].v}','${r.c[5].v}')" style="margin-left:auto; background:var(--yellow); border:none; padding:5px 10px; border-radius:5px;">ADD</button></div>`;
+    });
+    document.getElementById('list-prod').innerHTML = h; showView('view-prod');
+    document.getElementById('back-to-sub').onclick = () => loadSubs(main);
+}
+
+function add(n,w,p) { cart.push({n,w,p:parseInt(p)}); alert(n+" added!"); }
 
 function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(id === 'view-profile') renderOrders();
-}
-
-function renderOrders() {
-    let h = '';
-    orders.forEach((o, i) => {
-        h += `<div class="order-card">
-            <b>ID: #${o.id}</b> | <small>${o.date}</small><br>
-            <p>${o.items}</p>
-            <button onclick="cancelOrder(${i})" style="color:red; border:none; background:none; font-weight:bold;">Cancel Order</button>
-        </div>`;
-    });
-    document.getElementById('my-orders-list').innerHTML = h || "No orders yet.";
-}
-
-async function cancelOrder(i) {
-    if(confirm("Order cancel karein?")) {
-        let order = orders[i];
-        orders.splice(i, 1);
-        localStorage.setItem('ranaOrders', JSON.stringify(orders));
-        renderOrders();
-        // Auto-Update Sheet Status
-        fetch(WID, {method:'POST', mode:'no-cors', body: JSON.stringify({type:'cancel_order', mobile: currentUser.mobile, name: currentUser.name})});
-    }
 }
 
 async function processOrder() {
-    // Purana order logic with History Save...
+    let items = cart.map(x => `${x.n}(${x.w})`).join(", ");
+    let total = cart.reduce((s,x)=>s+x.p,0);
+    await fetch(WID, {method:'POST', mode:'no-cors', body:JSON.stringify({name:currentUser.name, mobile:currentUser.mobile, address:currentUser.address, details:items, total:total})});
+    alert("Order Sent!"); cart=[]; showView('view-home');
 }
 
-function logout() { localStorage.clear(); location.reload(); }
 window.onload = init;
 </script>
 </body>
