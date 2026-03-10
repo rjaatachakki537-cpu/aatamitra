@@ -9,7 +9,6 @@
         :root { --main: #2874f0; --dark: #4a2c2a; --bg: #f1f3f6; --accent: #2ecc71; --red: #e74c3c; --yellow: #f4b41a; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
         
-        /* Headers */
         .header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
         .search-box { background: var(--main); padding: 10px 15px; position: sticky; top: 50px; z-index: 999; }
         #search-input { width: 100%; padding: 10px 20px; border-radius: 5px; border: none; outline: none; }
@@ -31,13 +30,13 @@
         
         .item-row { background: white; padding: 12px; margin-bottom: 10px; border-radius: 10px; display: flex; align-items: center; gap: 12px; }
         .item-row img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
-        .add-btn { background: var(--yellow); border: none; padding: 5px 15px; border-radius: 5px; font-weight: bold; }
+        .add-btn { background: var(--yellow); border: none; padding: 5px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
         /* Profile Style */
         .profile-header { background: white; padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #ddd; margin-bottom: 10px; }
         .profile-img-box { position: relative; width: 70px; height: 70px; }
         .profile-img-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #eee; }
-        .cam-btn { position: absolute; bottom: 0; right: 0; background: white; border-radius: 50%; padding: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 10px; }
+        .cam-btn { position: absolute; bottom: 0; right: 0; background: white; border-radius: 50%; padding: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 10px; cursor: pointer; }
         
         .menu-item { background: white; padding: 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
 
@@ -47,45 +46,54 @@
         .nav-item.active { color: var(--main); font-weight: bold; }
         
         input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .blue-btn { background: #fb641b; color: white; border: none; padding: 15px; width: 100%; border-radius: 2px; font-weight: bold; }
+        .blue-btn { background: #fb641b; color: white; border: none; padding: 15px; width: 100%; border-radius: 2px; font-weight: bold; cursor: pointer; }
+        .blue-btn:disabled { background: #ccc; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
-    <div class="login-top"><h1>Login</h1><p>Experience the best of Rana Ji Aata Chakki</p></div>
+    <div class="login-top"><h1>Namaste</h1><p>Login to Rana Ji Aata Chakki</p></div>
     <div class="login-form">
-        <input type="text" id="l-name" placeholder="Full Name">
+        <input type="text" id="l-name" placeholder="Pura Naam">
         <input type="number" id="l-mobile" placeholder="Mobile Number">
         <input type="text" id="l-address" placeholder="Delivery Address">
-        <div id="otp-area" style="display:none;"><p>Enter OTP: <b id="show-otp"></b></p><input type="number" id="i-otp"></div>
-        <button class="blue-btn" onclick="handleLogin()">Continue</button>
+        <div id="otp-area" style="display:none;"><p>OTP: <b id="show-otp"></b></p><input type="number" id="i-otp" placeholder="Enter OTP"></div>
+        <button class="blue-btn" id="login-btn-main" onclick="handleLogin()">Aage Badhein</button>
     </div>
 </div>
 
 <div class="header"><h3>RANA JI AATA CHAKKI</h3></div>
-<div class="search-box"><input type="text" id="search-input" placeholder="Search for Aata, Masale..." onkeyup="searchProduct()"></div>
+<div class="search-box"><input type="text" id="search-input" placeholder="Dhoondhein: Aata, Oil, Masale..." onkeyup="searchProduct()"></div>
 
 <div id="view-home" class="view active">
     <div class="grid">
         <div class="card" onclick="loadSubs('Aata')"><i class="fas fa-wheat-awn"></i><h3>Aata</h3></div>
         <div class="card" onclick="loadSubs('Mustered oil')"><i class="fas fa-droplet"></i><h3>Oil</h3></div>
         <div class="card" onclick="loadSubs('Masale')"><i class="fas fa-pepper-hot"></i><h3>Masale</h3></div>
-        <div class="card" onclick="window.open('tel:8923357537')"><i class="fas fa-headset"></i><h3>Help</h3></div>
+        <div class="card" onclick="window.open('tel:8923357537')"><i class="fas fa-headset"></i><h3>Support</h3></div>
     </div>
 </div>
 
-<div id="view-sub" class="view"><button onclick="showView('view-home')">← Back</button><div id="list-sub" class="grid" style="margin-top:15px;"></div></div>
-<div id="view-prod" class="view"><button id="back-to-sub">← Back</button><div id="list-prod" style="margin-top:15px;"></div></div>
+<div id="view-sub" class="view"><button onclick="showView('view-home')" style="border:none; background:none; font-weight:bold;">← BACK</button><div id="list-sub" class="grid" style="margin-top:15px;"></div></div>
+<div id="view-prod" class="view"><button id="back-to-sub" style="border:none; background:none; font-weight:bold;">← BACK</button><div id="list-prod" style="margin-top:15px;"></div></div>
 <div id="view-search" class="view"><div id="list-search"></div></div>
 
 <div id="view-cart" class="view">
-    <h3>My Bag</h3>
+    <h3>Mera Bag</h3>
     <div id="list-cart"></div>
-    <div style="background:white; padding:15px; border-radius:10px; margin-top:15px;">
+    <div id="cart-summary" style="background:white; padding:15px; border-radius:10px; margin-top:15px;">
+        <p><b>Total:</b> ₹<span id="total-price">0</span></p>
         <p><b>Address:</b> <span id="cart-addr"></span></p>
-        <button class="blue-btn" onclick="processOrder()">Place Order</button>
+        <button class="blue-btn" id="place-order-btn" onclick="processOrder()">Order Confirm Karein</button>
     </div>
+</div>
+
+<div id="view-success" class="view" style="text-align:center; padding-top:50px;">
+    <i class="fas fa-check-circle" style="font-size:80px; color:var(--accent);"></i>
+    <h2>Order Successful!</h2>
+    <p>Aapka order mil gaya hai. Hum jald hi call karenge.</p>
+    <button class="blue-btn" style="background:var(--main)" onclick="showView('view-home')">Wapas Shopping Karein</button>
 </div>
 
 <div id="view-profile" class="view">
@@ -98,7 +106,7 @@
         <div><h2 id="u-name-show" style="margin:0">User</h2><p id="u-mob-show" style="margin:0; color:#777"></p></div>
     </div>
     <div class="menu-item" onclick="showView('view-home')"><i class="fas fa-shopping-bag"></i> Shop Products</div>
-    <div class="menu-item" onclick="editProfile()"><i class="fas fa-map-marker-alt"></i> Edit My Address</div>
+    <div class="menu-item" onclick="editProfile()"><i class="fas fa-map-marker-alt"></i> Edit Delivery Address</div>
     <div class="menu-item" style="color:red" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
 </div>
 
@@ -128,16 +136,18 @@ async function init() {
 
 function handleLogin() {
     const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value;
-    if(!n || m.length < 10) return alert("Details bharein!");
+    if(!n || m.length < 10 || !a) return alert("Puri jankari bharein!");
     if(!generatedOTP) {
         generatedOTP = Math.floor(1000 + Math.random()*9000);
         document.getElementById('show-otp').innerText = generatedOTP;
         document.getElementById('otp-area').style.display = 'block';
+        document.getElementById('login-btn-main').innerText = "Verify OTP";
         return;
     }
-    if(document.getElementById('i-otp').value != generatedOTP) return alert("Wrong OTP!");
+    if(document.getElementById('i-otp').value != generatedOTP) return alert("Galat OTP!");
     currentUser = {name: n, mobile: m, address: a, pic: ""};
     localStorage.setItem('ranaUser', JSON.stringify(currentUser));
+    fetch(WID, {method:'POST', mode:'no-cors', body: JSON.stringify({type:'login', name: n, mobile: m, address: a})});
     location.reload();
 }
 
@@ -158,7 +168,7 @@ function loadSubs(main) {
         }
     });
     let h = '';
-    for(let s in subs) h += `<div class="card" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%;height:80px;object-fit:cover;"><br><h3>${s}</h3></div>`;
+    for(let s in subs) h += `<div class="card" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;"><br><h3>${s}</h3></div>`;
     document.getElementById('list-sub').innerHTML = h; showView('view-sub');
 }
 
@@ -170,7 +180,7 @@ function loadProds(main, sub) {
         let s = r.c[3]?.v || lS; if(s) lS=s;
         let i = r.c[6]?.v || lI; if(i) lI=i;
         if((main === 'Masale' ? lN===sub : lS===sub)) {
-            h += `<div class="item-row"><img src="${lI}"><div><b>${lN}</b><br>${r.c[4]?.v} - ₹${r.c[5]?.v}</div><button class="add-btn" onclick="add('${lN}','${r.c[4]?.v}','${r.c[5]?.v}')">ADD</button></div>`;
+            h += `<div class="item-row"><img src="${lI}"><div><b>${lN}</b><br>${r.c[4]?.v} - ₹${r.c[5]?.v}</div><button class="add-btn" onclick="add('${lN}','${r.c[4]?.v}','${r.c[5]?.v}')">ADD +</button></div>`;
         }
     });
     document.getElementById('list-prod').innerHTML = h;
@@ -178,12 +188,13 @@ function loadProds(main, sub) {
     showView('view-prod');
 }
 
-function add(n,w,p) { cart.push({n,w,p}); alert("Added!"); }
+function add(n,w,p) { cart.push({n,w,p:parseInt(p)}); alert(n + " bag mein joda gaya!"); }
 
 function renderCart() {
     let h = '', t = 0;
-    cart.forEach((x, i) => { t += parseInt(x.p); h += `<div class="item-row"><b>${x.n}</b> (${x.w}) - ₹${x.p} <button onclick="cart.splice(${i},1);renderCart();">❌</button></div>`; });
+    cart.forEach((x, i) => { t += x.p; h += `<div class="item-row"><div><b>${x.n}</b> (${x.w})<br>₹${x.p}</div><button onclick="cart.splice(${i},1);renderCart();" style="border:none; color:red; background:none; margin-left:auto;"><i class="fas fa-trash"></i></button></div>`; });
     document.getElementById('list-cart').innerHTML = h || "Bag khali hai";
+    document.getElementById('total-price').innerText = t;
 }
 
 function searchProduct() {
@@ -210,19 +221,51 @@ function uploadPic(input) {
 function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(id==='view-cart') renderCart();
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if(id === 'view-home') document.querySelectorAll('.nav-item')[0].classList.add('active');
+    if(id === 'view-cart') { renderCart(); document.querySelectorAll('.nav-item')[1].classList.add('active'); }
+    if(id === 'view-profile') document.querySelectorAll('.nav-item')[2].classList.add('active');
 }
 
 async function processOrder() {
-    let items = cart.map(x => x.n + " " + x.w).join(", ");
-    await fetch(WID, {method:'POST', mode:'no-cors', body: JSON.stringify({name:currentUser.name, mobile:currentUser.mobile, address:currentUser.address, details:items, total:0})});
-    window.open(`https://wa.me/918923357537?text=Order: ${items}`);
+    if(cart.length === 0) return alert("Pehle kuch bag mein jodein!");
+    const btn = document.getElementById('place-order-btn');
+    btn.innerText = "Processing..."; btn.disabled = true;
+
+    let items = cart.map(x => `${x.n} (${x.w})`).join(", ");
+    let total = cart.reduce((s, x) => s + x.p, 0);
+
+    try {
+        // Direct Send to Google Sheet (which triggers Mail from Apps Script)
+        await fetch(WID, {
+            method:'POST', 
+            mode:'no-cors', 
+            body: JSON.stringify({
+                name: currentUser.name, 
+                mobile: currentUser.mobile, 
+                address: currentUser.address, 
+                details: items, 
+                total: total
+            })
+        });
+        cart = [];
+        showView('view-success');
+    } catch(e) {
+        alert("Server Error! Try again.");
+    } finally {
+        btn.innerText = "Order Confirm Karein"; btn.disabled = false;
+    }
 }
 
 function logout() { localStorage.clear(); location.reload(); }
 function editProfile() {
-    let a = prompt("New Address:", currentUser.address);
-    if(a) { currentUser.address = a; localStorage.setItem('ranaUser', JSON.stringify(currentUser)); updateUI(); }
+    let a = prompt("Naya Address bharein:", currentUser.address);
+    if(a) { 
+        currentUser.address = a; 
+        localStorage.setItem('ranaUser', JSON.stringify(currentUser)); 
+        updateUI();
+        fetch(WID, {method:'POST', mode:'no-cors', body: JSON.stringify({type:'login', name: currentUser.name, mobile: currentUser.mobile, address: a})});
+    }
 }
 
 window.onload = init;
