@@ -87,7 +87,7 @@
     <h3 style="margin-bottom:15px;">Mera Shopping Bag</h3>
     <div id="cart-items-display"></div>
     <div id="cart-total-display" style="font-weight:bold; font-size:20px; padding:20px 0; text-align:right;">Total: ₹0</div>
-    <textarea id="order-custom-note" placeholder="Bhai ko kuch bolna hai? (Optional)"></textarea>
+    <textarea id="order-custom-note" placeholder="Bhai ko kuch bolna hai? (Chat Box)"></textarea>
     <button class="submit-btn" onclick="confirmOrder()">Order Confirm Karein</button>
 </div>
 
@@ -115,6 +115,7 @@
 </div>
 
 <script>
+// --- TERA NAYA URL YAHAN FIX KAR DIYA HAI ---
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTj8qSzdH2u2oKmY7hfqJU59LfX8TWo88cRtUugkJP78iXOs55WsA3kv7T-cjhZqIq/exec';
 const DATA_URL = `https://docs.google.com/spreadsheets/d/15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx/gviz/tq?tqx=out:json&sheet=Products`;
 
@@ -140,7 +141,7 @@ async function syncStatuses() {
     try {
         const res = await fetch(`${SCRIPT_URL}?mobile=${user.mobile}`);
         const liveOrders = await res.json();
-        if(liveOrders.length >= 0) {
+        if(liveOrders) {
             historyData = liveOrders;
             localStorage.setItem('ranaHistory', JSON.stringify(historyData));
             renderHistory();
@@ -159,10 +160,10 @@ function renderHistory() {
             <div style="font-weight:bold;">Total: ₹${o.total}</div>
         </div>`;
     });
-    document.getElementById('order-history').innerHTML = html || "<p style='text-align:center;'>Koi order nahi hai.</p>";
+    document.getElementById('order-history').innerHTML = html || "<p style='text-align:center;'>Bag khali hai.</p>";
 }
 
-// --- ADMIN ---
+// --- ADMIN FUNCTIONS ---
 let clickCount = 0;
 function adminCounter() { clickCount++; if(clickCount >= 5) { clickCount = 0; openAdmin(); } }
 function openAdmin() {
@@ -180,7 +181,7 @@ async function fetchAdminOrders() {
             <b>${o.name}</b> (${o.mobile})<br>
             <small>${o.address}</small><br>
             <p>${o.details} | <b>₹${o.total}</b></p>
-            <div style="margin-bottom:5px;">Status: <b>${o.status}</b></div>
+            <div style="background:#eee; padding:5px; border-radius:5px; margin-bottom:5px;">Status: <b>${o.status}</b></div>
             <button class="admin-status-btn" style="background:blue" onclick="updateLiveStatus('${o.id}', 'CONFIRMED')">Confirm</button>
             <button class="admin-status-btn" style="background:orange" onclick="updateLiveStatus('${o.id}', 'SHIPPING')">Out</button>
             <button class="admin-status-btn" style="background:green" onclick="updateLiveStatus('${o.id}', 'DELIVERED')">Done</button>
@@ -197,37 +198,34 @@ async function updateLiveStatus(id, newStatus) {
 
 async function confirmOrder() {
     if(!cart.length) return alert("Bag khali hai!");
-    let id = Math.floor(100000 + Math.random() * 900000); // 6 Digit ID
+    let id = Math.floor(100000 + Math.random() * 900000); // Unique 6 digit ID
     let details = cart.map(i => `${i.n}(${i.w})`).join(", ");
     let note = document.getElementById('order-custom-note').value;
     let total = cart.reduce((a,b)=>a+b.p,0);
     
     showToast("Order Bhej rahe hain... 🚀");
     
-    // 1. Google Sheet Update
+    // 1. Sheet Update + Mail (Backend)
     await fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({
             action: "create", id: id, name: user.name, mobile: user.mobile,
-            address: user.address + (note ? " | Note: "+note : ""), details: details, total: total
+            address: user.address + (note ? " | NOTE: "+note : ""), details: details, total: total
         })
     });
 
     // 2. WhatsApp Redirect
-    let waMsg = `*NAMASTE RANA JI* 🙏%0A%0AMera Order Details:%0A🆔 *Order ID:* #${id}%0A👤 *Naam:* ${user.name}%0A🛒 *Saman:* ${details}%0A💰 *Total:* ₹${total}%0A📍 *Pata:* ${user.address}`;
+    let waMsg = `*Namaste Rana Ji!* 🙏%0A%0AMera Order confirm karein:%0A🆔 *Order ID:* #${id}%0A🛒 *Saman:* ${details}%0A💰 *Total:* ₹${total}%0A📍 *Pata:* ${user.address}`;
     let waUrl = `https://wa.me/918923357537?text=${waMsg}`;
 
     cart = [];
     showToast("Order Success! ✅");
-    
-    setTimeout(() => { 
-        window.location.href = waUrl; 
-    }, 1000);
+    setTimeout(() => { window.location.href = waUrl; }, 1000);
 }
 
-// Helpers
+// Global functions
 function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => t.className = "", 2500); }
-function askLocation() { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { userMapLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`; document.getElementById('loc-status').innerText = "Location Saved! ✅"; }, () => alert("GPS ON karo!")); } }
+function askLocation() { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { userMapLink = `http://google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`; document.getElementById('loc-status').innerText = "Location Saved! ✅"; }, () => alert("GPS ON karo!")); } }
 function handleLogin() { const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value; if(!n || m.length < 10) return alert("Sahi detail bharo!"); if(!genOtp) { genOtp = Math.floor(1000 + Math.random() * 9000); document.getElementById('display-otp').innerText = genOtp; document.getElementById('otp-box').style.display = 'block'; } else { if(document.getElementById('i-otp').value == genOtp) { user = { name: n, mobile: m, address: a, map: userMapLink }; localStorage.setItem('ranaUser', JSON.stringify(user)); location.reload(); } else alert("Galat OTP!"); } }
 function showPage(id) { document.getElementById('admin-view').style.display = 'none'; document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id==='view-cart') renderCart(); if(id==='view-profile') syncStatuses(); }
 function loadSubs(main) { let subs = {}; let lastM = ""; masterData.forEach(r => { let m = r.c[2]?.v || lastM; lastM = m; if(m.toLowerCase().includes(main.toLowerCase().substring(0,3))) { let s = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v; if(s && !subs[s]) subs[s] = r.c[6]?.v || ""; } }); let html = ''; for(let s in subs) html += `<div style="background:white; padding:15px; border-radius:15px; text-align:center;" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%; height:60px; object-fit:cover; border-radius:10px;"><br><b>${s}</b></div>`; document.getElementById('sub-list').innerHTML = html; showPage('view-sub'); }
