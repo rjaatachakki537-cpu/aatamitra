@@ -128,3 +128,49 @@ function handleLogin() {
     if(n && m) { user = {name:n, mobile:m, email:e, address:a}; localStorage.setItem('ranaUser', JSON.stringify(user)); location.reload(); }
 }
 window.onload = init;
+// Profile Photo Update
+function updateProfilePic(input) {
+    if (input.files && input.files[0]) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('user-img-display').src = e.target.result;
+            user.profilePic = e.target.result; // Base64 mein save
+            localStorage.setItem('ranaUser', JSON.stringify(user));
+            showToast("Photo Update Ho Gayi! 📸");
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Edit Mode On/Off
+function toggleEditMode() {
+    let form = document.getElementById('edit-form');
+    if(form.style.display === 'none') {
+        form.style.display = 'block';
+        document.getElementById('e-name').value = user.name;
+        document.getElementById('e-mobile').value = user.mobile;
+        document.getElementById('e-address').value = user.address;
+    } else {
+        form.style.display = 'none';
+    }
+}
+
+// Changes Save Karein
+function saveProfileChanges() {
+    user.name = document.getElementById('e-name').value;
+    user.mobile = document.getElementById('e-mobile').value;
+    user.address = document.getElementById('e-address').value;
+    
+    localStorage.setItem('ranaUser', JSON.stringify(user));
+    
+    // Update UI
+    document.getElementById('p-name').innerText = user.name;
+    document.getElementById('p-phone').innerText = user.mobile;
+    
+    toggleEditMode();
+    showToast("Profile Update Ho Gayi! ✅");
+}
+
+// init() function mein ye lines bhi add kar dena
+// document.getElementById('p-phone').innerText = user.mobile;
+// if(user.profilePic) document.getElementById('user-img-display').src = user.profilePic;
