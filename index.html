@@ -18,9 +18,7 @@
         .s-CONFIRMED { background: #e3f2fd; color: #1976d2; }
         .s-SHIPPING { background: #f3e5f5; color: #9c27b0; animation: blink 1s infinite; }
         .s-DELIVERED { background: #e8f5e9; color: #2e7d32; }
-        .s-CANCELLED { background: #ffebee; color: #d32f2f; }
-        @keyframes blink { 50% { opacity: 0.5; } }
-        .order-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--main); box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: relative; }
+        .order-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--main); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         .item-card { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
         .item-card img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; }
         .add-btn { background: var(--yellow); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; margin-left: auto; cursor: pointer; }
@@ -33,9 +31,6 @@
         .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 999; }
         .nav-item { flex: 1; text-align: center; padding: 12px; color: #888; font-size: 12px; cursor: pointer; }
         .nav-item.active { color: var(--main); font-weight: bold; }
-        #admin-view { background: #f1f3f6; color: #333; height: 100vh; overflow-y: auto; display: none; padding: 20px; }
-        .admin-card { background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 10px; border-left: 5px solid #000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .admin-status-btn { padding: 8px; margin: 4px; border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -47,15 +42,13 @@
     <p>Apni detail bharein shuru karne ke liye</p>
     <input type="text" id="l-name" placeholder="Pura Naam">
     <input type="number" id="l-mobile" placeholder="Mobile Number">
-    <button id="gps-button" class="loc-btn" onclick="askLocation()">
-        <i class="fas fa-location-arrow"></i> <span id="loc-status">Allow Live Location</span>
-    </button>
+    <button class="loc-btn" onclick="askLocation()"><i class="fas fa-location-arrow"></i> <span id="loc-status">Allow Live Location</span></button>
     <input type="text" id="l-address" placeholder="Ghar ka Pata (Address)">
     <div id="otp-box" style="display:none;">
         <div style="background:#fff3e0; padding:10px; text-align:center;">Login Code: <b id="display-otp" style="color:var(--red);"></b></div>
         <input type="number" id="i-otp" placeholder="Upar wala code daalein">
     </div>
-    <button class="submit-btn" id="login-action-btn" onclick="handleLogin()">Aage Badhein</button>
+    <button class="submit-btn" onclick="handleLogin()">Aage Badhein</button>
 </div>
 
 <div class="header"><b onclick="adminCounter()">RANA JI AATA CHAKKI</b></div>
@@ -79,12 +72,12 @@
 </div>
 
 <div id="view-prod" class="view">
-    <button onclick="showPage('view-sub')" style="border:none; padding:10px; background:none;">← BACK</button>
+    <button id="back-to-sub-btn" onclick="showPage('view-sub')" style="border:none; padding:10px; background:none;">← BACK</button>
     <div id="prod-list" style="margin-top:10px;"></div>
 </div>
 
 <div id="view-cart" class="view">
-    <h3 style="margin-bottom:15px;">Mera Shopping Bag</h3>
+    <h3>Mera Shopping Bag</h3>
     <div id="cart-items-display"></div>
     <div id="cart-total-display" style="font-weight:bold; font-size:20px; padding:20px 0; text-align:right;">Total: ₹0</div>
     <textarea id="order-custom-note" placeholder="Bhai ko kuch bolna hai? (Chat Box)"></textarea>
@@ -94,18 +87,18 @@
 <div id="view-profile" class="view">
     <div style="background:white; padding:20px; border-radius:15px; border-left:5px solid var(--main);">
         <b id="p-name">Loading...</b><br>
-        <span id="p-mob" style="color:#666;">+91 0000000000</span><br>
-        <small id="p-addr" style="color:#888;"></small>
+        <span id="p-mob"></span><br>
+        <small id="p-addr"></small>
     </div>
-    <h4 style="margin-top:25px;">Mere Pichle Orders <button onclick="syncStatuses()" style="float:right; border:none; background:none; color:var(--main); font-size:12px;"><i class="fas fa-sync"></i> Refresh</button></h4>
+    <h4 style="margin-top:25px;">Orders <button onclick="syncStatuses()" style="float:right; border:none; background:none; color:var(--main);"><i class="fas fa-sync"></i> Refresh</button></h4>
     <div id="order-history"></div>
     <button onclick="logout()" style="width:100%; margin-top:30px; border:none; color:gray; background:none;">Logout Account</button>
 </div>
 
 <div id="admin-view" class="view">
-    <h3 style="color:var(--main);">Rana Ji Admin (Live Orders)</h3>
+    <h3>Admin Orders</h3>
     <div id="admin-orders-list"></div>
-    <button class="submit-btn" onclick="showPage('view-home')" style="margin-top:20px; background:#444;">Exit Admin</button>
+    <button class="submit-btn" onclick="showPage('view-home')" style="background:#444;">Exit Admin</button>
 </div>
 
 <div class="nav">
@@ -115,7 +108,6 @@
 </div>
 
 <script>
-// --- TERA NAYA URL YAHAN FIX KAR DIYA HAI ---
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTj8qSzdH2u2oKmY7hfqJU59LfX8TWo88cRtUugkJP78iXOs55WsA3kv7T-cjhZqIq/exec';
 const DATA_URL = `https://docs.google.com/spreadsheets/d/15PzF3vRmqbrak8_9c4D9hqQ20jxUjWpx/gviz/tq?tqx=out:json&sheet=Products`;
 
@@ -133,105 +125,67 @@ async function init() {
     const res = await fetch(DATA_URL);
     const text = await res.text();
     masterData = JSON.parse(text.substring(47, text.length-2)).table.rows;
-    renderHistory();
 }
 
-async function syncStatuses() {
-    if(!user) return;
-    try {
-        const res = await fetch(`${SCRIPT_URL}?mobile=${user.mobile}`);
-        const liveOrders = await res.json();
-        if(liveOrders) {
-            historyData = liveOrders;
-            localStorage.setItem('ranaHistory', JSON.stringify(historyData));
-            renderHistory();
-        }
-    } catch(e) { console.log("Sync Error"); }
-}
-
-function renderHistory() {
-    let html = '';
-    historyData.slice().reverse().forEach(o => {
-        let sClass = "s-" + (o.status || 'PENDING');
-        html += `<div class="order-card">
-            <span class="status-badge ${sClass}">${o.status}</span>
-            <b>ID: #${o.id}</b><br>
-            <div style="font-size:13px; margin:8px 0;">${o.details}</div>
-            <div style="font-weight:bold;">Total: ₹${o.total}</div>
-        </div>`;
-    });
-    document.getElementById('order-history').innerHTML = html || "<p style='text-align:center;'>Bag khali hai.</p>";
-}
-
-// --- ADMIN FUNCTIONS ---
-let clickCount = 0;
-function adminCounter() { clickCount++; if(clickCount >= 5) { clickCount = 0; openAdmin(); } }
-function openAdmin() {
-    let pass = prompt("Enter Rana Ji Secret Pin:");
-    if(pass === "1234") { showPage('admin-view'); fetchAdminOrders(); }
-}
-
-async function fetchAdminOrders() {
-    showToast("Loading Orders... 🔄");
-    const res = await fetch(SCRIPT_URL);
-    const allOrders = await res.json();
-    let html = '';
-    allOrders.reverse().forEach(o => {
-        html += `<div class="admin-card">
-            <b>${o.name}</b> (${o.mobile})<br>
-            <small>${o.address}</small><br>
-            <p>${o.details} | <b>₹${o.total}</b></p>
-            <div style="background:#eee; padding:5px; border-radius:5px; margin-bottom:5px;">Status: <b>${o.status}</b></div>
-            <button class="admin-status-btn" style="background:blue" onclick="updateLiveStatus('${o.id}', 'CONFIRMED')">Confirm</button>
-            <button class="admin-status-btn" style="background:orange" onclick="updateLiveStatus('${o.id}', 'SHIPPING')">Out</button>
-            <button class="admin-status-btn" style="background:green" onclick="updateLiveStatus('${o.id}', 'DELIVERED')">Done</button>
-        </div>`;
-    });
-    document.getElementById('admin-orders-list').innerHTML = html || "No orders.";
-}
-
-async function updateLiveStatus(id, newStatus) {
-    showToast("Updating... 🚀");
-    await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "updateStatus", id: id, newStatus: newStatus }) });
-    fetchAdminOrders();
-}
-
+// ==========================================
+// UPDATED CONFIRM ORDER (MAIL + WHATSAPP)
+// ==========================================
 async function confirmOrder() {
     if(!cart.length) return alert("Bag khali hai!");
-    let id = Math.floor(100000 + Math.random() * 900000); // Unique 6 digit ID
+    
+    let id = Date.now().toString().slice(-6); 
     let details = cart.map(i => `${i.n}(${i.w})`).join(", ");
     let note = document.getElementById('order-custom-note').value;
     let total = cart.reduce((a,b)=>a+b.p,0);
     
     showToast("Order Bhej rahe hain... 🚀");
     
-    // 1. Sheet Update + Mail (Backend)
-    await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            action: "create", id: id, name: user.name, mobile: user.mobile,
-            address: user.address + (note ? " | NOTE: "+note : ""), details: details, total: total
-        })
-    });
+    // 1. Send to Backend (For Sheet and Mail)
+    try {
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: "create", id: id, name: user.name, mobile: user.mobile,
+                address: user.address + (note ? " | NOTE: "+note : ""), details: details, total: total
+            })
+        });
 
-    // 2. WhatsApp Redirect
-    let waMsg = `*Namaste Rana Ji!* 🙏%0A%0AMera Order confirm karein:%0A🆔 *Order ID:* #${id}%0A🛒 *Saman:* ${details}%0A💰 *Total:* ₹${total}%0A📍 *Pata:* ${user.address}`;
-    let waUrl = `https://wa.me/918923357537?text=${waMsg}`;
+        // 2. Prepare WhatsApp Message
+        let waMessage = `*RANA JI VIP ORDER*%0A%0A` +
+                        `*ID:* #${id}%0A` +
+                        `*Naam:* ${user.name}%0A` +
+                        `*Address:* ${user.address}%0A%0A` +
+                        `*Items:* ${details}%0A` +
+                        `*Total:* ₹${total}`;
+        
+        if(note) waMessage += `%0A*Note:* ${note}`;
+        
+        // 3. WhatsApp Redirect (8923357537)
+        let waUrl = `https://wa.me/918923357537?text=${waMessage}`;
+        
+        cart = []; // Empty cart
+        showToast("Success! WhatsApp khul raha hai...");
+        
+        setTimeout(() => {
+            window.location.href = waUrl;
+        }, 1500);
 
-    cart = [];
-    showToast("Order Success! ✅");
-    setTimeout(() => { window.location.href = waUrl; }, 1000);
+    } catch (e) {
+        alert("Server error! Please try again.");
+    }
 }
 
-// Global functions
+// Supporting functions
 function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => t.className = "", 2500); }
-function askLocation() { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { userMapLink = `http://google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`; document.getElementById('loc-status').innerText = "Location Saved! ✅"; }, () => alert("GPS ON karo!")); } }
+function askLocation() { if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(p => { userMapLink = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`; document.getElementById('loc-status').innerText = "Location Saved! ✅"; }); } }
 function handleLogin() { const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, a = document.getElementById('l-address').value; if(!n || m.length < 10) return alert("Sahi detail bharo!"); if(!genOtp) { genOtp = Math.floor(1000 + Math.random() * 9000); document.getElementById('display-otp').innerText = genOtp; document.getElementById('otp-box').style.display = 'block'; } else { if(document.getElementById('i-otp').value == genOtp) { user = { name: n, mobile: m, address: a, map: userMapLink }; localStorage.setItem('ranaUser', JSON.stringify(user)); location.reload(); } else alert("Galat OTP!"); } }
-function showPage(id) { document.getElementById('admin-view').style.display = 'none'; document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id==='view-cart') renderCart(); if(id==='view-profile') syncStatuses(); }
+function showPage(id) { document.getElementById('admin-view').style.display = 'none'; document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id==='view-cart') renderCart(); }
 function loadSubs(main) { let subs = {}; let lastM = ""; masterData.forEach(r => { let m = r.c[2]?.v || lastM; lastM = m; if(m.toLowerCase().includes(main.toLowerCase().substring(0,3))) { let s = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v; if(s && !subs[s]) subs[s] = r.c[6]?.v || ""; } }); let html = ''; for(let s in subs) html += `<div style="background:white; padding:15px; border-radius:15px; text-align:center;" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%; height:60px; object-fit:cover; border-radius:10px;"><br><b>${s}</b></div>`; document.getElementById('sub-list').innerHTML = html; showPage('view-sub'); }
 function loadProds(cat, sub) { let html = ''; let lM="", lN="", lS="", lI=""; masterData.forEach(r => { let n=r.c[1]?.v||lN; lN=n; let m=r.c[2]?.v||lM; lM=m; let s=r.c[3]?.v||lS; lS=s; let i=r.c[6]?.v||lI; lI=i; let match = (cat==='Masale') ? (lN===sub) : (lM.includes(cat.substring(0,3)) && lS===sub); if(match && r.c[4]?.v) { html += `<div class="item-card"><img src="${lI}"><div><b>${lN}</b><br><small>${r.c[4].v}</small><br><b>₹${r.c[5].v}</b></div><button class="add-btn" onclick="addToBag('${lN}','${r.c[4].v}',${r.c[5].v})">ADD</button></div>`; } }); document.getElementById('prod-list').innerHTML = html; showPage('view-prod'); }
-function addToBag(n, w, p) { cart.push({n, w, p}); showToast(`${n} Bag mein juda! 🛒`); }
-function renderCart() { let html = '', total = 0; cart.forEach((item, i) => { total += item.p; html += `<div class="item-card"><div><b>${item.n}</b> (${item.w})<br>₹${item.p}</div><button onclick="cart.splice(${i},1);renderCart()" style="margin-left:auto; color:red; border:none; background:none;"><i class="fas fa-trash"></i></button></div>`; }); document.getElementById('cart-items-display').innerHTML = html || "<p style='text-align:center;'>Bag khali hai!</p>"; document.getElementById('cart-total-display').innerText = "Total: ₹" + total; }
+function addToBag(n, w, p) { cart.push({n, w, p}); showToast(`${n} juda! 🛒`); }
+function renderCart() { let html = '', total = 0; cart.forEach((item, i) => { total += item.p; html += `<div class="item-card"><div><b>${item.n}</b> (${item.w})<br>₹${item.p}</div><button onclick="cart.splice(${i},1);renderCart()" style="color:red; border:none; background:none; margin-left:auto;"><i class="fas fa-trash"></i></button></div>`; }); document.getElementById('cart-items-display').innerHTML = html || "Khali hai!"; document.getElementById('cart-total-display').innerText = "Total: ₹" + total; }
+async function syncStatuses() { if(!user) return; const res = await fetch(`${SCRIPT_URL}?mobile=${user.mobile}`); const live = await res.json(); historyData = live; localStorage.setItem('ranaHistory', JSON.stringify(live)); renderHistory(); }
+function renderHistory() { let html = ''; historyData.slice().reverse().forEach(o => { html += `<div class="order-card"><span class="status-badge s-${o.status}">${o.status}</span><b>ID: #${o.id}</b><br>${o.details}<br>Total: ₹${o.total}</div>`; }); document.getElementById('order-history').innerHTML = html; }
 function logout() { localStorage.clear(); location.reload(); }
 window.onload = init;
 </script>
