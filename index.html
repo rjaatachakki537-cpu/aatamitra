@@ -19,14 +19,15 @@
         .order-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--main); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; float: right; background: #fff3e0; color: #ff9800; text-transform: uppercase; }
         
-        /* WhatsApp Chat Button */
+        /* Buttons */
         .chat-btn { background: var(--green); color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 14px; }
+        .repeat-btn { background: var(--yellow); color: #000; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
 
         .item-card { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
         .item-card img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; background: #eee; }
         .add-btn { background: var(--yellow); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; margin-left: auto; cursor: pointer; }
 
-        #toast { visibility: hidden; min-width: 200px; background: #333; color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 10001; left: 50%; bottom: 100px; transform: translateX(-50%); }
+        #toast { visibility: hidden; min-width: 250px; background: #333; color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 10001; left: 50%; bottom: 100px; transform: translateX(-50%); font-weight: bold; }
         #toast.show { visibility: visible; animation: fadeinout 2s; }
         @keyframes fadeinout { 0%, 100% { opacity: 0; bottom: 50px; } 20%, 80% { opacity: 1; bottom: 100px; } }
 
@@ -41,7 +42,7 @@
 </head>
 <body>
 
-<div id="toast">Item Bag mein juda! 🛒</div>
+<div id="toast"></div>
 
 <div id="login-screen" class="full-screen">
     <h2 style="color:var(--main);">Namaste! 🙏</h2>
@@ -91,7 +92,7 @@
     <div id="cart-items-display"></div>
     <div id="cart-total-display" style="font-weight:bold; font-size:20px; padding:20px 0; text-align:right;">Total: ₹0</div>
     <p><b>Bhai ko kuch bolna hai? (Chat Box)</b></p>
-    <textarea id="order-custom-note" placeholder="Yahan likhein: Jaise Aata barik pisna, ya kuch aur mangwana ho..."></textarea>
+    <textarea id="order-custom-note" placeholder="Yahan likhein: Jaise Aata barik pisna..."></textarea>
     <button class="submit-btn" onclick="confirmOrder()">Order Confirm Karein</button>
 </div>
 
@@ -108,7 +109,7 @@
 
 <div class="nav">
     <div class="nav-item active" id="n-home" onclick="showPage('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" id="n-cart" onclick="showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
+    <div class="nav-item" id="n-cart" onclick="showPage('n-cart'); showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
     <div class="nav-item" id="n-profile" onclick="showPage('view-profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
 </div>
 
@@ -130,6 +131,13 @@ async function init() {
     const text = await res.text();
     masterData = JSON.parse(text.substring(47, text.length-2)).table.rows;
     renderHistory();
+}
+
+function showToast(msg) {
+    let t = document.getElementById("toast");
+    t.innerText = msg;
+    t.className = "show";
+    setTimeout(() => t.className = t.className.replace("show", ""), 2500);
 }
 
 function askLocation() {
@@ -164,7 +172,6 @@ function showPage(id) {
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     
-    // Highlight active nav
     if(id==='view-home') document.getElementById('n-home').classList.add('active');
     if(id==='view-cart') { document.getElementById('n-cart').classList.add('active'); renderCart(); }
     if(id==='view-profile') { document.getElementById('n-profile').classList.add('active'); renderHistory(); }
@@ -200,10 +207,8 @@ function loadProds(cat, sub) {
 }
 
 function addToBag(n, w, p) {
-    cart.push({n, w, p});
-    let t = document.getElementById("toast");
-    t.className = "show";
-    setTimeout(() => t.className = t.className.replace("show", ""), 2000);
+    cart.push({n, w, p, rawPrice: p});
+    showToast(`${n} Bag mein juda! 🛒`);
 }
 
 function renderCart() {
@@ -222,20 +227,29 @@ async function confirmOrder() {
     let note = document.getElementById('order-custom-note').value;
     let total = cart.reduce((a,b)=>a+b.p,0);
     
-    // Save to Local History
-    let newOrder = { id: Date.now(), items: details, note: note, total: total, date: new Date().toLocaleString(), status: 'PENDING' };
+    let rawItems = JSON.parse(JSON.stringify(cart)); // For Repeat Feature
+
+    let newOrder = { id: Date.now(), items: details, rawItems: rawItems, note: note, total: total, date: new Date().toLocaleString(), status: 'PENDING' };
     historyData.unshift(newOrder);
     localStorage.setItem('ranaHistory', JSON.stringify(historyData));
 
-    // Send to Sheet
-    await fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({
+    fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({
         name: user.name, mobile: user.mobile, address: user.address, details: details + (note ? " | NOTE: "+note : ""), total: total
     })});
     
-    alert("Order Done! ✅ Profile mein check karein.");
+    showToast("Order Done! ✅ Profile mein check karein.");
     cart = [];
     document.getElementById('order-custom-note').value = "";
-    showPage('view-profile');
+    setTimeout(() => showPage('view-profile'), 1500);
+}
+
+function repeatOrder(orderId) {
+    let oldOrder = historyData.find(o => o.id === orderId);
+    if(oldOrder && oldOrder.rawItems) {
+        cart = JSON.parse(JSON.stringify(oldOrder.rawItems));
+        showToast("Purana saaman Bag mein add ho gaya! 🛒");
+        setTimeout(() => showPage('view-cart'), 1000);
+    }
 }
 
 function renderHistory() {
@@ -250,6 +264,7 @@ function renderHistory() {
             <small>${o.date}</small><br><br>
             <div style="font-size:13px;">${o.items}</div>
             <div style="font-weight:bold; margin-top:5px;">Total: ₹${o.total}</div>
+            <button class="repeat-btn" onclick="repeatOrder(${o.id})"><i class="fas fa-redo"></i> Repeat This Order</button>
             <a href="${waUrl}" class="chat-btn"><i class="fab fa-whatsapp"></i> Rana Ji se Chat Karein</a>
         </div>`;
     });
