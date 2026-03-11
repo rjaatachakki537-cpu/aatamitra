@@ -15,11 +15,26 @@
 <div id="login-screen" class="full-screen">
     <h2 style="color:var(--main); text-align:center;">Namaste Rana Ji VIP! 🙏</h2>
     <p style="text-align:center; color:gray; margin-bottom:20px;">Apni details bhariye shuru karne ke liye</p>
+    
     <input type="text" id="l-name" placeholder="Pura Naam">
-    <input type="number" id="l-mobile" placeholder="WhatsApp Number">
+    
+    <div style="display:flex; gap:5px; margin-bottom:12px;">
+        <input type="number" id="l-mobile" placeholder="WhatsApp Number" style="flex:1; margin-bottom:0;">
+        <button onclick="sendOTP()" style="height:48px; border-radius:12px; background:var(--main); color:white; border:none; padding:0 15px; font-weight:bold; font-size:12px;">Get OTP</button>
+    </div>
+
+    <div id="otp-section" style="display:none;">
+        <input type="number" id="l-otp" placeholder="Enter 4 Digit OTP">
+    </div>
+
     <input type="email" id="l-email" placeholder="Email (Notification ke liye)">
-    <input type="text" id="l-address" placeholder="Pura Address">
-    <button class="submit-btn" onclick="handleLogin()">CHALU KAREIN</button>
+    
+    <div style="display:flex; gap:5px; align-items:center; margin-bottom:20px;">
+        <input type="text" id="l-address" placeholder="Pura Address ya Location" style="margin-bottom:0; flex:1;">
+        <button onclick="getMyLocation()" style="background:#eee; border:none; height:48px; width:48px; border-radius:12px; color:var(--main); font-size:18px;"><i class="fas fa-location-arrow"></i></button>
+    </div>
+
+    <button class="submit-btn" onclick="verifyOTP()">LOGIN KAREIN</button>
 </div>
 
 <div class="header"><b>RANA JI AATA CHAKKI</b></div>
@@ -130,6 +145,8 @@
     </div>
 </div>
 
+<script src="https://rjaatachakki537-cpu.github.io/aatamitra/auth.js"></script>
+<script src="https://rjaatachakki537-cpu.github.io/aatamitra/tracking.js"></script>
 <script src="https://rjaatachakki537-cpu.github.io/aatamitra/script.js"></script>
 
 </body>
