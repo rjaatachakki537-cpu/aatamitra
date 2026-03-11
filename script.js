@@ -302,3 +302,13 @@ function installApp() {
         alert("App pehle se install hai ya aapka browser iska sath nahi de raha. 3-dots menu check karein.");
     }
 }
+// Ye function check karega ki item Live hai ya nahi
+function addToCart(id, name, price, status) {
+    if (status && status.toLowerCase() !== 'live') {
+        alert("Maaf kijiye, ye item abhi Out of Stock hai!");
+        return;
+    }
+    // Agar Live hai toh hi purana cart wala logic chalega
+    // Yahan apna purana cart logic call karein ya naya likhein
+    processCart(id, name, price); 
+}
