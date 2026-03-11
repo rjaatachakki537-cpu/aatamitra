@@ -194,3 +194,19 @@ async function loadInventoryAdmin() {
         invDiv.innerHTML = "<p style='color:red;'>Technical error: Stock load nahi hua.</p>";
     }
 }
+async function toggleStockStatus(id, currentStatus) {
+    let newStatus = (String(currentStatus).toLowerCase() === 'live') ? 'Out' : 'Live';
+    if (confirm(`Kya aap ID: ${id} ko ${newStatus} karna chahte hain?`)) {
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "updateProductStock", id: id, newStatus: newStatus })
+            });
+            alert("Stock Update Ho Gaya!");
+            // Turant list ko refresh karo taaki button ka rang badal jaye
+            loadInventoryAdmin(); 
+        } catch (error) {
+            alert("Network error!");
+        }
+    }
+}
