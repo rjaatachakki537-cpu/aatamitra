@@ -228,3 +228,31 @@ function saveProfileChanges() {
 }
 
 window.onload = init;
+
+// --- BACK BUTTON NAVIGATION LOGIC ---
+
+// Jab bhi hum page badle, history mein ek 'state' push karo
+const originalShowPage = showPage; // Purane function ko save karo
+showPage = function(id) {
+    originalShowPage(id);
+    // History mein entry dalo taaki back button kaam kare
+    history.pushState({viewId: id}, "", "#" + id);
+};
+
+// Jab user mobile ka BACK button dabaye
+window.onpopstate = function(event) {
+    if (event.state && event.state.viewId) {
+        // Agar history mein koi view hai, toh wahan jao
+        const vId = event.state.viewId;
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(vId).classList.add('active');
+    } else {
+        // Agar bilkul shuruat mein hain, toh home par le jao
+        showPage('view-home');
+    }
+};
+
+// Shuruat mein home state set kar do
+window.addEventListener('load', () => {
+    history.replaceState({viewId: 'view-home'}, "", "#view-home");
+});
