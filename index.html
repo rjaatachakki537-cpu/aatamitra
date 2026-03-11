@@ -10,6 +10,12 @@
 </head>
 <body>
 
+<div id="splash-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+    <img src="https://rjaatachakki537-cpu.github.io/aatamitra/welcome.jpg" style="width:80%; max-width:300px; border-radius:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+    <h2 style="color:var(--main); margin-top:20px; font-family:'Poppins';">Rana Ji VIP</h2>
+    <p style="color:gray;">Shuddhata Ka Vishwas...</p>
+</div>
+
 <div id="toast"></div>
 
 <div id="login-screen" class="full-screen">
@@ -32,7 +38,7 @@
     <button class="submit-btn" onclick="verifyOTP()">LOGIN KAREIN</button>
 </div>
 
-<div class="header"><b>RANA JI AATA CHAKKI</b></div>
+<div class="header" onclick="checkSuperAdmin()"><b>RANA JI AATA CHAKKI</b></div>
 
 <div id="view-home" class="view active">
     <h3 style="margin-bottom:15px;">Hamari Services</h3>
@@ -76,9 +82,14 @@
         </div>
         <h3 id="p-name" onclick="checkAdminAccess()" style="margin:5px 0; cursor:pointer;">Rana Ji Customer</h3>
         <p id="p-phone" style="color:gray; font-size:13px; margin:0;"></p>
-        <button onclick="toggleEditMode()" style="background:none; border:1px solid var(--main); color:var(--main); padding:6px 15px; border-radius:20px; margin-top:12px; font-size:12px;"><i class="fas fa-user-edit"></i> Edit Details</button>
+        
+        <button onclick="toggleEditMode()" style="background:none; border:1px solid var(--main); color:var(--main); padding:6px 15px; border-radius:20px; margin-top:12px; font-size:12px;">
+            <i class="fas fa-user-edit"></i> Edit Details
+        </button>
 
-        <button id="delivery-admin-btn" onclick="showPage('view-delivery')" style="display:none; width:100%; background:#333; color:white; border:none; padding:12px; border-radius:12px; margin-top:20px; font-weight:bold;"><i class="fas fa-truck"></i> DELIVERY DASHBOARD</button>
+        <button id="delivery-admin-btn" onclick="showPage('view-delivery')" style="display:none; width:100%; background:#333; color:white; border:none; padding:12px; border-radius:12px; margin-top:20px; font-weight:bold;">
+            <i class="fas fa-truck"></i> DELIVERY DASHBOARD
+        </button>
 
         <div id="edit-form" style="display:none; margin-top:20px; text-align:left; border-top:1px solid #eee; padding-top:15px;">
             <input type="text" id="e-name" placeholder="Naya Naam">
@@ -99,6 +110,20 @@
     <div id="delivery-list">Loading...</div>
 </div>
 
+<div id="view-admin" class="view">
+    <button onclick="showPage('view-profile')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:15px;"><i class="fas fa-arrow-left"></i> BACK</button>
+    <h3 style="margin-bottom:15px;">Malak Dashboard 👑</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+        <div style="background:#e8f5e9; padding:15px; border-radius:12px; text-align:center; border:1px solid #c8e6c9;">
+            <b>Total Sales</b><br><h2 id="total-sale-amt" style="color:#2e7d32; margin:5px 0;">₹0</h2>
+        </div>
+        <div style="background:#fff3e0; padding:15px; border-radius:12px; text-align:center; border:1px solid #ffe0b2;">
+            <b>All Orders</b><br><h2 id="total-order-count" style="color:#ef6c00; margin:5px 0;">0</h2>
+        </div>
+    </div>
+    <div id="admin-all-orders" style="max-height:60vh; overflow-y:auto; padding-bottom:20px;"></div>
+</div>
+
 <div class="nav">
     <div class="nav-item active" onclick="showPage('view-home')"><i class="fas fa-home"></i><br>Home</div>
     <div class="nav-item" onclick="showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
@@ -107,6 +132,8 @@
 
 <script src="https://rjaatachakki537-cpu.github.io/aatamitra/auth.js"></script>
 <script src="https://rjaatachakki537-cpu.github.io/aatamitra/tracking.js"></script>
+<script src="https://rjaatachakki537-cpu.github.io/aatamitra/splash.js"></script>
+<script src="https://rjaatachakki537-cpu.github.io/aatamitra/admin.js"></script>
 <script src="https://rjaatachakki537-cpu.github.io/aatamitra/script.js"></script>
 
 </body>
