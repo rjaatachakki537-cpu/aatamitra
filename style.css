@@ -1,34 +1,258 @@
-:root { --main: #2874f0; --yellow: #f4b41a; --bg: #f1f3f6; --red: #fb641b; --green: #25D366; }
-body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; }
-.header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
-.full-screen { position: fixed; inset: 0; background: white; z-index: 10000; padding: 25px; display: flex; flex-direction: column; overflow-y: auto; }
-.view { display: none; padding: 10px; animation: fadeIn 0.3s; }
-.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* --- RANA JI VIP PREMIUM STYLES --- */
+:root { 
+    --main: #2874f0; 
+    --yellow: #f4b41a; 
+    --bg: #f1f3f6; 
+    --red: #fb641b; 
+    --green: #25D366; 
+    --dark: #333;
+    --shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 
-.order-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--main); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-.status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; float: right; text-transform: uppercase; }
+body { 
+    margin: 0; 
+    font-family: 'Poppins', sans-serif; 
+    background: var(--bg); 
+    padding-bottom: 90px; 
+    color: var(--dark);
+}
+
+/* Header & Navigation */
+.header { 
+    background: var(--main); 
+    color: white; 
+    padding: 15px; 
+    text-align: center; 
+    position: sticky; 
+    top: 0; 
+    z-index: 1000; 
+    box-shadow: var(--shadow);
+}
+
+.nav { 
+    position: fixed; 
+    bottom: 0; 
+    width: 100%; 
+    background: white; 
+    display: flex; 
+    border-top: 1px solid #ddd; 
+    z-index: 999; 
+    padding: 5px 0;
+}
+
+.nav-item { 
+    flex: 1; 
+    text-align: center; 
+    padding: 10px; 
+    color: #888; 
+    font-size: 11px; 
+    transition: 0.3s;
+}
+
+.nav-item.active { 
+    color: var(--main); 
+    font-weight: bold; 
+}
+
+.nav-item i { font-size: 20px; margin-bottom: 3px; }
+
+/* Screens & Views */
+.view { display: none; padding: 15px; animation: fadeIn 0.4s ease; }
+.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.full-screen { 
+    position: fixed; 
+    inset: 0; 
+    background: white; 
+    z-index: 10000; 
+    padding: 30px; 
+    display: flex; 
+    flex-direction: column; 
+    overflow-y: auto; 
+}
+
+/* Profile Section Styles */
+.profile-card {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.user-img-container {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 15px;
+}
+
+.user-img-container img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 0 15px rgba(40, 116, 240, 0.2);
+}
+
+.cam-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: var(--main);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+/* Help & Support Cards */
+.help-card {
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #eee;
+    transition: 0.3s;
+}
+
+.help-card:active { transform: scale(0.98); background: #f9f9f9; }
+
+.help-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-right: 15px;
+}
+
+/* Order Cards */
+.order-card { 
+    background: white; 
+    padding: 15px; 
+    border-radius: 15px; 
+    margin-bottom: 15px; 
+    border-left: 5px solid var(--main); 
+    box-shadow: var(--shadow); 
+}
+
+.status-badge { 
+    padding: 5px 12px; 
+    border-radius: 20px; 
+    font-size: 10px; 
+    font-weight: bold; 
+    float: right; 
+    text-transform: uppercase;
+}
+
 .s-PENDING { background: #fff3e0; color: #ff9800; }
 .s-DELIVERED { background: #e8f5e9; color: #2e7d32; }
 .s-CANCELLED { background: #ffebee; color: #d32f2f; }
 
-.btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-.action-btn { padding: 10px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px; border: 1px solid #ddd; }
-.btn-modify { background: #e3f2fd; color: #1976d2; border-color: #1976d2; }
-.btn-repeat { background: #fff9e6; color: #f4b41a; border-color: #f4b41a; }
-.btn-chat { background: #e8fbf0; color: #25D366; border-color: #25D366; }
-.btn-cancel { background: #fff1f1; color: #d32f2f; border-color: #d32f2f; }
+/* Form Elements */
+input, textarea { 
+    width: 100%; 
+    padding: 14px; 
+    margin-bottom: 12px; 
+    border: 1px solid #e0e0e0; 
+    border-radius: 12px; 
+    box-sizing: border-box; 
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
 
-.item-card { background: white; padding: 12px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
-.item-card img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; }
-.add-btn { background: var(--yellow); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; margin-left: auto; }
+input:focus { border-color: var(--main); }
 
-#toast { visibility: hidden; min-width: 250px; background: #333; color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 10001; left: 50%; bottom: 100px; transform: translateX(-50%); }
-#toast.show { visibility: visible; }
+.submit-btn { 
+    background: var(--red); 
+    color: white; 
+    border: none; 
+    padding: 16px; 
+    border-radius: 12px; 
+    width: 100%; 
+    font-weight: bold; 
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(251, 100, 27, 0.3);
+}
 
-input, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-.submit-btn { background: var(--red); color: white; border: none; padding: 16px; border-radius: 10px; width: 100%; font-weight: bold; }
+/* Action Buttons Grid */
+.btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 
-.nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 999; }
-.nav-item { flex: 1; text-align: center; padding: 12px; color: #888; font-size: 12px; }
-.nav-item.active { color: var(--main); font-weight: bold; }
+.action-btn { 
+    padding: 10px; 
+    border-radius: 10px; 
+    font-weight: bold; 
+    font-size: 12px; 
+    cursor: pointer; 
+    text-decoration: none; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+    border: 1px solid transparent;
+    transition: 0.2s;
+}
+
+.btn-modify { background: #e3f2fd; color: #1976d2; border-color: #bbdefb; }
+.btn-repeat { background: #fff9e6; color: #f4b41a; border-color: #ffecb3; }
+.btn-chat { background: #e8fbf0; color: #25D366; border-color: #c8e6c9; }
+.btn-cancel { background: #fff1f1; color: #d32f2f; border-color: #ffcdd2; }
+
+/* Item Cards (Home/Products) */
+.item-card { 
+    background: white; 
+    padding: 12px; 
+    margin-bottom: 12px; 
+    border-radius: 15px; 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.item-card img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; }
+
+.add-btn { 
+    background: var(--yellow); 
+    border: none; 
+    padding: 8px 16px; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    margin-left: auto; 
+    box-shadow: 0 3px 6px rgba(244, 180, 26, 0.3);
+}
+
+/* Toast Notification */
+#toast { 
+    visibility: hidden; 
+    min-width: 250px; 
+    background: #333; 
+    color: #fff; 
+    text-align: center; 
+    border-radius: 50px; 
+    padding: 14px; 
+    position: fixed; 
+    z-index: 10001; 
+    left: 50%; 
+    bottom: 100px; 
+    transform: translateX(-50%); 
+    font-size: 14px;
+}
+
+#toast.show { visibility: visible; animation: slideUp 0.3s forwards; }
+@keyframes slideUp { from { bottom: 50px; opacity: 0; } to { bottom: 100px; opacity: 1; } }
