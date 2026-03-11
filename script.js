@@ -312,3 +312,9 @@ function addToCart(id, name, price, status) {
     // Yahan apna purana cart logic call karein ya naya likhein
     processCart(id, name, price); 
 }
+// Footer Nav ke liye pakka kaam karne wala function
+function handleNavCart() {
+    showPage('view-cart');
+    // Navigation items ka color bhi theek karega
+    updateNavUI('nav-cart'); 
+}
