@@ -318,3 +318,18 @@ function handleNavCart() {
     // Navigation items ka color bhi theek karega
     updateNavUI('nav-cart'); 
 }
+function showPage(pageId) {
+    // Saari views hide karo
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    // Sirf mangi gayi view dikhao
+    document.getElementById(pageId).classList.add('active');
+
+    // Navigation buttons ka rang badlo
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        // Agar button ka text ya icon page se match kare (logic)
+        if(pageId.includes('home') && item.innerHTML.includes('Home')) item.classList.add('active');
+        if(pageId.includes('cart') && item.innerHTML.includes('Bag')) item.classList.add('active');
+        if(pageId.includes('profile') && item.innerHTML.includes('Profile')) item.classList.add('active');
+    });
+}
