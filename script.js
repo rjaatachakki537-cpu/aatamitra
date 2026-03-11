@@ -3,12 +3,12 @@ const DATA_URL = `https://docs.google.com/spreadsheets/d/15PzF3vRmqbrak8_9c4D9hq
 
 let masterData = [], cart = [], user = JSON.parse(localStorage.getItem('ranaUser')), activeModificationId = null;
 let historyData = JSON.parse(localStorage.getItem('ranaHistory')) || [];
+let adminClicks = 0;
 
 async function init() {
     if(user) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('p-name').innerText = user.name;
-        // Profile phone aur image load karna
         if(document.getElementById('p-phone')) document.getElementById('p-phone').innerText = user.mobile;
         if(user.profilePic && document.getElementById('user-img-display')) {
             document.getElementById('user-img-display').src = user.profilePic;
@@ -21,6 +21,87 @@ async function init() {
     renderHistory();
 }
 
+// NAVIGATION
+function showPage(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id==='view-cart') renderCart();
+    if(id==='view-delivery') loadDeliveryOrders();
+}
+
+// ADMIN ACCESS LOGIC (TAP 5 TIMES)
+function checkAdminAccess() {
+    adminClicks++;
+    if (adminClicks === 5) {
+        let pass = prompt("Enter Secret Admin Password:");
+        if (pass === "RANA537") {
+            document.getElementById('delivery-admin-btn').style.display = 'block';
+            showToast("Admin Mode On! 🚚");
+        } else {
+            alert("Galat Password!");
+        }
+        adminClicks = 0;
+    }
+    setTimeout(() => { adminClicks = 0; }, 3000);
+}
+
+// DELIVERY DASHBOARD LOGIC
+async function loadDeliveryOrders() {
+    const listDiv = document.getElementById('delivery-list');
+    listDiv.innerHTML = "Fetching pending orders...";
+    try {
+        const res = await fetch(SCRIPT_URL);
+        const allOrders = await res.json();
+        const pending = allOrders.filter(o => o.status === 'PENDING');
+        
+        let html = '';
+        pending.forEach(o => {
+            html += `
+            <div class="order-card" style="border-left:5px solid var(--main);">
+                <div style="display:flex; justify-content:space-between;">
+                    <b>ID: #${o.id.toString().slice(-5)}</b>
+                    <b style="color:green;">₹${o.total}</b>
+                </div>
+                <div style="margin:10px 0; font-size:13px;">
+                    <i class="fas fa-user"></i> ${o.name} <br>
+                    <i class="fas fa-box"></i> ${o.details}
+                </div>
+                <div style="margin-bottom:10px; background:#f0f0f0; padding:10px; border-radius:10px;">
+                    <small>Delivery Proof (Photo):</small>
+                    <input type="file" id="proof-${o.id}" accept="image/*" capture="camera" style="width:100%; font-size:12px;">
+                </div>
+                <div class="btn-grid">
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.address)}" target="_blank" class="action-btn" style="background:#e3f2fd; color:#1976d2;">
+                        <i class="fas fa-map-marked-alt"></i> MAPS
+                    </a>
+                    <button class="action-btn" style="background:var(--main); color:white;" onclick="verifyAndDeliver('${o.id}')">
+                        <i class="fas fa-check"></i> DONE
+                    </button>
+                </div>
+            </div>`;
+        });
+        listDiv.innerHTML = html || "No pending deliveries! 😎";
+    } catch(e) { listDiv.innerHTML = "Error loading orders."; }
+}
+
+async function verifyAndDeliver(id) {
+    const photoInput = document.getElementById(`proof-${id}`);
+    if(!photoInput.files.length) return alert("Pehle saaman ki photo kheencho! 📸");
+
+    if(!confirm("Kya order deliver ho gaya?")) return;
+    
+    showToast("Processing... ⏳");
+    try {
+        await fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            body: JSON.stringify({ action: "updateStatus", id: id, newStatus: "DELIVERED" }) 
+        });
+        showToast("Order Delivered! ✅");
+        loadDeliveryOrders();
+    } catch(e) { showToast("Error updating status"); }
+}
+
+// EXISTING FUNCTIONS (PRODS, CART, ETC.)
 function loadSubs(main) {
     let subs = {}; let lastM = "";
     masterData.forEach(r => {
@@ -49,12 +130,6 @@ function loadProds(cat, sub) {
     showPage('view-prod');
 }
 
-function showPage(id) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    if(id==='view-cart') renderCart();
-}
-
 function addToBag(n, w, p) { cart.push({n, w, p}); showToast(`${n} Bag mein!`); }
 
 function renderCart() {
@@ -67,62 +142,25 @@ function renderCart() {
     document.getElementById('cart-total-display').innerText = "Total: ₹" + total;
 }
 
-// REDIRECT TO WHATSAPP LOGIC ADDED HERE
 async function confirmOrder() {
     if(!cart.length && !activeModificationId) return alert("Bag khali hai!");
     let id = activeModificationId || Date.now().toString().slice(-6);
     let details = cart.map(i => `${i.n}(${i.w})`).join(", ");
     let note = document.getElementById('order-custom-note').value;
     let total = cart.reduce((a,b)=>a+b.p,0);
-    
     showToast("Processing Order... 🚀");
     try {
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
-            body: JSON.stringify({ 
-                action: activeModificationId ? "update" : "create", 
-                id: id, 
-                name: user.name, 
-                mobile: user.mobile, 
-                email: user.email || "", 
-                address: user.address + (note ? " | " + note : ""), 
-                details: details, 
-                total: total 
-            })
+            body: JSON.stringify({ action: activeModificationId ? "update" : "create", id: id, name: user.name, mobile: user.mobile, email: user.email || "", address: user.address + (note ? " | " + note : ""), details: details, total: total })
         });
-
         const result = await response.json();
-
         if(result.status === "success") {
             showToast("Order Success! ✅");
-            cart = [];
-            activeModificationId = null;
-            renderCart();
-            
-            // Redirect to WhatsApp after 1 second
-            setTimeout(() => {
-                window.location.href = result.whatsapp_url;
-            }, 1200);
+            cart = []; activeModificationId = null; renderCart();
+            setTimeout(() => { window.location.href = result.whatsapp_url; }, 1200);
         }
-    } catch(e) {
-        console.log(e);
-        showToast("Order Done! Kripya WhatsApp karein.");
-    }
-}
-
-function startCustomization(orderId, oldDetails) {
-    activeModificationId = orderId;
-    document.getElementById('cart-header').innerText = "Modifying Order #" + orderId.slice(-5);
-    document.getElementById('order-custom-note').value = "ADDITION TO: " + oldDetails;
-    showPage('view-home');
-    showToast("Ab saman jodein!");
-}
-
-async function cancelOrder(id) {
-    if(!confirm("Order cancel karein?")) return;
-    showToast("Cancelling... ⏳");
-    await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "updateStatus", id: id, newStatus: "CANCELLED" }) });
-    syncStatuses();
+    } catch(e) { showToast("Order ho gaya, WhatsApp manually karein."); }
 }
 
 function renderHistory() {
@@ -134,7 +172,6 @@ function renderHistory() {
             <b>ID: #${o.id.toString().slice(-6)}</b><br><small>${o.details}</small><br><b>Total: ₹${o.total}</b>
             <div class="btn-grid">
                 ${s==='PENDING' ? `<button class="action-btn btn-modify" onclick="startCustomization('${o.id}','${o.details}')">Modify</button>` : ''}
-                ${s==='PENDING' ? `<button class="action-btn btn-cancel" onclick="cancelOrder('${o.id}')">Cancel</button>` : ''}
                 <button class="action-btn btn-repeat" onclick="alert('Added to cart!')">Repeat</button>
                 <a href="https://wa.me/918923357537" class="action-btn btn-chat">WhatsApp</a>
             </div>
@@ -154,14 +191,10 @@ async function syncStatuses() {
 }
 
 function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => t.className = "", 2500); }
-
 function handleLogin() { 
     const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, e = document.getElementById('l-email').value, a = document.getElementById('l-address').value;
     if(n && m) { user = {name:n, mobile:m, email:e, address:a}; localStorage.setItem('ranaUser', JSON.stringify(user)); location.reload(); }
 }
-
-// --- PROFILE FEATURES ---
-
 function updateProfilePic(input) {
     if (input.files && input.files[0]) {
         let reader = new FileReader();
@@ -169,24 +202,20 @@ function updateProfilePic(input) {
             document.getElementById('user-img-display').src = e.target.result;
             user.profilePic = e.target.result;
             localStorage.setItem('ranaUser', JSON.stringify(user));
-            showToast("Photo Update Ho Gayi! 📸");
+            showToast("Photo Updated! 📸");
         };
         reader.readAsDataURL(input.files[0]);
     }
 }
-
 function toggleEditMode() {
     let form = document.getElementById('edit-form');
-    if(form.style.display === 'none') {
-        form.style.display = 'block';
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    if(form.style.display === 'block') {
         document.getElementById('e-name').value = user.name;
         document.getElementById('e-mobile').value = user.mobile;
         document.getElementById('e-address').value = user.address;
-    } else {
-        form.style.display = 'none';
     }
 }
-
 function saveProfileChanges() {
     user.name = document.getElementById('e-name').value;
     user.mobile = document.getElementById('e-mobile').value;
@@ -195,7 +224,7 @@ function saveProfileChanges() {
     document.getElementById('p-name').innerText = user.name;
     if(document.getElementById('p-phone')) document.getElementById('p-phone').innerText = user.mobile;
     toggleEditMode();
-    showToast("Profile Update Ho Gayi! ✅");
+    showToast("Saved! ✅");
 }
 
 window.onload = init;
