@@ -8,7 +8,7 @@ function sendOTP() {
     generatedOTP = Math.floor(1000 + Math.random() * 9000);
     
     // Asli app mein yahan SMS API lagti hai, par abhi hum alert dikhayenge
-    alert(`Rana Ji VIP Verification\nTera OTP hai: ${generatedOTP}`);
+    alert(`Rana Ji VIP Verification\nAapka OTP hai: ${generatedOTP}`);
     
     // UI badalna
     document.getElementById('otp-section').style.display = 'block';
