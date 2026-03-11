@@ -4,79 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rana Ji VIP</title>
-    <link rel="stylesheet" href="https://rjaatachakki537-cpu.github.io/aatamitra/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://rjaatachakki537-cpu.github.io/aatamitra/style.css">
 </head>
 <body>
 
 <div id="toast"></div>
 
 <div id="login-screen" class="full-screen">
-    <h2>Namaste Rana Ji VIP! 🙏</h2>
+    <h2 style="color:var(--main); text-align:center;">Namaste Rana Ji VIP! 🙏</h2>
+    <p style="text-align:center; color:gray; margin-bottom:20px;">Apni details bhariye shuru karne ke liye</p>
     <input type="text" id="l-name" placeholder="Pura Naam">
     <input type="number" id="l-mobile" placeholder="WhatsApp Number">
     <input type="email" id="l-email" placeholder="Email (Notification ke liye)">
-    <input type="text" id="l-address" placeholder="Address">
-    <button class="submit-btn" onclick="handleLogin()">Login Karein</button>
+    <input type="text" id="l-address" placeholder="Pura Address">
+    <button class="submit-btn" onclick="handleLogin()">CHALU KAREIN</button>
 </div>
 
 <div class="header"><b>RANA JI AATA CHAKKI</b></div>
 
 <div id="view-home" class="view active">
+    <h3 style="margin-bottom:15px;">Hamari Services</h3>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div style="background:raibow color; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Aata')"><b>Aata</b></div>
-        <div style="background:raibow color; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Mustered oil')"><b>Oil</b></div>
-        <div style="background:raibow color; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Masale')"><b>Masale</b></div>
+        <div class="item-card" style="flex-direction:column; padding:20px; text-align:center;" onclick="loadSubs('Aata')">
+            <i class="fas fa-wheat-awn" style="font-size:30px; color:var(--main);"></i><br><b>Aata</b>
+        </div>
+        <div class="item-card" style="flex-direction:column; padding:20px; text-align:center;" onclick="loadSubs('Mustered oil')">
+            <i class="fas fa-droplet" style="font-size:30px; color:var(--main);"></i><br><b>Oil</b>
+        </div>
+        <div class="item-card" style="flex-direction:column; padding:20px; text-align:center;" onclick="loadSubs('Masale')">
+            <i class="fas fa-mortar-pestle" style="font-size:30px; color:var(--main);"></i><br><b>Masale</b>
+        </div>
     </div>
 </div>
 
-<div id="view-sub" class="view"><button onclick="showPage('view-home')">BACK</button><div id="sub-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:10px;"></div></div>
-<div id="view-prod" class="view"><button onclick="showPage('view-sub')">BACK</button><div id="prod-list"></div></div>
+<div id="view-sub" class="view">
+    <button onclick="showPage('view-home')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:10px;">
+        <i class="fas fa-arrow-left"></i> BACK
+    </button>
+    <div id="sub-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;"></div>
+</div>
+
+<div id="view-prod" class="view">
+    <button onclick="showPage('view-sub')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:10px;">
+        <i class="fas fa-arrow-left"></i> BACK
+    </button>
+    <div id="prod-list"></div>
+</div>
 
 <div id="view-cart" class="view">
-    <h3 id="cart-header">My Shopping Bag</h3>
+    <h3 id="cart-header"><i class="fas fa-shopping-bag"></i> Mera Bag</h3>
     <div id="cart-items-display"></div>
-    <div id="cart-total-display" style="font-weight:bold; text-align:right;">Total amount: ₹0</div>
-    <textarea id="order-custom-note" placeholder="Extra note..."></textarea>
-    <button class="submit-btn" id="confirm-btn-text" onclick="confirmOrder()">Place Order</button>
+    <div id="cart-total-display" style="font-size:18px; font-weight:bold; text-align:right; margin:15px 0;">Total: ₹0</div>
+    <textarea id="order-custom-note" placeholder="Rana Ji ke liye koi extra message?"></textarea>
+    <button class="submit-btn" onclick="confirmOrder()">ORDER CONFIRM KAREIN</button>
 </div>
 
 <div id="view-profile" class="view">
-    <div style="background:green+yellow; padding:20px; border-radius:15px; text-align:center; position:relative;">
-        <div style="position:relative; width:100px; height:100px; margin:0 auto 10px;">
-            <img id="user-img-display" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid var(--main);">
-            <label for="img-input" style="position:absolute; bottom:0; right:0; background:var(--main); color:blue; padding:5px; border-radius:50%; cursor:pointer; font-size:12px;">
+    <div class="profile-card">
+        <div class="user-img-container">
+            <img id="user-img-display" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+            <label for="img-input" class="cam-icon">
                 <i class="fas fa-camera"></i>
             </label>
             <input type="file" id="img-input" accept="image/*" style="display:none;" onchange="updateProfilePic(this)">
         </div>
-
-        <h3 id="p-name" style="margin:5px 0;">Loading...</h3>
-        <p id="p-phone" style="color:gray; margin:0; font-size:13px;"></p>
+        <h3 id="p-name" style="margin:5px 0;">Rana Ji Customer</h3>
+        <p id="p-phone" style="color:gray; font-size:13px; margin:0;"></p>
         
-        <button onclick="toggleEditMode()" style="background:none; border:1px solid var(--main); color:var(--main); padding:5px 15px; border-radius:20px; margin-top:10px; font-size:12px;">
-            <i class="fas fa-edit"></i> Edit Details
+        <button onclick="toggleEditMode()" style="background:none; border:1px solid var(--main); color:var(--main); padding:6px 15px; border-radius:20px; margin-top:12px; font-size:12px;">
+            <i class="fas fa-user-edit"></i> Edit Details
         </button>
 
         <div id="edit-form" style="display:none; margin-top:20px; text-align:left; border-top:1px solid #eee; padding-top:15px;">
             <input type="text" id="e-name" placeholder="Naya Naam">
-            <input type="number" id="e-mobile" placeholder="Naya Mobile">
+            <input type="number" id="e-mobile" placeholder="Naya Number">
             <textarea id="e-address" placeholder="Naya Address"></textarea>
-            <button class="submit-btn" onclick="saveProfileChanges()" style="padding:10px;">Save Change Karein</button>
+            <button class="submit-btn" onclick="saveProfileChanges()" style="padding:10px;">SAVE CHANGES</button>
         </div>
     </div>
 
-    <h4 style="margin-top:20px;">Mere Purane Orders</h4>
+    <h4 style="margin:20px 0 10px;"><i class="fas fa-headset"></i> Help & Support</h4>
+    
+    <div class="help-card">
+        <div class="help-icon" style="background:#e3f2fd; color:#1976d2;"><i class="fas fa-phone-alt"></i></div>
+        <div style="flex:1;">
+            <b>Contact Us</b><br><small>Direct call karein</small>
+        </div>
+        <a href="tel:8923357537" class="action-btn btn-modify">CALL</a>
+    </div>
+
+    <div class="help-card" style="flex-direction:column; align-items:stretch;">
+        <div style="display:flex; align-items:center; margin-bottom:10px;">
+            <div class="help-icon" style="background:#fff9e6; color:#f4b41a;"><i class="fas fa-comments"></i></div>
+            <div style="flex:1;"><b>Feedback</b><br><small>Hume batayein kaisa laga</small></div>
+        </div>
+        <div class="btn-grid">
+            <a href="mailto:ranajiaatachakki@gmail.com?subject=Feedback" class="action-btn"><i class="fas fa-envelope"></i> MAIL</a>
+            <a href="https://wa.me/918923357537?text=Hi Rana Ji," class="action-btn btn-chat"><i class="fab fa-whatsapp"></i> WHATSAPP</a>
+        </div>
+    </div>
+
+    <div class="help-card">
+        <div class="help-icon" style="background:#ffebee; color:#d32f2f;"><i class="fas fa-life-ring"></i></div>
+        <div style="flex:1;"><b>Support</b><br><small>Technical dikkat?</small></div>
+        <a href="mailto:ranajiaatachakki@gmail.com?subject=Technical Support" class="action-btn" style="background:#333; color:white;">WRITE MAIL</a>
+    </div>
+
+    <h4 style="margin-top:25px;"><i class="fas fa-history"></i> Purane Orders</h4>
     <div id="order-history"></div>
-</div>
-    <b id="p-name">Loading...</b>
-    <div id="order-history"></div>
+    
+    <button onclick="localStorage.clear(); location.reload();" style="width:100%; background:none; color:red; border:none; margin-top:30px; font-size:12px; text-decoration:underline;">LOGOUT KAREIN</button>
 </div>
 
 <div class="nav">
-    <div class="nav-item active" onclick="showPage('view-home')">Home</div>
-    <div class="nav-item" onclick="showPage('view-cart')">Bag</div>
-    <div class="nav-item" onclick="showPage('view-profile')">Profile</div>
+    <div class="nav-item active" onclick="showPage('view-home')">
+        <i class="fas fa-home"></i><br>Home
+    </div>
+    <div class="nav-item" onclick="showPage('view-cart')">
+        <i class="fas fa-shopping-basket"></i><br>Bag
+    </div>
+    <div class="nav-item" onclick="showPage('view-profile')">
+        <i class="fas fa-user-circle"></i><br>Profile
+    </div>
 </div>
 
 <script src="https://rjaatachakki537-cpu.github.io/aatamitra/script.js"></script>
