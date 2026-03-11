@@ -7,8 +7,8 @@ function checkSuperAdmin() {
         let pass = prompt("Namaste Rana Ji! Secret Password Daalein:");
         if (pass === "BOSS537") {
             showPage('view-admin');
-            loadAdminData(); // Orders load karne ke liye
-            loadInventoryAdmin(); // Stock control load karne ke liye (Naya)
+            loadAdminData(); 
+            loadInventoryAdmin(); 
         } else {
             alert("Galat Password!");
         }
@@ -51,31 +51,33 @@ async function loadAdminData() {
     }
 }
 
-// --- NAYA DHUANDHAAR FEATURE: STOCK CONTROL ---
+// --- STOCK CONTROL WITH WEIGHT DISPLAY ---
 
 async function loadInventoryAdmin() {
-    // Ye tab dikhega jab hum index.html mein ye div banayenge (jo maine pehle bataya tha)
-    const invDiv = document.getElementById('admin-all-orders'); // Hum orders ke niche hi list jodd rahe hain
+    const invDiv = document.getElementById('admin-all-orders'); 
     let invHtml = `<div style="margin-top:25px; padding:15px; background:#fff; border:1px dashed var(--main); border-radius:12px;">
                     <h4 style="margin-bottom:10px;"><i class="fas fa-boxes-stacked"></i> Stock Control (ON/OFF)</h4>
                     <p style="font-size:11px; color:gray; margin-bottom:10px;">Yahan se item band ya chalu karein:</p>`;
 
     try {
-        // Maan lo 'productsData' aapke global script mein save hai jo sheet se aata hai
-        // Agar nahi hai, toh hum fetch kar lenge
         const res = await fetch(SCRIPT_URL + "?action=getProducts"); 
         const products = await res.json();
 
         products.forEach(item => {
             let isLive = (item.Status === 'Live');
             let btnColor = isLive ? '#2ecc71' : '#e74c3c';
-            let btnText = isLive ? 'LIVE (ON)' : 'OUT (OFF)';
+            let btnText = isLive ? 'LIVE' : 'OUT';
+            
+            // Weight/Unit dikhane ke liye (Maan lo sheet mein column ka naam 'Unit' hai)
+            let weightInfo = item.Unit ? `<span style="color:#d35400; font-weight:bold;"> - ${item.Unit}</span>` : '';
 
             invHtml += `
             <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">
-                <span style="font-size:13px;">${item.Name}</span>
+                <div style="flex:1; padding-right:10px;">
+                    <span style="font-size:13px; font-weight:600;">${item.Name}</span>${weightInfo}
+                </div>
                 <button onclick="toggleStockStatus('${item.ID}', '${item.Status}')" 
-                        style="background:${btnColor}; color:white; border:none; padding:5px 10px; border-radius:20px; font-size:11px; font-weight:bold; cursor:pointer;">
+                        style="background:${btnColor}; color:white; border:none; padding:6px 12px; border-radius:20px; font-size:10px; font-weight:bold; cursor:pointer; min-width:65px;">
                     ${btnText}
                 </button>
             </div>`;
@@ -91,19 +93,27 @@ async function loadInventoryAdmin() {
 
 async function toggleStockStatus(id, currentStatus) {
     let newStatus = (currentStatus === 'Live') ? 'Out' : 'Live';
-    let confirmCheck = confirm(`Kya aap ${id} ko ${newStatus} karna chahte hain?`);
+    let confirmCheck = confirm(`Kya aap ID: ${id} ko ${newStatus} karna chahte hain?`);
     
     if (confirmCheck) {
         try {
-            // Google Script ko message bhejo update karne ke liye
-            const response = await fetch(SCRIPT_URL + `?action=updateStatus&id=${id}&status=${newStatus}`);
-            const result = await response.json();
-            if (result.success) {
-                alert("Status update ho gaya!");
-                loadAdminData(); // Refresh list
-            }
+            // DHYAN DEIN: Yahan humne POST request ka use kiya hai jo Apps Script ke doPost mein updateProductStock ko trigger karega
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Kyunki hum redirection handles nahi kar rahe
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: "updateProductStock",
+                    id: id,
+                    newStatus: newStatus
+                })
+            });
+            
+            alert("Request bhej di gayi hai! Update hone mein 2-3 second lag sakte hain.");
+            setTimeout(() => { location.reload(); }, 1000); // Page refresh taaki naya status dikhe
+
         } catch (error) {
-            alert("Error: Sheet update nahi ho payi.");
+            alert("Error: Connection mein dikkat hai.");
         }
     }
 }
