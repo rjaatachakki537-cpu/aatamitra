@@ -8,6 +8,11 @@ async function init() {
     if(user) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('p-name').innerText = user.name;
+        // Profile phone aur image load karna
+        if(document.getElementById('p-phone')) document.getElementById('p-phone').innerText = user.mobile;
+        if(user.profilePic && document.getElementById('user-img-display')) {
+            document.getElementById('user-img-display').src = user.profilePic;
+        }
         syncStatuses();
     }
     const res = await fetch(DATA_URL);
@@ -62,6 +67,7 @@ function renderCart() {
     document.getElementById('cart-total-display').innerText = "Total: ₹" + total;
 }
 
+// REDIRECT TO WHATSAPP LOGIC ADDED HERE
 async function confirmOrder() {
     if(!cart.length && !activeModificationId) return alert("Bag khali hai!");
     let id = activeModificationId || Date.now().toString().slice(-6);
@@ -69,14 +75,39 @@ async function confirmOrder() {
     let note = document.getElementById('order-custom-note').value;
     let total = cart.reduce((a,b)=>a+b.p,0);
     
-    showToast("Processing... 🚀");
-    await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: activeModificationId ? "update" : "create", id: id, name: user.name, mobile: user.mobile, email: user.email || "", address: user.address + (note ? " | " + note : ""), details: details, total: total })
-    });
-    activeModificationId = null; cart = [];
-    showToast("Order Success! ✅");
-    setTimeout(() => { showPage('view-profile'); syncStatuses(); }, 1000);
+    showToast("Processing Order... 🚀");
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ 
+                action: activeModificationId ? "update" : "create", 
+                id: id, 
+                name: user.name, 
+                mobile: user.mobile, 
+                email: user.email || "", 
+                address: user.address + (note ? " | " + note : ""), 
+                details: details, 
+                total: total 
+            })
+        });
+
+        const result = await response.json();
+
+        if(result.status === "success") {
+            showToast("Order Success! ✅");
+            cart = [];
+            activeModificationId = null;
+            renderCart();
+            
+            // Redirect to WhatsApp after 1 second
+            setTimeout(() => {
+                window.location.href = result.whatsapp_url;
+            }, 1200);
+        }
+    } catch(e) {
+        console.log(e);
+        showToast("Order Done! Kripya WhatsApp karein.");
+    }
 }
 
 function startCustomization(orderId, oldDetails) {
@@ -123,18 +154,20 @@ async function syncStatuses() {
 }
 
 function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => t.className = "", 2500); }
+
 function handleLogin() { 
     const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, e = document.getElementById('l-email').value, a = document.getElementById('l-address').value;
     if(n && m) { user = {name:n, mobile:m, email:e, address:a}; localStorage.setItem('ranaUser', JSON.stringify(user)); location.reload(); }
 }
-window.onload = init;
-// Profile Photo Update
+
+// --- PROFILE FEATURES ---
+
 function updateProfilePic(input) {
     if (input.files && input.files[0]) {
         let reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('user-img-display').src = e.target.result;
-            user.profilePic = e.target.result; // Base64 mein save
+            user.profilePic = e.target.result;
             localStorage.setItem('ranaUser', JSON.stringify(user));
             showToast("Photo Update Ho Gayi! 📸");
         };
@@ -142,7 +175,6 @@ function updateProfilePic(input) {
     }
 }
 
-// Edit Mode On/Off
 function toggleEditMode() {
     let form = document.getElementById('edit-form');
     if(form.style.display === 'none') {
@@ -155,22 +187,15 @@ function toggleEditMode() {
     }
 }
 
-// Changes Save Karein
 function saveProfileChanges() {
     user.name = document.getElementById('e-name').value;
     user.mobile = document.getElementById('e-mobile').value;
     user.address = document.getElementById('e-address').value;
-    
     localStorage.setItem('ranaUser', JSON.stringify(user));
-    
-    // Update UI
     document.getElementById('p-name').innerText = user.name;
-    document.getElementById('p-phone').innerText = user.mobile;
-    
+    if(document.getElementById('p-phone')) document.getElementById('p-phone').innerText = user.mobile;
     toggleEditMode();
     showToast("Profile Update Ho Gayi! ✅");
 }
 
-// init() function mein ye lines bhi add kar dena
-// document.getElementById('p-phone').innerText = user.mobile;
-// if(user.profilePic) document.getElementById('user-img-display').src = user.profilePic;
+window.onload = init;
