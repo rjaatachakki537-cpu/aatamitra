@@ -24,9 +24,9 @@
 
 <div id="view-home" class="view active">
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Aata')"><b>Aata</b></div>
-        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Mustered oil')"><b>Oil</b></div>
-        <div style="background:white; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Masale')"><b>Masale</b></div>
+        <div style="background:raibow color; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Aata')"><b>Aata</b></div>
+        <div style="background:raibow color; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Mustered oil')"><b>Oil</b></div>
+        <div style="background:raibow color; padding:20px; border-radius:15px; text-align:center;" onclick="loadSubs('Masale')"><b>Masale</b></div>
     </div>
 </div>
 
@@ -34,18 +34,18 @@
 <div id="view-prod" class="view"><button onclick="showPage('view-sub')">BACK</button><div id="prod-list"></div></div>
 
 <div id="view-cart" class="view">
-    <h3 id="cart-header">Mera Shopping Bag</h3>
+    <h3 id="cart-header">My Shopping Bag</h3>
     <div id="cart-items-display"></div>
-    <div id="cart-total-display" style="font-weight:bold; text-align:right;">Total: ₹0</div>
+    <div id="cart-total-display" style="font-weight:bold; text-align:right;">Total amount: ₹0</div>
     <textarea id="order-custom-note" placeholder="Extra note..."></textarea>
-    <button class="submit-btn" id="confirm-btn-text" onclick="confirmOrder()">Confirm Order</button>
+    <button class="submit-btn" id="confirm-btn-text" onclick="confirmOrder()">Place Order</button>
 </div>
 
 <div id="view-profile" class="view">
-    <div style="background:white; padding:20px; border-radius:15px; text-align:center; position:relative;">
+    <div style="background:green+yellow; padding:20px; border-radius:15px; text-align:center; position:relative;">
         <div style="position:relative; width:100px; height:100px; margin:0 auto 10px;">
             <img id="user-img-display" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid var(--main);">
-            <label for="img-input" style="position:absolute; bottom:0; right:0; background:var(--main); color:white; padding:5px; border-radius:50%; cursor:pointer; font-size:12px;">
+            <label for="img-input" style="position:absolute; bottom:0; right:0; background:var(--main); color:blue; padding:5px; border-radius:50%; cursor:pointer; font-size:12px;">
                 <i class="fas fa-camera"></i>
             </label>
             <input type="file" id="img-input" accept="image/*" style="display:none;" onchange="updateProfilePic(this)">
