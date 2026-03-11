@@ -17,23 +17,18 @@
     <p style="text-align:center; color:gray; margin-bottom:20px;">Apni details bhariye shuru karne ke liye</p>
     
     <input type="text" id="l-name" placeholder="Pura Naam">
-    
     <div style="display:flex; gap:5px; margin-bottom:12px;">
         <input type="number" id="l-mobile" placeholder="WhatsApp Number" style="flex:1; margin-bottom:0;">
         <button onclick="sendOTP()" style="height:48px; border-radius:12px; background:var(--main); color:white; border:none; padding:0 15px; font-weight:bold; font-size:12px;">Get OTP</button>
     </div>
-
     <div id="otp-section" style="display:none;">
         <input type="number" id="l-otp" placeholder="Enter 4 Digit OTP">
     </div>
-
     <input type="email" id="l-email" placeholder="Email (Notification ke liye)">
-    
     <div style="display:flex; gap:5px; align-items:center; margin-bottom:20px;">
         <input type="text" id="l-address" placeholder="Pura Address ya Location" style="margin-bottom:0; flex:1;">
         <button onclick="getMyLocation()" style="background:#eee; border:none; height:48px; width:48px; border-radius:12px; color:var(--main); font-size:18px;"><i class="fas fa-location-arrow"></i></button>
     </div>
-
     <button class="submit-btn" onclick="verifyOTP()">LOGIN KAREIN</button>
 </div>
 
@@ -55,16 +50,12 @@
 </div>
 
 <div id="view-sub" class="view">
-    <button onclick="showPage('view-home')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:10px;">
-        <i class="fas fa-arrow-left"></i> BACK
-    </button>
+    <button onclick="showPage('view-home')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:10px;"><i class="fas fa-arrow-left"></i> BACK</button>
     <div id="sub-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;"></div>
 </div>
 
 <div id="view-prod" class="view">
-    <button onclick="showPage('view-sub')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:10px;">
-        <i class="fas fa-arrow-left"></i> BACK
-    </button>
+    <button onclick="showPage('view-sub')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:10px;"><i class="fas fa-arrow-left"></i> BACK</button>
     <div id="prod-list"></div>
 </div>
 
@@ -80,17 +71,14 @@
     <div class="profile-card">
         <div class="user-img-container">
             <img id="user-img-display" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
-            <label for="img-input" class="cam-icon">
-                <i class="fas fa-camera"></i>
-            </label>
+            <label for="img-input" class="cam-icon"><i class="fas fa-camera"></i></label>
             <input type="file" id="img-input" accept="image/*" style="display:none;" onchange="updateProfilePic(this)">
         </div>
-        <h3 id="p-name" style="margin:5px 0;">Rana Ji Customer</h3>
+        <h3 id="p-name" onclick="checkAdminAccess()" style="margin:5px 0; cursor:pointer;">Rana Ji Customer</h3>
         <p id="p-phone" style="color:gray; font-size:13px; margin:0;"></p>
-        
-        <button onclick="toggleEditMode()" style="background:none; border:1px solid var(--main); color:var(--main); padding:6px 15px; border-radius:20px; margin-top:12px; font-size:12px;">
-            <i class="fas fa-user-edit"></i> Edit Details
-        </button>
+        <button onclick="toggleEditMode()" style="background:none; border:1px solid var(--main); color:var(--main); padding:6px 15px; border-radius:20px; margin-top:12px; font-size:12px;"><i class="fas fa-user-edit"></i> Edit Details</button>
+
+        <button id="delivery-admin-btn" onclick="showPage('view-delivery')" style="display:none; width:100%; background:#333; color:white; border:none; padding:12px; border-radius:12px; margin-top:20px; font-weight:bold;"><i class="fas fa-truck"></i> DELIVERY DASHBOARD</button>
 
         <div id="edit-form" style="display:none; margin-top:20px; text-align:left; border-top:1px solid #eee; padding-top:15px;">
             <input type="text" id="e-name" placeholder="Naya Naam">
@@ -100,49 +88,21 @@
         </div>
     </div>
 
-    <h4 style="margin:20px 0 10px;"><i class="fas fa-headset"></i> Help & Support</h4>
-    
-    <div class="help-card">
-        <div class="help-icon" style="background:#e3f2fd; color:#1976d2;"><i class="fas fa-phone-alt"></i></div>
-        <div style="flex:1;">
-            <b>Contact Us</b><br><small>Direct call karein</small>
-        </div>
-        <a href="tel:8923357537" class="action-btn btn-modify">CALL</a>
-    </div>
-
-    <div class="help-card" style="flex-direction:column; align-items:stretch;">
-        <div style="display:flex; align-items:center; margin-bottom:10px;">
-            <div class="help-icon" style="background:#fff9e6; color:#f4b41a;"><i class="fas fa-comments"></i></div>
-            <div style="flex:1;"><b>Feedback</b><br><small>Hume batayein kaisa laga</small></div>
-        </div>
-        <div class="btn-grid">
-            <a href="mailto:ranajiaatachakki@gmail.com?subject=Feedback" class="action-btn"><i class="fas fa-envelope"></i> MAIL</a>
-            <a href="https://wa.me/918923357537?text=Hi Rana Ji," class="action-btn btn-chat"><i class="fab fa-whatsapp"></i> WHATSAPP</a>
-        </div>
-    </div>
-
-    <div class="help-card">
-        <div class="help-icon" style="background:#ffebee; color:#d32f2f;"><i class="fas fa-life-ring"></i></div>
-        <div style="flex:1;"><b>Support</b><br><small>Technical dikkat?</small></div>
-        <a href="mailto:ranajiaatachakki@gmail.com?subject=Technical Support" class="action-btn" style="background:#333; color:white;">WRITE MAIL</a>
-    </div>
-
     <h4 style="margin-top:25px;"><i class="fas fa-history"></i> Purane Orders</h4>
     <div id="order-history"></div>
-    
     <button onclick="localStorage.clear(); location.reload();" style="width:100%; background:none; color:red; border:none; margin-top:30px; font-size:12px; text-decoration:underline;">LOGOUT KAREIN</button>
 </div>
 
+<div id="view-delivery" class="view">
+    <button onclick="showPage('view-profile')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:15px;"><i class="fas fa-arrow-left"></i> BACK</button>
+    <h3 style="margin-bottom:15px;">Pending Deliveries 📦</h3>
+    <div id="delivery-list">Loading...</div>
+</div>
+
 <div class="nav">
-    <div class="nav-item active" onclick="showPage('view-home')">
-        <i class="fas fa-home"></i><br>Home
-    </div>
-    <div class="nav-item" onclick="showPage('view-cart')">
-        <i class="fas fa-shopping-basket"></i><br>Bag
-    </div>
-    <div class="nav-item" onclick="showPage('view-profile')">
-        <i class="fas fa-user-circle"></i><br>Profile
-    </div>
+    <div class="nav-item active" onclick="showPage('view-home')"><i class="fas fa-home"></i><br>Home</div>
+    <div class="nav-item" onclick="showPage('view-cart')"><i class="fas fa-shopping-basket"></i><br>Bag</div>
+    <div class="nav-item" onclick="showPage('view-profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
 </div>
 
 <script src="https://rjaatachakki537-cpu.github.io/aatamitra/auth.js"></script>
