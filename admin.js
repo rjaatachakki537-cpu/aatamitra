@@ -150,3 +150,47 @@ async function toggleStockStatus(id, currentStatus) {
         } catch (error) { alert("Network error!"); }
     }
 }
+// admin.js ke sabse niche ye jodd dein
+async function loadInventoryAdmin() {
+    const invDiv = document.getElementById('admin-inventory-list'); 
+    if(!invDiv) return; // Agar div na mile toh error na aaye
+    
+    invDiv.innerHTML = "<p style='text-align:center;'>Maal ki list load ho rahi hai...</p>";
+
+    try {
+        const res = await fetch(SCRIPT_URL + "?action=getProducts"); 
+        const products = await res.json();
+
+        let invHtml = '<h4 style="margin-bottom:15px;"><i class="fas fa-boxes-stacked"></i> Stock Control</h4>';
+
+        if (products && products.length > 0) {
+            products.forEach(item => {
+                let isLive = (String(item.Status).toLowerCase() === 'live');
+                let btnColor = isLive ? '#2ecc71' : '#e74c3c';
+                let btnText = isLive ? 'LIVE' : 'OUT';
+                
+                // "Net weight" dhyan se likha hai, jo teri sheet mein hai
+                let weight = item["Net weight"] || item.Unit || "No Data";
+
+                invHtml += `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid #eee;">
+                    <div style="flex:1;">
+                        <span style="font-size:14px; font-weight:600;">${item.Name}</span> 
+                        <br><small style="color:var(--main); font-weight:bold; background:#fff3e0; padding:2px 8px; border-radius:4px; display:inline-block; margin-top:4px;">
+                            <i class="fas fa-weight-hanging" style="font-size:10px;"></i> ${weight}
+                        </small>
+                    </div>
+                    <button onclick="toggleStockStatus('${item.ID}', '${item.Status}')" 
+                            style="background:${btnColor}; color:white; border:none; padding:8px 15px; border-radius:20px; font-size:10px; font-weight:bold; cursor:pointer;">
+                        ${btnText}
+                    </button>
+                </div>`;
+            });
+            invDiv.innerHTML = invHtml;
+        } else {
+            invDiv.innerHTML = "<p>Products nahi mile. Sheet check karein.</p>";
+        }
+    } catch(e) {
+        invDiv.innerHTML = "<p style='color:red;'>Technical error: Stock load nahi hua.</p>";
+    }
+}
