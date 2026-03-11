@@ -256,3 +256,49 @@ window.onpopstate = function(event) {
 window.addEventListener('load', () => {
     history.replaceState({viewId: 'view-home'}, "", "#view-home");
 });
+// Sidebar Toggle Logic
+function toggleMenu() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    if(sidebar.style.left === '0px') {
+        sidebar.style.left = '-280px';
+        overlay.style.display = 'none';
+    } else {
+        sidebar.style.left = '0px';
+        overlay.style.display = 'block';
+    }
+}
+
+// Search Logic
+function searchProducts() {
+    let input = document.getElementById('searchInput').value.toLowerCase();
+    let products = document.querySelectorAll('.product-card'); // Check karein aapki class yahi hai na
+    
+    products.forEach(item => {
+        let text = item.innerText.toLowerCase();
+        item.style.display = text.includes(input) ? "" : "none";
+    });
+}
+
+// Install App Logic
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Menu mein install button dikhao
+    document.getElementById('menu-install-btn').style.display = 'block';
+});
+
+function installApp() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choice) => {
+            if (choice.outcome === 'accepted') {
+                document.getElementById('menu-install-btn').style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
+    } else {
+        alert("App pehle se install hai ya aapka browser iska sath nahi de raha. 3-dots menu check karein.");
+    }
+}
