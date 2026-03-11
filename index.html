@@ -2,37 +2,49 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rana Ji VIP</title>
-    <!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aata Mitra</title>
+    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d35400">
     <link rel="apple-touch-icon" href="welcome.jpg">
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    ...
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://rjaatachakki537-cpu.github.io/aatamitra/style.css">
 </head>
 <body>
 
-<div id="splash-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+<div id="splash-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:20002; display:flex; flex-direction:column; justify-content:center; align-items:center;">
    <img src="welcome.jpg" id="splash-img" style="width:80%; max-width:300px; border-radius:20px;">
-    <h2 style="color:var(--main); margin-top:20px; font-family:'Poppins';">Rana Ji VIP</h2>
+    <h2 style="color:var(--main); margin-top:20px; font-family:'Poppins';">Aata Mitra</h2>
     <p style="color:gray;">Shuddhata Ka Vishwas...</p>
 </div>
+
+<div id="sidebar" style="position:fixed; top:0; left:-280px; width:280px; height:100%; background:white; z-index:20001; transition:0.3s; box-shadow:2px 0 10px rgba(0,0,0,0.2);">
+    <div style="background:var(--main); color:white; padding:25px 20px; font-weight:bold; font-size:20px;">
+        Namaste, Mitra!
+        <span onclick="toggleMenu()" style="float:right; cursor:pointer; font-size:28px;">&times;</span>
+    </div>
+    <div style="padding:20px; display:flex; flex-direction:column; gap:20px; font-size:16px;">
+        <div onclick="showPage('view-home'); toggleMenu()"><i class="fas fa-home" style="width:25px;"></i> Home</div>
+        <div onclick="showPage('view-cart'); toggleMenu()"><i class="fas fa-shopping-bag" style="width:25px;"></i> Mera Bag</div>
+        <div onclick="showPage('view-profile'); toggleMenu()"><i class="fas fa-user-circle" style="width:25px;"></i> My Profile</div>
+        <hr style="border:0; border-top:1px solid #eee;">
+        
+        <div id="menu-install-btn" onclick="installApp()" style="color:var(--main); font-weight:bold; display:none;">
+            <i class="fas fa-download" style="width:25px;"></i> Install Aata Mitra App
+        </div>
+        
+        <div onclick="window.open('https://wa.me/91XXXXXXXXXX')"><i class="fab fa-whatsapp" style="width:25px;"></i> Help & Support</div>
+    </div>
+</div>
+<div id="sidebar-overlay" onclick="toggleMenu()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:20000;"></div>
 
 <div id="toast"></div>
 
 <div id="login-screen" class="full-screen">
-    <h2 style="color:var(--main); text-align:center;">Namaste Rana Ji VIP! 🙏</h2>
+    <h2 style="color:var(--main); text-align:center;">Namaste Aata Mitra! 🙏</h2>
     <p style="text-align:center; color:gray; margin-bottom:20px;">Apni details bhariye shuru karne ke liye</p>
     
     <input type="text" id="l-name" placeholder="Pura Naam">
@@ -51,7 +63,18 @@
     <button class="submit-btn" onclick="verifyOTP()">LOGIN KAREIN</button>
 </div>
 
-<div class="header" onclick="checkSuperAdmin()"><b>RANA JI AATA CHAKKI</b></div>
+<div class="header" style="display:flex; justify-content:space-between; align-items:center;">
+    <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size:20px;"></i>
+    <b onclick="checkSuperAdmin()">AATA MITRA</b>
+    <i class="fas fa-bell" style="font-size:18px; opacity:0.5;"></i>
+</div>
+
+<div id="search-container" style="padding:10px 15px; background:white;">
+    <div style="position:relative;">
+        <i class="fas fa-search" style="position:absolute; left:12px; top:12px; color:gray;"></i>
+        <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Aata, Masale ya Tel dhundhein..." style="width:100%; padding:10px 10px 10px 35px; border-radius:10px; border:1px solid #eee; background:#f9f9f9; outline:none; font-size:14px;">
+    </div>
+</div>
 
 <div id="view-home" class="view active">
     <h3 style="margin-bottom:15px;">Hamari Services</h3>
@@ -93,7 +116,7 @@
             <label for="img-input" class="cam-icon"><i class="fas fa-camera"></i></label>
             <input type="file" id="img-input" accept="image/*" style="display:none;" onchange="updateProfilePic(this)">
         </div>
-        <h3 id="p-name" onclick="checkAdminAccess()" style="margin:5px 0; cursor:pointer;">Rana Ji Customer</h3>
+        <h3 id="p-name" onclick="checkAdminAccess()" style="margin:5px 0; cursor:pointer;">Aata Mitra Customer</h3>
         <p id="p-phone" style="color:gray; font-size:13px; margin:0;"></p>
         
         <button onclick="toggleEditMode()" style="background:none; border:1px solid var(--main); color:var(--main); padding:6px 15px; border-radius:20px; margin-top:12px; font-size:12px;">
