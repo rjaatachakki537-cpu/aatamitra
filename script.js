@@ -333,3 +333,23 @@ function showPage(pageId) {
         if(pageId.includes('profile') && item.innerHTML.includes('Profile')) item.classList.add('active');
     });
 }
+// 1. Purane function ko safe rakh ke naya logic joddna
+var originalAddToCart = typeof addToCart === 'function' ? addToCart : null;
+
+addToCart = function(id, name, price, status) {
+    // Pehle check karo ki item Out of Stock toh nahi hai
+    if (status && (status.toLowerCase() === 'out' || status.toLowerCase() === 'out of stock')) {
+        alert("⚠️ Maaf kijiye, ye maal abhi khatam (Out of Stock) ho gaya hai!");
+        return; // Yahan se hi wapas bhej do, add mat hone do
+    }
+
+    // Agar Live hai, toh purana wala saman add karne ka kaam chalu rakho
+    if (originalAddToCart) {
+        // Agar status 'Live' hai ya null hai, toh purana function chalao
+        originalAddToCart(id, name, price);
+    } else {
+        // Agar purana function nahi mila, toh ye backup logic (Sirf tab chalega jab koi dikkat ho)
+        console.log("Adding to bag:", name);
+        if(typeof updateCartUI === 'function') updateCartUI();
+    }
+};
