@@ -1,3 +1,4 @@
+// auth.js
 let generatedOTP = null;
 
 function sendOTP() {
@@ -7,19 +8,36 @@ function sendOTP() {
     // Fake OTP Generate karna (Demo ke liye)
     generatedOTP = Math.floor(1000 + Math.random() * 9000);
     
-    // Asli app mein yahan SMS API lagti hai, par abhi hum alert dikhayenge
+    // Rana Ji, abhi demo ke liye alert hai, baad mein API lag sakti hai
     alert(`Rana Ji VIP Verification\nAapka OTP hai: ${generatedOTP}`);
     
     // UI badalna
     document.getElementById('otp-section').style.display = 'block';
-    showToast("OTP bhej diya gaya hai!");
+    if(typeof showToast === 'function') showToast("OTP bhej diya gaya hai!");
 }
 
 function verifyOTP() {
     const enteredOTP = document.getElementById('l-otp').value;
+    const name = document.getElementById('l-name').value;
+    const address = document.getElementById('l-address').value;
+
+    // Pehle check karo ki naam aur address bhara hai ya nahi
+    if (!name || !address) {
+        return alert("Pehle apna Naam aur Address bhariye!");
+    }
+
     if (enteredOTP == generatedOTP) {
-        showToast("Verification Safal! ✅");
-        handleLogin(); // Purana login function call hoga
+        if(typeof showToast === 'function') showToast("Verification Safal! ✅");
+        
+        // Yahan handleLogin call ho raha hai jo script.js mein hoga
+        if(typeof handleLogin === 'function') {
+            handleLogin(); 
+        } else {
+            // Agar handleLogin nahi mila toh fallback (backup)
+            alert("Login ho gaya! Welcome " + name);
+            document.getElementById('login-screen').classList.remove('active');
+            showPage('view-home');
+        }
     } else {
         alert("Galat OTP! Fir se koshish karein.");
     }
