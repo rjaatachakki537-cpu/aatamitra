@@ -1,82 +1,64 @@
-// AATA MITRA - Main Logic
 const URL = "https://script.google.com/macros/s/AKfycbwKIh4Q2VGhGspPBEQe6cfrwJLOlrY76MC3BDp9463MsIIBj1gPDLs7f3yR6vtGDwk_/exec";
+let allProducts = []; // Saara saaman yahan save rahega
 
 async function loadProducts() {
     const list = document.getElementById('product-list');
-    if(!list) return;
-
-    list.innerHTML = "<p style='grid-column: 1/-1;'>Saman load ho raha hai, rukiye...</p>";
+    const catBar = document.querySelector('.category-bar'); // index.html mein ye class honi chahiye
     
     try {
         const response = await fetch(`${URL}?action=getProducts`);
         const data = await response.json();
         
-        // Agar data mil gaya
         if (data && data.length > 1) {
-            const products = data.slice(1); // Pehli row (headers) ko chhod kar
-            list.innerHTML = ""; // Loader hatao
-
-            products.forEach(row => {
-                // row[0]=ID, row[2]=Name, row[3]=Weight, row[4]=Price
-                list.innerHTML += `
-                    <div class="product-card">
-                        <img src="images/products/${row[0]}.jpg" onerror="this.src='welcome.jpg'">
-                        <h4 style="margin:5px 0;">${row[2]}</h4>
-                        <p style="font-size:12px; color:gray;">Pack: ${row[3]}</p>
-                        <p style="font-weight:bold; color:#27ae60;">₹${row[4]}</p>
-                        <button class="btn" onclick="addToCart('${row[0]}', '${row[2]}', ${row[4]})" style="padding:5px; font-size:12px;">Add to Cart</button>
-                    </div>
-                `;
+            allProducts = data.slice(1); // Header chhod kar data save kiya
+            
+            // 1. Categories Filter Banana (Sheet ke Column B se)
+            const categories = [...new Set(allProducts.map(item => item[1]))]; // Unique Categories
+            
+            let catHtml = `<span onclick="filterByCategory('All')" class="cat-pill active">All</span>`;
+            categories.forEach(cat => {
+                catHtml += `<span onclick="filterByCategory('${cat}')" class="cat-pill">${cat}</span>`;
             });
-        } else {
-            list.innerHTML = "<p style='grid-column: 1/-1;'>Abhi koi saman available nahi hai.</p>";
+            if(catBar) catBar.innerHTML = catHtml;
+
+            // 2. Pehli baar saare products dikhana
+            displayProducts(allProducts);
         }
     } catch (e) {
-        console.error("Error loading products:", e);
-        list.innerHTML = "<p style='grid-column: 1/-1;'>Google Sheet se connection nahi ban paya. Ek baar Refresh karein.</p>";
+        list.innerHTML = "Sheet se connection nahi bana!";
     }
 }
 
-// Banners Load Karne ka Function
-async function loadBanners() {
-    const bannerArea = document.getElementById('banner-area');
-    if(!bannerArea) return;
+// Category Filter Logic
+function filterByCategory(category) {
+    // Active class change karne ka style
+    document.querySelectorAll('.cat-pill').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
 
-    try {
-        const response = await fetch(`${URL}?action=getBanners`);
-        const data = await response.json();
-        if(data && data.length > 1) {
-            const banner = data[1]; // Pehla banner uthao
-            bannerArea.innerHTML = `
-                <div style="margin:10px; border-radius:10px; overflow:hidden; background:#fff3cd; padding:15px; border:1px dashed #f1c40f;">
-                    <h3 style="color:#856404;">${banner[1]}</h3>
-                    <p>${banner[2]}</p>
+    if (category === 'All') {
+        displayProducts(allProducts);
+    } else {
+        const filtered = allProducts.filter(item => item[1] === category);
+        displayProducts(filtered);
+    }
+}
+
+// Saman Dikhaane ka Function
+function displayProducts(products) {
+    const list = document.getElementById('product-list');
+    list.innerHTML = ""; 
+    
+    products.forEach(row => {
+        list.innerHTML += `
+            <div class="product-card">
+                <img src="images/products/${row[0]}.jpg" onerror="this.src='welcome.jpg'">
+                <h4>${row[2]}</h4>
+                <p style="font-size:11px; color:#666;">Pack: ${row[3]}</p>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                    <b style="color:#27ae60;">₹${row[4]}</b>
+                    <button onclick="addToCart('${row[0]}', '${row[2]}', ${row[4]})" style="background:#f1c40f; border:none; padding:5px 10px; border-radius:4px; font-size:12px; cursor:pointer;">Add</button>
                 </div>
-            `;
-        }
-    } catch (e) {
-        console.log("Banners nahi mile");
-    }
+            </div>
+        `;
+    });
 }
-
-// Global Variables
-let cart = [];
-
-function addToCart(id, name, price) {
-    cart.push({id, name, price});
-    alert(`${name} cart mein add ho gaya!`);
-    document.getElementById('cart-count').innerText = cart.length;
-}
-
-function toggleSidebar() {
-    alert("Menu feature jald aa raha hai!");
-}
-
-// Admin Trigger
-document.addEventListener('click', (e) => {
-    if(e.target.id === 'admin-trigger') {
-        if(prompt("Enter Admin Code:") === "LUCKY") {
-            alert("Welcome Rana Ji! Admin Panel Loading...");
-        }
-    }
-});
