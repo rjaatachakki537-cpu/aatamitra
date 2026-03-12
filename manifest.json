@@ -1,24 +1,15 @@
 {
-  "name": "Aata Mitra - Shuddhata Ka Saathi",
+  "name": "Aata Mitra - Rana Ji Aata Chakki",
   "short_name": "Aata Mitra",
-  "description": "Rana Ji ki Shuddh Chakki ka Aata, Masale aur Tel.",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#d35400",
+  "background_color": "#f1c40f",
+  "theme_color": "#f1c40f",
   "icons": [
     {
       "src": "welcome.jpg",
-      "sizes": "192x192",
-      "type": "image/jpg",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "welcome.jpg",
       "sizes": "512x512",
-      "type": "image/jpg",
-      "purpose": "any maskable"
+      "type": "image/jpeg"
     }
   ]
 }
