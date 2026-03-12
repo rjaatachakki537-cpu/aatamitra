@@ -5,6 +5,7 @@ let masterData = [], cart = [], user = JSON.parse(localStorage.getItem('ranaUser
 let historyData = JSON.parse(localStorage.getItem('ranaHistory')) || [];
 let adminClicks = 0;
 
+// 1. INITIALIZATION
 async function init() {
     if(user) {
         document.getElementById('login-screen').style.display = 'none';
@@ -15,104 +16,58 @@ async function init() {
         }
         syncStatuses();
     }
-    const res = await fetch(DATA_URL);
-    const text = await res.text();
-    masterData = JSON.parse(text.substring(47, text.length-2)).table.rows;
+    try {
+        const res = await fetch(DATA_URL);
+        const text = await res.text();
+        masterData = JSON.parse(text.substring(47, text.length-2)).table.rows;
+    } catch(e) { console.log("Data Load Error"); }
     renderHistory();
 }
 
-// NAVIGATION
-function showPage(id) {
+// 2. NAVIGATION LOGIC (Sahi UI update ke saath)
+function showPage(pageId) {
+    // Saari views hide karo
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    if(id==='view-cart') renderCart();
-    if(id==='view-delivery') loadDeliveryOrders();
-}
-
-// ADMIN ACCESS LOGIC (TAP 5 TIMES)
-function checkAdminAccess() {
-    adminClicks++;
-    if (adminClicks === 5) {
-        let pass = prompt("Enter Secret Admin Password:");
-        if (pass === "RANA537") {
-            document.getElementById('delivery-admin-btn').style.display = 'block';
-            showToast("Admin Mode On! 🚚");
-        } else {
-            alert("Galat Password!");
-        }
-        adminClicks = 0;
-    }
-    setTimeout(() => { adminClicks = 0; }, 3000);
-}
-
-// DELIVERY DASHBOARD LOGIC
-async function loadDeliveryOrders() {
-    const listDiv = document.getElementById('delivery-list');
-    listDiv.innerHTML = "Fetching pending orders...";
-    try {
-        const res = await fetch(SCRIPT_URL);
-        const allOrders = await res.json();
-        const pending = allOrders.filter(o => o.status === 'PENDING');
-        
-        let html = '';
-        pending.forEach(o => {
-            html += `
-            <div class="order-card" style="border-left:5px solid var(--main);">
-                <div style="display:flex; justify-content:space-between;">
-                    <b>ID: #${o.id.toString().slice(-5)}</b>
-                    <b style="color:green;">₹${o.total}</b>
-                </div>
-                <div style="margin:10px 0; font-size:13px;">
-                    <i class="fas fa-user"></i> ${o.name} <br>
-                    <i class="fas fa-box"></i> ${o.details}
-                </div>
-                <div style="margin-bottom:10px; background:#f0f0f0; padding:10px; border-radius:10px;">
-                    <small>Delivery Proof (Photo):</small>
-                    <input type="file" id="proof-${o.id}" accept="image/*" capture="camera" style="width:100%; font-size:12px;">
-                </div>
-                <div class="btn-grid">
-                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.address)}" target="_blank" class="action-btn" style="background:#e3f2fd; color:#1976d2;">
-                        <i class="fas fa-map-marked-alt"></i> MAPS
-                    </a>
-                    <button class="action-btn" style="background:var(--main); color:white;" onclick="verifyAndDeliver('${o.id}')">
-                        <i class="fas fa-check"></i> DONE
-                    </button>
-                </div>
-            </div>`;
-        });
-        listDiv.innerHTML = html || "No pending deliveries! 😎";
-    } catch(e) { listDiv.innerHTML = "Error loading orders."; }
-}
-
-async function verifyAndDeliver(id) {
-    const photoInput = document.getElementById(`proof-${id}`);
-    if(!photoInput.files.length) return alert("Pehle saaman ki photo kheencho! 📸");
-
-    if(!confirm("Kya order deliver ho gaya?")) return;
     
-    showToast("Processing... ⏳");
-    try {
-        await fetch(SCRIPT_URL, { 
-            method: 'POST', 
-            body: JSON.stringify({ action: "updateStatus", id: id, newStatus: "DELIVERED" }) 
-        });
-        showToast("Order Delivered! ✅");
-        loadDeliveryOrders();
-    } catch(e) { showToast("Error updating status"); }
+    // Target view dikhao
+    const target = document.getElementById(pageId);
+    if(target) target.classList.add('active');
+
+    // Nav Bar Icons ka color update karo
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    
+    if(pageId === 'view-home') document.getElementById('nav-home')?.classList.add('active');
+    if(pageId === 'view-cart') {
+        document.getElementById('nav-bag')?.classList.add('active');
+        renderCart();
+    }
+    if(pageId === 'view-profile') document.getElementById('nav-profile')?.classList.add('active');
+    
+    if(pageId === 'view-delivery') loadDeliveryOrders();
+
+    // Browser history for Back Button
+    if (!window.location.hash.includes(pageId)) {
+        history.pushState({viewId: pageId}, "", "#" + pageId);
+    }
 }
 
-// EXISTING FUNCTIONS (PRODS, CART, ETC.)
+// Bag button ke liye special handler
+function handleNavBag() {
+    showPage('view-cart');
+}
+
+// 3. PRODUCTS & CATEGORIES
 function loadSubs(main) {
     let subs = {}; let lastM = "";
     masterData.forEach(r => {
         let m = r.c[2]?.v || lastM; lastM = m;
-        if(m.toLowerCase().includes(main.toLowerCase().substring(0,3))) {
+        if(m && m.toLowerCase().includes(main.toLowerCase().substring(0,3))) {
             let s = (main === 'Masale') ? r.c[1]?.v : r.c[3]?.v;
             if(s && !subs[s]) subs[s] = r.c[6]?.v || "";
         }
     });
     let html = '';
-    for(let s in subs) html += `<div style="background:white; padding:15px; border-radius:15px; text-align:center;" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%; height:60px; object-fit:cover; border-radius:10px;"><br><b>${s}</b></div>`;
+    for(let s in subs) html += `<div class="item-card" style="flex-direction:column; padding:15px; text-align:center;" onclick="loadProds('${main}','${s}')"><img src="${subs[s]}" style="width:100%; height:80px; object-fit:contain; border-radius:10px;"><br><b>${s}</b></div>`;
     document.getElementById('sub-list').innerHTML = html;
     showPage('view-sub');
 }
@@ -120,64 +75,98 @@ function loadSubs(main) {
 function loadProds(cat, sub) {
     let html = ''; let lM="", lN="", lS="", lI="";
     masterData.forEach(r => {
-        let n=r.c[1]?.v||lN; lN=n; let m=r.c[2]?.v||lM; lM=m; let s=r.c[3]?.v||lS; lS=s; let i=r.c[6]?.v||lI; lI=i;
+        let n=r.c[1]?.v||lN; lN=n; 
+        let m=r.c[2]?.v||lM; lM=m; 
+        let s=r.c[3]?.v||lS; lS=s; 
+        let i=r.c[6]?.v||lI; lI=i;
         let match = (cat==='Masale') ? (lN===sub) : (lM.includes(cat.substring(0,3)) && lS===sub);
+        
         if(match && r.c[4]?.v) {
-            html += `<div class="item-card"><img src="${lI}"><div><b>${lN}</b><br><small>${r.c[4].v}</small><br><b>₹${r.c[5].v}</b></div><button class="add-btn" onclick="addToBag('${lN}','${r.c[4].v}',${r.c[5].v})">ADD</button></div>`;
+            let status = r.c[7]?.v || 'Live';
+            let isOut = (status.toLowerCase() === 'out' || status.toLowerCase() === 'out of stock');
+            
+            html += `
+            <div class="item-card" style="opacity: ${isOut ? '0.6' : '1'}">
+                <img src="${lI}">
+                <div style="flex:1;">
+                    <b>${lN}</b><br><small>${r.c[4].v}</small><br>
+                    <b>₹${r.c[5].v}</b>
+                    ${isOut ? '<br><b style="color:red; font-size:10px;">OUT OF STOCK</b>' : ''}
+                </div>
+                <button class="add-btn" ${isOut ? 'disabled style="background:gray"' : `onclick="addToBag('${lN}','${r.c[4].v}',${r.c[5].v})"`}>
+                    ${isOut ? 'N/A' : 'ADD'}
+                </button>
+            </div>`;
         }
     });
     document.getElementById('prod-list').innerHTML = html;
     showPage('view-prod');
 }
 
-function addToBag(n, w, p) { cart.push({n, w, p}); showToast(`${n} Bag mein!`); }
+// 4. CART LOGIC
+function addToBag(n, w, p) { 
+    cart.push({n, w, p}); 
+    showToast(`${n} Bag mein dala gaya! 🛒`); 
+}
 
 function renderCart() {
     let html = '', total = 0;
     cart.forEach((item, i) => {
         total += item.p;
-        html += `<div class="item-card"><b>${item.n}</b> (${item.w})<br>₹${item.p}<button onclick="cart.splice(${i},1);renderCart()" style="margin-left:auto; border:none; background:none; color:red;">🗑️</button></div>`;
+        html += `<div class="item-card" style="justify-content:space-between;">
+            <div><b>${item.n}</b><br><small>${item.w}</small> - ₹${item.p}</div>
+            <button onclick="cart.splice(${i},1);renderCart()" style="border:none; background:none; color:red; font-size:18px;">🗑️</button>
+        </div>`;
     });
-    document.getElementById('cart-items-display').innerHTML = html || "Bag khali hai!";
+    document.getElementById('cart-items-display').innerHTML = html || "<p style='text-align:center; width:100%; padding:20px;'>Aapka Bag khali hai!</p>";
     document.getElementById('cart-total-display').innerText = "Total: ₹" + total;
 }
 
 async function confirmOrder() {
-    if(!cart.length && !activeModificationId) return alert("Bag khali hai!");
+    if(!cart.length) return alert("Pehle Bag mein kuch add karein!");
     let id = activeModificationId || Date.now().toString().slice(-6);
     let details = cart.map(i => `${i.n}(${i.w})`).join(", ");
     let note = document.getElementById('order-custom-note').value;
     let total = cart.reduce((a,b)=>a+b.p,0);
-    showToast("Processing Order... 🚀");
+    
+    showToast("Order Confirm ho raha hai... 🚀");
     try {
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
-            body: JSON.stringify({ action: activeModificationId ? "update" : "create", id: id, name: user.name, mobile: user.mobile, email: user.email || "", address: user.address + (note ? " | " + note : ""), details: details, total: total })
+            body: JSON.stringify({ 
+                action: "create", 
+                id: id, 
+                name: user.name, 
+                mobile: user.mobile, 
+                email: user.email || "", 
+                address: user.address + (note ? " | Note: " + note : ""), 
+                details: details, 
+                total: total 
+            })
         });
         const result = await response.json();
         if(result.status === "success") {
-            showToast("Order Success! ✅");
-            cart = []; activeModificationId = null; renderCart();
-            setTimeout(() => { window.location.href = result.whatsapp_url; }, 1200);
+            cart = []; renderCart();
+            showToast("Order Successful! ✅");
+            setTimeout(() => { window.location.href = result.whatsapp_url; }, 1000);
         }
-    } catch(e) { showToast("Order ho gaya, WhatsApp manually karein."); }
+    } catch(e) { showToast("Order Error! WhatsApp manually karein."); }
 }
 
+// 5. PROFILE & HISTORY
 function renderHistory() {
     let html = '';
     historyData.slice().reverse().forEach(o => {
         let s = o.status || 'PENDING';
-        html += `<div class="order-card">
+        html += `<div class="order-card" style="border-left: 4px solid var(--main)">
             <span class="status-badge s-${s}">${s}</span>
-            <b>ID: #${o.id.toString().slice(-6)}</b><br><small>${o.details}</small><br><b>Total: ₹${o.total}</b>
-            <div class="btn-grid">
-                ${s==='PENDING' ? `<button class="action-btn btn-modify" onclick="startCustomization('${o.id}','${o.details}')">Modify</button>` : ''}
-                <button class="action-btn btn-repeat" onclick="alert('Added to cart!')">Repeat</button>
-                <a href="https://wa.me/918923357537" class="action-btn btn-chat">WhatsApp</a>
+            <b>ID: #${o.id}</b><br><small>${o.details}</small><br><b>Total: ₹${o.total}</b>
+            <div class="btn-grid" style="margin-top:10px;">
+                <a href="https://wa.me/918923357537" class="action-btn" style="text-align:center; text-decoration:none; background:#25D366; color:white;">WhatsApp</a>
             </div>
         </div>`;
     });
-    document.getElementById('order-history').innerHTML = html || "No orders.";
+    document.getElementById('order-history').innerHTML = html || "Abhi tak koi order nahi hai.";
 }
 
 async function syncStatuses() {
@@ -190,76 +179,17 @@ async function syncStatuses() {
     } catch(e) { console.log("Sync Error"); }
 }
 
-function showToast(msg) { let t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => t.className = "", 2500); }
-function handleLogin() { 
-    const n = document.getElementById('l-name').value, m = document.getElementById('l-mobile').value, e = document.getElementById('l-email').value, a = document.getElementById('l-address').value;
-    if(n && m) { user = {name:n, mobile:m, email:e, address:a}; localStorage.setItem('ranaUser', JSON.stringify(user)); location.reload(); }
-}
-function updateProfilePic(input) {
-    if (input.files && input.files[0]) {
-        let reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('user-img-display').src = e.target.result;
-            user.profilePic = e.target.result;
-            localStorage.setItem('ranaUser', JSON.stringify(user));
-            showToast("Photo Updated! 📸");
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-function toggleEditMode() {
-    let form = document.getElementById('edit-form');
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    if(form.style.display === 'block') {
-        document.getElementById('e-name').value = user.name;
-        document.getElementById('e-mobile').value = user.mobile;
-        document.getElementById('e-address').value = user.address;
-    }
-}
-function saveProfileChanges() {
-    user.name = document.getElementById('e-name').value;
-    user.mobile = document.getElementById('e-mobile').value;
-    user.address = document.getElementById('e-address').value;
-    localStorage.setItem('ranaUser', JSON.stringify(user));
-    document.getElementById('p-name').innerText = user.name;
-    if(document.getElementById('p-phone')) document.getElementById('p-phone').innerText = user.mobile;
-    toggleEditMode();
-    showToast("Saved! ✅");
+// 6. UTILITIES
+function showToast(msg) { 
+    let t = document.getElementById("toast"); 
+    t.innerText = msg; 
+    t.classList.add("show"); 
+    setTimeout(() => t.classList.remove("show"), 3000); 
 }
 
-window.onload = init;
-
-// --- BACK BUTTON NAVIGATION LOGIC ---
-
-// Jab bhi hum page badle, history mein ek 'state' push karo
-const originalShowPage = showPage; // Purane function ko save karo
-showPage = function(id) {
-    originalShowPage(id);
-    // History mein entry dalo taaki back button kaam kare
-    history.pushState({viewId: id}, "", "#" + id);
-};
-
-// Jab user mobile ka BACK button dabaye
-window.onpopstate = function(event) {
-    if (event.state && event.state.viewId) {
-        // Agar history mein koi view hai, toh wahan jao
-        const vId = event.state.viewId;
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(vId).classList.add('active');
-    } else {
-        // Agar bilkul shuruat mein hain, toh home par le jao
-        showPage('view-home');
-    }
-};
-
-// Shuruat mein home state set kar do
-window.addEventListener('load', () => {
-    history.replaceState({viewId: 'view-home'}, "", "#view-home");
-});
-// Sidebar Toggle Logic
 function toggleMenu() {
     const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
+    const overlay = document.getElementById('sidebar-overlay');
     if(sidebar.style.left === '0px') {
         sidebar.style.left = '-280px';
         overlay.style.display = 'none';
@@ -272,84 +202,23 @@ function toggleMenu() {
 // Search Logic
 function searchProducts() {
     let input = document.getElementById('searchInput').value.toLowerCase();
-    let products = document.querySelectorAll('.product-card'); // Check karein aapki class yahi hai na
-    
-    products.forEach(item => {
-        let text = item.innerText.toLowerCase();
-        item.style.display = text.includes(input) ? "" : "none";
+    let cards = document.querySelectorAll('#prod-list .item-card, #view-home .item-card');
+    cards.forEach(card => {
+        let text = card.innerText.toLowerCase();
+        card.style.display = text.includes(input) ? "" : "none";
     });
 }
 
-// Install App Logic
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    // Menu mein install button dikhao
-    document.getElementById('menu-install-btn').style.display = 'block';
-});
-
-function installApp() {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choice) => {
-            if (choice.outcome === 'accepted') {
-                document.getElementById('menu-install-btn').style.display = 'none';
-            }
-            deferredPrompt = null;
-        });
+// Back Button Navigation
+window.onpopstate = function(event) {
+    if (event.state && event.state.viewId) {
+        showPage(event.state.viewId);
     } else {
-        alert("App pehle se install hai ya aapka browser iska sath nahi de raha. 3-dots menu check karein.");
+        showPage('view-home');
     }
-}
-// Ye function check karega ki item Live hai ya nahi
-function addToCart(id, name, price, status) {
-    if (status && status.toLowerCase() !== 'live') {
-        alert("Maaf kijiye, ye item abhi Out of Stock hai!");
-        return;
-    }
-    // Agar Live hai toh hi purana cart wala logic chalega
-    // Yahan apna purana cart logic call karein ya naya likhein
-    processCart(id, name, price); 
-}
-// Footer Nav ke liye pakka kaam karne wala function
-function handleNavCart() {
-    showPage('view-cart');
-    // Navigation items ka color bhi theek karega
-    updateNavUI('nav-cart'); 
-}
-function showPage(pageId) {
-    // Saari views hide karo
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    // Sirf mangi gayi view dikhao
-    document.getElementById(pageId).classList.add('active');
+};
 
-    // Navigation buttons ka rang badlo
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-        // Agar button ka text ya icon page se match kare (logic)
-        if(pageId.includes('home') && item.innerHTML.includes('Home')) item.classList.add('active');
-        if(pageId.includes('cart') && item.innerHTML.includes('Bag')) item.classList.add('active');
-        if(pageId.includes('profile') && item.innerHTML.includes('Profile')) item.classList.add('active');
-    });
-}
-// 1. Purane function ko safe rakh ke naya logic joddna
-var originalAddToCart = typeof addToCart === 'function' ? addToCart : null;
-
-addToCart = function(id, name, price, status) {
-    // Pehle check karo ki item Out of Stock toh nahi hai
-    if (status && (status.toLowerCase() === 'out' || status.toLowerCase() === 'out of stock')) {
-        alert("⚠️ Maaf kijiye, ye maal abhi khatam (Out of Stock) ho gaya hai!");
-        return; // Yahan se hi wapas bhej do, add mat hone do
-    }
-
-    // Agar Live hai, toh purana wala saman add karne ka kaam chalu rakho
-    if (originalAddToCart) {
-        // Agar status 'Live' hai ya null hai, toh purana function chalao
-        originalAddToCart(id, name, price);
-    } else {
-        // Agar purana function nahi mila, toh ye backup logic (Sirf tab chalega jab koi dikkat ho)
-        console.log("Adding to bag:", name);
-        if(typeof updateCartUI === 'function') updateCartUI();
-    }
+window.onload = () => {
+    init();
+    history.replaceState({viewId: 'view-home'}, "", "#view-home");
 };
