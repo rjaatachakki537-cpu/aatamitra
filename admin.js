@@ -3,7 +3,7 @@ const ADMIN_CODE = "LUCKY";
 async function loadAdminOrders() {
     const response = await fetch(`${SCRIPT_URL}?action=getOrders`); // Humne Apps Script mein getOrders banaya tha
     const data = await response.json();
-    const orders = data.slice(1); // Header [cite: 1] hata kar
+    const orders = data.slice(1); // Header [cite: 5] hata kar
 
     let html = '<h2>Admin Dashboard (Rana Ji Aata Chakki)</h2>';
     orders.reverse().forEach(row => {
