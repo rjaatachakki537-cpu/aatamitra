@@ -1,26 +1,213 @@
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-body { background: #f8f9fa; }
-
-/* Splash Screen */
-#splash-screen {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: white; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+/* RANA JI AATA CHAKKI - Professional UI */
+:root {
+    --primary: #f1c40f;    /* Mustard Yellow */
+    --secondary: #27ae60;  /* Fresh Green */
+    --dark: #2c3e50;
+    --light: #f8f9fa;
+    --white: #ffffff;
+    --shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-#splash-screen img { width: 100%; height: 100%; object-fit: cover; }
-.splash-text { position: absolute; bottom: 10%; color: white; text-align: center; text-shadow: 2px 2px 5px #000; }
 
-/* Login */
-#login-screen { padding: 40px 20px; text-align: center; }
-.login-logo { width: 120px; height: 120px; border-radius: 50%; border: 4px solid #f1c40f; }
-input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
-.btn { width: 100%; padding: 12px; background: #f1c40f; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.success { background: #27ae60; color: white; margin-top: 10px; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
 
-/* Main App */
-.header { background: #f1c40f; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-.category-bar { display: flex; overflow-x: auto; padding: 10px; background: white; gap: 10px; }
-.category-bar span { padding: 5px 15px; background: #eee; border-radius: 20px; white-space: nowrap; }
-#product-list { display: grid; grid-template-columns: 1fr 1fr; padding: 10px; gap: 10px; }
-.product-card { background: white; padding: 10px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-.product-card img { width: 100%; height: 120px; object-fit: contain; }
-.bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #ddd; }
+body {
+    background-color: var(--light);
+    color: var(--dark);
+    padding-bottom: 70px; /* Space for bottom nav */
+}
+
+/* 1. Splash Screen */
+#splash-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--white);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#splash-screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 2. Login Screen */
+#login-screen {
+    padding: 30px;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--white);
+}
+.login-container img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 5px solid var(--primary);
+}
+input {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
+    background: #fdfdfd;
+}
+input:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+/* 3. Header */
+.header {
+    background: var(--primary);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+}
+.header b {
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+/* 4. Category Pills (The smart part) */
+.category-bar {
+    display: flex;
+    overflow-x: auto;
+    padding: 15px 10px;
+    gap: 12px;
+    background: var(--white);
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+}
+.category-bar::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
+
+.cat-pill {
+    padding: 8px 20px;
+    background: #eee;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    border: 1.5px solid transparent;
+    transition: 0.3s;
+}
+.cat-pill.active {
+    background: var(--primary);
+    border-color: var(--dark);
+    font-weight: 600;
+}
+
+/* 5. Product Grid & Cards */
+#product-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 15px;
+}
+.product-card {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #f1f1f1;
+}
+.product-card img {
+    width: 100%;
+    height: 110px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+.product-card h4 {
+    font-size: 14px;
+    margin-bottom: 5px;
+    height: 40px;
+    overflow: hidden;
+}
+.product-card b {
+    color: var(--secondary);
+    font-size: 16px;
+}
+
+/* 6. Buttons */
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.btn:active { transform: scale(0.95); }
+.btn-primary { background: var(--primary); color: var(--dark); }
+.btn-success { background: var(--secondary); color: var(--white); }
+
+.add-btn {
+    background: var(--primary);
+    border: none;
+    padding: 5px 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* 7. Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: var(--white);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    border-top: 1.5px solid #eee;
+    z-index: 1000;
+}
+.nav-item {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    flex: 1;
+}
+.nav-item.active {
+    color: var(--dark);
+    font-weight: bold;
+}
+.nav-item i {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 3px;
+}
+
+/* 8. Badge (Cart Count) */
+#cart-count {
+    background: #e74c3c;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-size: 10px;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
