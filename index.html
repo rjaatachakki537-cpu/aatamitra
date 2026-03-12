@@ -15,94 +15,94 @@
 </head>
 <body>
 
-<div id="splash-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:20002; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-   <img src="welcome.jpg" id="splash-img" style="width:80%; max-width:300px; border-radius:20px;">
-    <h2 style="color:var(--main); margin-top:20px; font-family:'Poppins';">Aata Mitra</h2>
-    <p style="color:gray;">Shuddhata Ka Vishwas...</p>
+<div id="splash-screen">
+   <img src="welcome.jpg" id="splash-img" alt="Welcome">
+    <h2>Aata Mitra</h2>
+    <p>Shuddhata Ka Vishwas...</p>
 </div>
 
-<div id="sidebar" style="position:fixed; top:0; left:-280px; width:280px; height:100%; background:white; z-index:20001; transition:0.3s; box-shadow:2px 0 10px rgba(0,0,0,0.2);">
-    <div style="background:var(--main); color:white; padding:25px 20px; font-weight:bold; font-size:20px;">
+<div id="sidebar">
+    <div class="sidebar-header">
         Namaste, Mitra!
-        <span onclick="toggleMenu()" style="float:right; cursor:pointer; font-size:28px;">&times;</span>
+        <span onclick="toggleMenu()">&times;</span>
     </div>
-    <div style="padding:20px; display:flex; flex-direction:column; gap:20px; font-size:16px;">
-        <div onclick="showPage('view-home'); toggleMenu()"><i class="fas fa-home" style="width:25px;"></i> Home</div>
-        <div onclick="handleNavBag(); toggleMenu()"><i class="fas fa-shopping-bag" style="width:25px;"></i> Mera Bag</div>
-        <div onclick="showPage('view-profile'); toggleMenu()"><i class="fas fa-user-circle" style="width:25px;"></i> My Profile</div>
-        <hr style="border:0; border-top:1px solid #eee;">
-        <div id="menu-install-btn" onclick="installApp()" style="color:var(--main); font-weight:bold; display:none;">
-            <i class="fas fa-download" style="width:25px;"></i> Install Aata Mitra App
+    <div class="sidebar-links">
+        <div onclick="showPage('view-home'); toggleMenu()"><i class="fas fa-home"></i> Home</div>
+        <div onclick="handleNavBag(); toggleMenu()"><i class="fas fa-shopping-bag"></i> Mera Bag</div>
+        <div onclick="showPage('view-profile'); toggleMenu()"><i class="fas fa-user-circle"></i> My Profile</div>
+        <hr>
+        <div id="menu-install-btn" onclick="installApp()">
+            <i class="fas fa-download"></i> Install App
         </div>
-        <div onclick="window.open('https://wa.me/918923357537')"><i class="fab fa-whatsapp" style="width:25px;"></i> Help & Support</div>
+        <div onclick="window.open('https://wa.me/918923357537')"><i class="fab fa-whatsapp"></i> Help & Support</div>
     </div>
 </div>
-<div id="sidebar-overlay" onclick="toggleMenu()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:20000;"></div>
+<div id="sidebar-overlay" onclick="toggleMenu()"></div>
 
 <div id="toast"></div>
 
 <div id="login-screen" class="full-screen">
-    <h2 style="color:var(--main); text-align:center;">Namaste Aata Mitra! 🙏</h2>
-    <p style="text-align:center; color:gray; margin-bottom:20px;">Apni details bhariye shuru karne ke liye</p>
+    <h2>Namaste Aata Mitra! 🙏</h2>
+    <p>Apni details bhariye shuru karne ke liye</p>
     <input type="text" id="l-name" placeholder="Pura Naam">
-    <div style="display:flex; gap:5px; margin-bottom:12px;">
-        <input type="number" id="l-mobile" placeholder="WhatsApp Number" style="flex:1; margin-bottom:0;">
-        <button onclick="sendOTP()" style="height:48px; border-radius:12px; background:var(--main); color:white; border:none; padding:0 15px; font-weight:bold; font-size:12px;">Get OTP</button>
+    <div class="input-group">
+        <input type="number" id="l-mobile" placeholder="WhatsApp Number">
+        <button onclick="sendOTP()">Get OTP</button>
     </div>
     <div id="otp-section" style="display:none;">
         <input type="number" id="l-otp" placeholder="Enter 4 Digit OTP">
     </div>
     <input type="email" id="l-email" placeholder="Email (Notification ke liye)">
-    <div style="display:flex; gap:5px; align-items:center; margin-bottom:20px;">
-        <input type="text" id="l-address" placeholder="Pura Address ya Location" style="margin-bottom:0; flex:1;">
-        <button onclick="getMyLocation()" style="background:#eee; border:none; height:48px; width:48px; border-radius:12px; color:var(--main); font-size:18px;"><i class="fas fa-location-arrow"></i></button>
+    <div class="input-group">
+        <input type="text" id="l-address" placeholder="Pura Address ya Location">
+        <button onclick="getMyLocation()"><i class="fas fa-location-arrow"></i></button>
     </div>
     <button class="submit-btn" onclick="verifyOTP()">LOGIN KAREIN</button>
 </div>
 
-<div class="header" style="display:flex; justify-content:space-between; align-items:center;">
-    <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size:20px;"></i>
+<div class="header">
+    <i class="fas fa-bars" onclick="toggleMenu()"></i>
     <b onclick="checkSuperAdmin()">AATA MITRA</b>
-    <i class="fas fa-bell" style="font-size:18px; opacity:0.5;"></i>
+    <i class="fas fa-bell"></i>
 </div>
 
-<div id="search-container" style="padding:10px 15px; background:white;">
-    <div style="position:relative;">
-        <i class="fas fa-search" style="position:absolute; left:12px; top:12px; color:gray;"></i>
-        <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Aata, Masale ya Tel dhundhein..." style="width:100%; padding:10px 10px 10px 35px; border-radius:10px; border:1px solid #eee; background:#f9f9f9; outline:none; font-size:14px;">
+<div id="search-container">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Aata, Masale ya Tel dhundhein...">
     </div>
 </div>
 
 <div id="view-home" class="view active">
-    <h3 style="margin-bottom:15px;">Hamari Services</h3>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div class="item-card" style="flex-direction:column; padding:20px; text-align:center;" onclick="loadSubs('Aata')">
-            <i class="fas fa-wheat-awn" style="font-size:30px; color:var(--main);"></i><br><b>Aata</b>
+    <h3>Hamari Services</h3>
+    <div class="category-grid">
+        <div class="cat-card" onclick="loadSubs('Aata')">
+            <i class="fas fa-wheat-awn"></i><b>Aata</b>
         </div>
-        <div class="item-card" style="flex-direction:column; padding:20px; text-align:center;" onclick="loadSubs('Mustered oil')">
-            <i class="fas fa-droplet" style="font-size:30px; color:var(--main);"></i><br><b>Oil</b>
+        <div class="cat-card" onclick="loadSubs('Mustered oil')">
+            <i class="fas fa-droplet"></i><b>Oil</b>
         </div>
-        <div class="item-card" style="flex-direction:column; padding:20px; text-align:center;" onclick="loadSubs('Masale')">
-            <i class="fas fa-mortar-pestle" style="font-size:30px; color:var(--main);"></i><br><b>Masale</b>
+        <div class="cat-card" onclick="loadSubs('Masale')">
+            <i class="fas fa-mortar-pestle"></i><b>Masale</b>
         </div>
     </div>
 </div>
 
 <div id="view-sub" class="view">
-    <button onclick="showPage('view-home')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:10px;"><i class="fas fa-arrow-left"></i> BACK</button>
-    <div id="sub-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;"></div>
+    <button class="back-btn" onclick="showPage('view-home')"><i class="fas fa-arrow-left"></i> BACK</button>
+    <div id="sub-list" class="grid-2"></div>
 </div>
 
 <div id="view-prod" class="view">
-    <button onclick="showPage('view-sub')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:10px;"><i class="fas fa-arrow-left"></i> BACK</button>
+    <button class="back-btn" onclick="showPage('view-sub')"><i class="fas fa-arrow-left"></i> BACK</button>
     <div id="prod-list"></div>
 </div>
 
 <div id="view-cart" class="view">
-    <h3 id="cart-header"><i class="fas fa-shopping-bag"></i> Mera Bag</h3>
+    <h3><i class="fas fa-shopping-bag"></i> Mera Bag</h3>
     <div id="cart-items-display"></div>
-    <div id="cart-total-display" style="font-size:18px; font-weight:bold; text-align:right; margin:15px 0;">Total: ₹0</div>
-    <textarea id="order-custom-note" placeholder="Rana Ji ke liye koi extra message?"></textarea>
+    <div id="cart-total-display">Total: ₹0</div>
+    <textarea id="order-custom-note" placeholder="Koi extra message?"></textarea>
     <button class="submit-btn" onclick="confirmOrder()">ORDER CONFIRM KAREIN</button>
 </div>
 
@@ -111,48 +111,34 @@
         <div class="user-img-container">
             <img id="user-img-display" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
             <label for="img-input" class="cam-icon"><i class="fas fa-camera"></i></label>
-            <input type="file" id="img-input" accept="image/*" style="display:none;" onchange="updateProfilePic(this)">
+            <input type="file" id="img-input" accept="image/*" onchange="updateProfilePic(this)">
         </div>
-        <h3 id="p-name" onclick="checkAdminAccess()" style="margin:5px 0; cursor:pointer;">Aata Mitra Customer</h3>
-        <p id="p-phone" style="color:gray; font-size:13px; margin:0;"></p>
-        <button onclick="toggleEditMode()" style="background:none; border:1px solid var(--main); color:var(--main); padding:6px 15px; border-radius:20px; margin-top:12px; font-size:12px;">
-            <i class="fas fa-user-edit"></i> Edit Details
-        </button>
-        <div id="edit-form" style="display:none; margin-top:20px; text-align:left; border-top:1px solid #eee; padding-top:15px;">
+        <h3 id="p-name" onclick="checkAdminAccess()">Customer</h3>
+        <p id="p-phone"></p>
+        <button class="edit-btn" onclick="toggleEditMode()"><i class="fas fa-user-edit"></i> Edit Details</button>
+        
+        <div id="edit-form" style="display:none;">
             <input type="text" id="e-name" placeholder="Naya Naam">
             <input type="number" id="e-mobile" placeholder="Naya Number">
             <textarea id="e-address" placeholder="Naya Address"></textarea>
-            <button class="submit-btn" onclick="saveProfileChanges()" style="padding:10px;">SAVE CHANGES</button>
+            <button class="submit-btn" onclick="saveProfileChanges()">SAVE</button>
         </div>
     </div>
-    <h4 style="margin-top:25px;"><i class="fas fa-history"></i> Purane Orders</h4>
+    <h4><i class="fas fa-history"></i> Purane Orders</h4>
     <div id="order-history"></div>
-    <button onclick="localStorage.clear(); location.reload();" style="width:100%; background:none; color:red; border:none; margin-top:30px; font-size:12px; text-decoration:underline;">LOGOUT KAREIN</button>
-</div>
-
-<div id="view-admin" class="view">
-    <button onclick="showPage('view-profile')" style="border:none; background:none; color:var(--main); font-weight:bold; margin-bottom:15px;"><i class="fas fa-arrow-left"></i> BACK</button>
-    <h3 style="margin-bottom:15px;">Malak Dashboard 👑</h3>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
-        <div style="background:#e8f5e9; padding:15px; border-radius:12px; text-align:center; border:1px solid #c8e6c9;">
-            <b>Total Sales</b><br><h2 id="total-sale-amt" style="color:#2e7d32; margin:5px 0;">₹0</h2>
-        </div>
-        <div style="background:#fff3e0; padding:15px; border-radius:12px; text-align:center; border:1px solid #ffe0b2;">
-            <b>All Orders</b><br><h2 id="total-order-count" style="color:#ef6c00; margin:5px 0;">0</h2>
-        </div>
-    </div>
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <button onclick="switchAdminTab('orders')" id="tab-btn-orders" style="flex:1; padding:12px; border-radius:10px; border:none; background:var(--main); color:white; font-weight:bold;">📦 Orders</button>
-        <button onclick="switchAdminTab('stock')" id="tab-btn-stock" style="flex:1; padding:12px; border-radius:10px; border:none; background:#eee; color:#333; font-weight:bold;">🛒 Stock</button>
-    </div>
-    <div id="admin-orders-section"><div id="admin-all-orders"></div></div>
-    <div id="admin-stock-section" style="display:none;"><div id="admin-inventory-list"></div></div>
+    <button class="logout-btn" onclick="localStorage.clear(); location.reload();">LOGOUT</button>
 </div>
 
 <div class="nav">
-    <div class="nav-item active" id="nav-home" onclick="showPage('view-home')"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" id="nav-bag" onclick="handleNavBag()"><i class="fas fa-shopping-basket"></i><br>Bag</div>
-    <div class="nav-item" id="nav-profile" onclick="showPage('view-profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
+    <div class="nav-item active" id="nav-home" onclick="showPage('view-home')">
+        <i class="fas fa-home"></i><span>Home</span>
+    </div>
+    <div class="nav-item" id="nav-bag" onclick="handleNavBag()">
+        <i class="fas fa-shopping-basket"></i><span>Bag</span>
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="showPage('view-profile')">
+        <i class="fas fa-user-circle"></i><span>Profile</span>
+    </div>
 </div>
 
 <script src="https://rjaatachakki537-cpu.github.io/aatamitra/auth.js"></script>
