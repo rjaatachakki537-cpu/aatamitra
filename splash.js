@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 3 second ka timer
+    const splash = document.getElementById('splash-screen');
+    const login = document.getElementById('login-screen');
+    const mainApp = document.getElementById('main-app');
+
     setTimeout(() => {
-        const userMobile = localStorage.getItem('userMobile');
-        
-        // Agar user pehle se login hai toh seedha Home, nahi toh Login
-        if (userMobile) {
-            window.location.href = "index.html"; 
+        splash.style.display = 'none';
+        const user = localStorage.getItem('userMobile');
+        if (user) {
+            mainApp.style.display = 'block';
+            loadProducts(); // script.js se call hoga
         } else {
-            // Hum index.html mein hi ek hidden login div rakhenge 
-            // ya use login.html par bhej denge
-            document.getElementById('splash-screen').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'block';
+            login.style.display = 'block';
         }
-    }, 3000); 
+    }, 3000);
 });
