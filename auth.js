@@ -1,44 +1,39 @@
-// auth.js
-let generatedOTP = null;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKIh4Q2VGhGspPBEQe6cfrwJLOlrY76MC3BDp9463MsIIBj1gPDLs7f3yR6vtGDwk_/exec";
 
-function sendOTP() {
-    const mobile = document.getElementById('l-mobile').value;
-    if (mobile.length < 10) return alert("Sahi mobile number daalein!");
-
-    // Fake OTP Generate karna (Demo ke liye)
-    generatedOTP = Math.floor(1000 + Math.random() * 9000);
-    
-    // Rana Ji, abhi demo ke liye alert hai, baad mein API lag sakti hai
-    alert(`Rana Ji VIP Verification\nAapka OTP hai: ${generatedOTP}`);
-    
-    // UI badalna
-    document.getElementById('otp-section').style.display = 'block';
-    if(typeof showToast === 'function') showToast("OTP bhej diya gaya hai!");
+async function sendOTP() {
+    let mobile = document.getElementById('mobile-input').value;
+    if(mobile.length === 10) {
+        alert("OTP sent to " + mobile + " (Try 1234)"); // Fake OTP message
+        document.getElementById('otp-section').style.display = 'block';
+    } else {
+        alert("Sahi mobile number daalo bhai!");
+    }
 }
 
-function verifyOTP() {
-    const enteredOTP = document.getElementById('l-otp').value;
-    const name = document.getElementById('l-name').value;
-    const address = document.getElementById('l-address').value;
+async function verifyOTP() {
+    let otp = document.getElementById('otp-input').value;
+    let mobile = document.getElementById('mobile-input').value;
+    let name = document.getElementById('name-input').value;
 
-    // Pehle check karo ki naam aur address bhara hai ya nahi
-    if (!name || !address) {
-        return alert("Pehle apna Naam aur Address bhariye!");
-    }
+    if(otp === "1234") {
+        // Local Storage mein save karna taaki Delivery Panel access mile
+        localStorage.setItem('userMobile', mobile);
+        localStorage.setItem('userName', name);
 
-    if (enteredOTP == generatedOTP) {
-        if(typeof showToast === 'function') showToast("Verification Safal! ✅");
-        
-        // Yahan handleLogin call ho raha hai jo script.js mein hoga
-        if(typeof handleLogin === 'function') {
-            handleLogin(); 
-        } else {
-            // Agar handleLogin nahi mila toh fallback (backup)
-            alert("Login ho gaya! Welcome " + name);
-            document.getElementById('login-screen').classList.remove('active');
-            showPage('view-home');
-        }
+        // Google Sheet (Users Tab) mein data bhejna [cite: 15, 16, 17]
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'syncUser',
+                name: name,
+                mobile: mobile,
+                address: "Not Set" // User baad mein update karega [cite: 18]
+            })
+        });
+
+        alert("Login Successful!");
+        window.location.href = "index.html";
     } else {
-        alert("Galat OTP! Fir se koshish karein.");
+        alert("Galat OTP!");
     }
 }
