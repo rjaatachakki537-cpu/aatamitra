@@ -3,60 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aata Mitra - Rana Ji Aata Chakki</title>
+    <title>Aata Mitra</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div id="splash-screen">
-        <img src="welcome.jpg" alt="Splash">
-        <div class="splash-text">
-            <h1>AATA MITRA</h1>
-            <p>Rana Ji Aata Chakki</p>
-        </div>
+        <img src="welcome.jpg" style="width:100%; height:100%; object-fit:cover;">
     </div>
 
-    <div id="login-screen" style="display:none;">
-        <div class="login-container">
-            <img src="welcome.jpg" class="login-logo">
-            <h2>Welcome Bhai!</h2>
-            <input type="text" id="name-input" placeholder="Apna Naam Likho">
-            <input type="number" id="mobile-input" placeholder="Mobile Number">
-            <button onclick="sendOTP()" class="btn">OTP Bhejo</button>
-            
-            <div id="otp-section" style="display:none;">
-                <input type="number" id="otp-input" placeholder="OTP Dalo (1234)">
-                <button onclick="verifyOTP()" class="btn success">Verify Karo</button>
-            </div>
+    <div id="login-screen" style="display:none; padding:20px; text-align:center;">
+        <img src="welcome.jpg" style="width:120px; border-radius:50%;">
+        <h2>Aata Mitra Login</h2>
+        <input type="text" id="name-input" placeholder="Apna Naam">
+        <input type="number" id="mobile-input" placeholder="Mobile Number">
+        <button onclick="sendOTP()" style="width:100%; padding:10px; background:#f1c40f; border:none; border-radius:5px;">OTP Bhejo</button>
+        <div id="otp-section" style="display:none; margin-top:10px;">
+            <input type="number" id="otp-input" placeholder="OTP (1234)">
+            <button onclick="verifyOTP()" style="width:100%; padding:10px; background:#27ae60; color:white; border:none; border-radius:5px;">Verify</button>
         </div>
     </div>
 
     <div id="main-app" style="display:none;">
-        <header class="header">
-            <div onclick="toggleSidebar()">☰</div>
-            <h2 id="admin-trigger">RANA JI AATA CHAKKI</h2>
-            <div id="delivery-trigger">👤 Profile</div>
+        <header style="background:#f1c40f; padding:15px; display:flex; justify-content:space-between; align-items:center;">
+            <span onclick="toggleSidebar()">☰</span>
+            <b id="admin-trigger">RANA JI AATA CHAKKI</b>
+            <span id="cart-count" style="background:red; color:white; padding:2px 8px; border-radius:50%; font-size:12px;">0</span>
         </header>
 
         <div id="banner-area"></div>
-        <div class="category-bar">
-            <span>🌾 Atta</span><span>🌶️ Masala</span><span>🟡 Oil</span>
-        </div>
-        <div id="product-list"></div>
+        
+        <div style="padding:10px; font-weight:bold;">Taza Saman 👇</div>
+        <div id="product-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; padding:10px;"></div>
 
-        <nav class="bottom-nav">
-            <div onclick="showTab('home')">🏠 Home</div>
-            <div onclick="showTab('cart')">🛒 Cart</div>
-            <div onclick="showTab('track')">📦 Track</div>
+        <nav style="position:fixed; bottom:0; width:100%; background:white; display:flex; justify-content:space-around; padding:15px; border-top:1px solid #ddd;">
+            <span>🏠 Home</span>
+            <span>🛒 Cart</span>
+            <span>📦 Track</span>
         </nav>
     </div>
 
     <script src="script.js"></script>
     <script src="auth.js"></script>
     <script src="splash.js"></script>
-    <script src="admin.js"></script>
-    <script src="tracking.js"></script>
 </body>
 </html>
