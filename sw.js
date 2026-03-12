@@ -1,21 +1,23 @@
-// sw.js
 const CACHE_NAME = 'aata-mitra-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/script.js'
+const urlsToCache = [
+  'index.html',
+  'style.css',
+  'script.js',
+  'welcome.jpg'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(urlsToCache);
+    })
   );
-  console.log('Aata Mitra SW: Installed & Cached Assets');
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
   );
 });
