@@ -1,39 +1,25 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKIh4Q2VGhGspPBEQe6cfrwJLOlrY76MC3BDp9463MsIIBj1gPDLs7f3yR6vtGDwk_/exec";
-
-async function sendOTP() {
+function sendOTP() {
     let mobile = document.getElementById('mobile-input').value;
     if(mobile.length === 10) {
-        alert("OTP sent to " + mobile + " (Try 1234)"); // Fake OTP message
         document.getElementById('otp-section').style.display = 'block';
+        alert("Bhai OTP bhej diya! (1234 dalo)");
     } else {
-        alert("Sahi mobile number daalo bhai!");
+        alert("Sahi Number dalo!");
     }
 }
 
-async function verifyOTP() {
+function verifyOTP() {
     let otp = document.getElementById('otp-input').value;
-    let mobile = document.getElementById('mobile-input').value;
-    let name = document.getElementById('name-input').value;
-
     if(otp === "1234") {
-        // Local Storage mein save karna taaki Delivery Panel access mile
+        let mobile = document.getElementById('mobile-input').value;
+        let name = document.getElementById('name-input').value;
         localStorage.setItem('userMobile', mobile);
         localStorage.setItem('userName', name);
-
-        // Google Sheet (Users Tab) mein data bhejna [cite: 15, 16, 17]
-        await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'syncUser',
-                name: name,
-                mobile: mobile,
-                address: "Not Set" // User baad mein update karega [cite: 18]
-            })
-        });
-
-        alert("Login Successful!");
-        window.location.href = "index.html";
+        
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        loadProducts();
     } else {
-        alert("Galat OTP!");
+        alert("Galat OTP hai!");
     }
 }
