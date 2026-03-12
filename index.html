@@ -10,74 +10,53 @@
 </head>
 <body>
 
-    <div id="splash-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <img src="welcome.jpg" alt="Welcome" style="width:100%; height:100%; object-fit:cover;">
-        <div style="position:absolute; bottom:50px; text-align:center; color:white; text-shadow:2px 2px 4px #000;">
+    <div id="splash-screen">
+        <img src="welcome.jpg" alt="Splash">
+        <div class="splash-text">
             <h1>AATA MITRA</h1>
-            <p>Fresh Chakki Atta & Pure Grocery</p>
+            <p>Rana Ji Aata Chakki</p>
         </div>
     </div>
 
-    <div id="login-screen" style="display:none; padding:20px; text-align:center;">
-        <img src="welcome.jpg" style="width:150px; border-radius:50%; margin-bottom:20px;">
-        <h2>Login to Aata Mitra</h2>
-        <input type="text" id="name-input" placeholder="Enter Your Name" class="input-field"><br><br>
-        <input type="number" id="mobile-input" placeholder="Mobile Number" class="input-field"><br><br>
-        <button onclick="sendOTP()" class="btn-primary">Send OTP</button>
-        
-        <div id="otp-section" style="display:none; margin-top:20px;">
-            <input type="number" id="otp-input" placeholder="Enter 4 Digit OTP">
-            <button onclick="verifyOTP()" class="btn-primary">Verify & Login</button>
+    <div id="login-screen" style="display:none;">
+        <div class="login-container">
+            <img src="welcome.jpg" class="login-logo">
+            <h2>Welcome Bhai!</h2>
+            <input type="text" id="name-input" placeholder="Apna Naam Likho">
+            <input type="number" id="mobile-input" placeholder="Mobile Number">
+            <button onclick="sendOTP()" class="btn">OTP Bhejo</button>
+            
+            <div id="otp-section" style="display:none;">
+                <input type="number" id="otp-input" placeholder="OTP Dalo (1234)">
+                <button onclick="verifyOTP()" class="btn success">Verify Karo</button>
+            </div>
         </div>
     </div>
 
     <div id="main-app" style="display:none;">
         <header class="header">
-            <div class="menu-icon" onclick="toggleSidebar()">☰</div>
-            <h2 class="header-title" style="cursor:pointer;">RANA JI AATA CHAKKI</h2>
-            <div class="profile-name" style="cursor:pointer;">👤 Profile</div>
+            <div onclick="toggleSidebar()">☰</div>
+            <h2 id="admin-trigger">RANA JI AATA CHAKKI</h2>
+            <div id="delivery-trigger">👤 Profile</div>
         </header>
 
-        <div id="sidebar" class="sidebar">
-            <a href="#">My Orders</a>
-            <a href="#" id="install-btn" onclick="installApp()" style="display:none; background:#27ae60; color:white;">📥 Install App</a>
-            <a href="#">Support</a>
-            <a href="#" onclick="logout()">Logout</a>
+        <div id="banner-area"></div>
+        <div class="category-bar">
+            <span>🌾 Atta</span><span>🌶️ Masala</span><span>🟡 Oil</span>
         </div>
+        <div id="product-list"></div>
 
-        <div id="banner-slider" class="banners">
-            </div>
-
-        <div class="categories">
-            <span>🌾 Atta</span> <span>🌶️ Masale</span> <span>🟡 Oil</span>
-        </div>
-
-        <div id="product-list" class="product-container">
-            </div>
-        
         <nav class="bottom-nav">
-            <div onclick="showHome()">🏠 Home</div>
-            <div onclick="showCart()">🛒 Cart <span id="cart-count">0</span></div>
-            <div onclick="showTracking()">📦 Track</div>
+            <div onclick="showTab('home')">🏠 Home</div>
+            <div onclick="showTab('cart')">🛒 Cart</div>
+            <div onclick="showTab('track')">📦 Track</div>
         </nav>
     </div>
 
-    <script src="splash.js"></script>
-    <script src="auth.js"></script>
     <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script src="splash.js"></script>
     <script src="admin.js"></script>
     <script src="tracking.js"></script>
-    <script>
-        // PWA Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-
-        // Sidebar Toggle
-        function toggleSidebar() {
-            let sb = document.getElementById('sidebar');
-            sb.style.left = sb.style.left === '0px' ? '-250px' : '0px';
-        }
-    </script>
 </body>
 </html>
