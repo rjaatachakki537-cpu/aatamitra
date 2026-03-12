@@ -1,12 +1,12 @@
 /* --- RANA JI VIP PREMIUM STYLES --- */
 :root { 
-    --main: #2874f0; 
+    --main: #d35400; /* Orange theme color as per your HTML */
     --yellow: #f4b41a; 
-    --bg: #f1f3f6; 
-    --red: #fb641b; 
-    --green: #25D366; 
-    --dark: #333;
-    --shadow: 0 4px 12px rgba(0,0,0,0.1);
+    --bg: #f7f9fc; 
+    --red: #e67e22; 
+    --green: #27ae60; 
+    --dark: #2c3e50;
+    --shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
 body { 
@@ -15,77 +15,82 @@ body {
     background: var(--bg); 
     padding-bottom: 90px; 
     color: var(--dark);
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* Header & Navigation */
+/* Header */
 .header { 
-    background: var(--main); 
-    color: white; 
-    padding: 15px; 
-    text-align: center; 
+    background: white; 
+    color: var(--main); 
+    padding: 15px 20px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: sticky; 
     top: 0; 
     z-index: 1000; 
-    box-shadow: var(--shadow);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
+.header b { font-size: 18px; letter-spacing: 1px; }
+
+/* Navigation */
 .nav { 
     position: fixed; 
     bottom: 0; 
     width: 100%; 
     background: white; 
     display: flex; 
-    border-top: 1px solid #ddd; 
-    z-index: 999; 
-    padding: 5px 0;
+    border-top: 1px solid #eee; 
+    z-index: 1999; 
+    padding: 8px 0;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
 }
 
 .nav-item { 
     flex: 1; 
     text-align: center; 
-    padding: 10px; 
-    color: #888; 
+    color: #95a5a6; 
     font-size: 11px; 
-    transition: 0.3s;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
+.nav-item i { font-size: 20px; margin-bottom: 4px; display: block; }
+
+/* ACTIVE STATE FOR NAV (Important) */
 .nav-item.active { 
-    color: var(--main); 
-    font-weight: bold; 
+    color: var(--main) !important; 
+    font-weight: 600; 
 }
 
-.nav-item i { font-size: 20px; margin-bottom: 3px; }
-
-/* Screens & Views */
-.view { display: none; padding: 15px; animation: fadeIn 0.4s ease; }
-.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.full-screen { 
-    position: fixed; 
-    inset: 0; 
-    background: white; 
-    z-index: 10000; 
-    padding: 30px; 
-    display: flex; 
-    flex-direction: column; 
-    overflow-y: auto; 
+.nav-item.active i { 
+    transform: translateY(-3px) scale(1.1); 
 }
 
-/* Profile Section Styles */
+/* Screens & Animation */
+.view { display: none; padding: 20px; animation: fadeIn 0.4s ease-out; }
+.view.active { display: block; }
+
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(15px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* Profile & Cards */
 .profile-card {
     background: white;
     padding: 25px;
     border-radius: 20px;
     text-align: center;
     box-shadow: var(--shadow);
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .user-img-container {
     position: relative;
-    width: 110px;
-    height: 110px;
+    width: 100px;
+    height: 100px;
     margin: 0 auto 15px;
 }
 
@@ -94,126 +99,48 @@ body {
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid #fff;
-    box-shadow: 0 0 15px rgba(40, 116, 240, 0.2);
+    border: 3px solid #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .cam-icon {
     position: absolute;
-    bottom: 5px;
-    right: 5px;
+    bottom: 0;
+    right: 0;
     background: var(--main);
     color: white;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 2px solid white;
-    cursor: pointer;
-}
-
-/* Help & Support Cards */
-.help-card {
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    border: 1px solid #eee;
-    transition: 0.3s;
-}
-
-.help-card:active { transform: scale(0.98); background: #f9f9f9; }
-
-.help-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    margin-right: 15px;
+    font-size: 14px;
 }
 
 /* Order Cards */
 .order-card { 
     background: white; 
-    padding: 15px; 
-    border-radius: 15px; 
+    padding: 18px; 
+    border-radius: 18px; 
     margin-bottom: 15px; 
-    border-left: 5px solid var(--main); 
     box-shadow: var(--shadow); 
+    border: 1px solid #f0f0f0;
 }
 
 .status-badge { 
-    padding: 5px 12px; 
-    border-radius: 20px; 
+    padding: 4px 10px; 
+    border-radius: 8px; 
     font-size: 10px; 
     font-weight: bold; 
     float: right; 
-    text-transform: uppercase;
 }
 
-.s-PENDING { background: #fff3e0; color: #ff9800; }
-.s-DELIVERED { background: #e8f5e9; color: #2e7d32; }
-.s-CANCELLED { background: #ffebee; color: #d32f2f; }
+.s-PENDING { background: #fff3e0; color: #e67e22; }
+.s-DELIVERED { background: #e8f5e9; color: #27ae60; }
 
-/* Form Elements */
-input, textarea { 
-    width: 100%; 
-    padding: 14px; 
-    margin-bottom: 12px; 
-    border: 1px solid #e0e0e0; 
-    border-radius: 12px; 
-    box-sizing: border-box; 
-    font-family: inherit;
-    font-size: 14px;
-    outline: none;
-}
-
-input:focus { border-color: var(--main); }
-
-.submit-btn { 
-    background: var(--red); 
-    color: white; 
-    border: none; 
-    padding: 16px; 
-    border-radius: 12px; 
-    width: 100%; 
-    font-weight: bold; 
-    font-size: 15px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(251, 100, 27, 0.3);
-}
-
-/* Action Buttons Grid */
-.btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-
-.action-btn { 
-    padding: 10px; 
-    border-radius: 10px; 
-    font-weight: bold; 
-    font-size: 12px; 
-    cursor: pointer; 
-    text-decoration: none; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 6px; 
-    border: 1px solid transparent;
-    transition: 0.2s;
-}
-
-.btn-modify { background: #e3f2fd; color: #1976d2; border-color: #bbdefb; }
-.btn-repeat { background: #fff9e6; color: #f4b41a; border-color: #ffecb3; }
-.btn-chat { background: #e8fbf0; color: #25D366; border-color: #c8e6c9; }
-.btn-cancel { background: #fff1f1; color: #d32f2f; border-color: #ffcdd2; }
-
-/* Item Cards (Home/Products) */
+/* Item Card (Product Style) */
 .item-card { 
     background: white; 
     padding: 12px; 
@@ -222,29 +149,41 @@ input:focus { border-color: var(--main); }
     display: flex; 
     align-items: center; 
     gap: 15px; 
-    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: 0.2s;
 }
 
-.item-card img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; }
+.item-card:active { transform: scale(0.97); }
+
+.item-card img { 
+    width: 65px; 
+    height: 65px; 
+    border-radius: 12px; 
+    object-fit: cover; 
+    background: #f9f9f9;
+}
 
 .add-btn { 
-    background: var(--yellow); 
+    background: var(--main); 
+    color: white;
     border: none; 
-    padding: 8px 16px; 
-    border-radius: 8px; 
+    padding: 8px 18px; 
+    border-radius: 10px; 
     font-weight: bold; 
     margin-left: auto; 
-    box-shadow: 0 3px 6px rgba(244, 180, 26, 0.3);
+    transition: 0.3s;
 }
+
+.add-btn:active { background: #b34700; }
 
 /* Toast Notification */
 #toast { 
     visibility: hidden; 
-    min-width: 250px; 
+    min-width: 200px; 
     background: #333; 
     color: #fff; 
     text-align: center; 
-    border-radius: 50px; 
+    border-radius: 12px; 
     padding: 14px; 
     position: fixed; 
     z-index: 10001; 
@@ -252,15 +191,31 @@ input:focus { border-color: var(--main); }
     bottom: 100px; 
     transform: translateX(-50%); 
     font-size: 14px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
 #toast.show { visibility: visible; animation: slideUp 0.3s forwards; }
-@keyframes slideUp { from { bottom: 50px; opacity: 0; } to { bottom: 100px; opacity: 1; } }
-.nav-item.active {
-    color: var(--main) !important;
-    font-weight: bold;
+
+@keyframes slideUp { 
+    from { bottom: 80px; opacity: 0; } 
+    to { bottom: 100px; opacity: 1; } 
 }
-.nav-item.active i {
-    transform: scale(1.2);
+
+/* Sidebar Overlay */
+#sidebar-overlay {
+    background: rgba(0,0,0,0.4) !important;
+    backdrop-filter: blur(2px);
+}
+
+/* Inputs */
+input, textarea {
+    border: 1px solid #edf2f7;
+    background: #f8fafc;
     transition: 0.3s;
+}
+
+input:focus {
+    background: white;
+    border-color: var(--main);
+    box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
 }
