@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aata Mitra</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -13,33 +14,37 @@
     </div>
 
     <div id="login-screen" style="display:none; padding:20px; text-align:center;">
-        <img src="welcome.jpg" style="width:120px; border-radius:50%;">
-        <h2>Aata Mitra Login</h2>
-        <input type="text" id="name-input" placeholder="Apna Naam">
+        <img src="welcome.jpg" style="width:120px; border-radius:50%; margin-bottom:20px; border:4px solid #f1c40f;">
+        <h2>Login</h2>
         <input type="number" id="mobile-input" placeholder="Mobile Number">
-        <button onclick="sendOTP()" style="width:100%; padding:10px; background:#f1c40f; border:none; border-radius:5px;">OTP Bhejo</button>
-        <div id="otp-section" style="display:none; margin-top:10px;">
-            <input type="number" id="otp-input" placeholder="OTP (1234)">
-            <button onclick="verifyOTP()" style="width:100%; padding:10px; background:#27ae60; color:white; border:none; border-radius:5px;">Verify</button>
+        <button onclick="sendOTP()" class="btn btn-primary">OTP Bhejo</button>
+        <div id="otp-section" style="display:none; margin-top:15px;">
+            <input type="number" id="otp-input" placeholder="Enter 1234">
+            <button onclick="verifyOTP()" class="btn btn-success">Verify</button>
         </div>
     </div>
 
     <div id="main-app" style="display:none;">
-        <header style="background:#f1c40f; padding:15px; display:flex; justify-content:space-between; align-items:center;">
-            <span onclick="toggleSidebar()">☰</span>
-            <b id="admin-trigger">RANA JI AATA CHAKKI</b>
-            <span id="cart-count" style="background:red; color:white; padding:2px 8px; border-radius:50%; font-size:12px;">0</span>
+        <header class="header">
+            <div onclick="openMenu()" style="font-size:24px; cursor:pointer;">☰</div>
+            <b id="admin-trigger" style="cursor:pointer;">RANA JI AATA CHAKKI</b>
+            <div style="position:relative; cursor:pointer;" onclick="showTab('cart')">
+                🛒 <span id="cart-count">0</span>
+            </div>
         </header>
 
-        <div id="banner-area"></div>
-        
-        <div style="padding:10px; font-weight:bold;">Taza Saman 👇</div>
-        <div id="product-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; padding:10px;"></div>
+        <div class="category-bar" id="category-list">
+            </div>
 
-        <nav style="position:fixed; bottom:0; width:100%; background:white; display:flex; justify-content:space-around; padding:15px; border-top:1px solid #ddd;">
-            <span>🏠 Home</span>
-            <span>🛒 Cart</span>
-            <span>📦 Track</span>
+        <div id="banner-area"></div>
+
+        <div style="padding:10px 15px; font-weight:bold;">Taza Saman 👇</div>
+        <div id="product-list"></div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item" onclick="showTab('home')">🏠<br>Home</div>
+            <div class="nav-item" onclick="showTab('cart')">🛒<br>Cart</div>
+            <div class="nav-item" onclick="showTab('track')">📦<br>Track</div>
         </nav>
     </div>
 
