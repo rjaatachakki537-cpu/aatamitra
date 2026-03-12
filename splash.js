@@ -1,28 +1,16 @@
-// splash.js
-function startSplash() {
-    const splash = document.getElementById('splash-screen');
-    if (splash) {
-        const img = splash.querySelector('img');
-        if (img) {
-            // Fresh image fetch logic
-            img.src = "https://rjaatachakki537-cpu.github.io/aatamitra/welcome.jpg?v=" + new Date().getTime();
+document.addEventListener('DOMContentLoaded', () => {
+    // 3 second ka timer
+    setTimeout(() => {
+        const userMobile = localStorage.getItem('userMobile');
+        
+        // Agar user pehle se login hai toh seedha Home, nahi toh Login
+        if (userMobile) {
+            window.location.href = "index.html"; 
+        } else {
+            // Hum index.html mein hi ek hidden login div rakhenge 
+            // ya use login.html par bhej denge
+            document.getElementById('splash-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'block';
         }
-
-        // 4 second ka wait aur smooth transition
-        setTimeout(() => {
-            splash.style.transition = "opacity 0.8s ease, transform 0.8s ease";
-            splash.style.opacity = "0";
-            splash.style.transform = "scale(1.1)";
-            
-            setTimeout(() => { 
-                splash.style.display = 'none'; 
-            }, 800);
-        }, 4000); 
-    }
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startSplash);
-} else {
-    startSplash();
-}
+    }, 3000); 
+});
