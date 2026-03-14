@@ -1,8 +1,8 @@
-// ===============================
+// =============================== 
 // AATA MITRA MAIN SCRIPT
 // ===============================
 
-const API_URL = "YOUR_APPS_SCRIPT_URL";
+const API_URL = "https://script.google.com/macros/s/AKfycbwKIh4Q2VGhGspPBEQe6cfrwJLOlrY76MC3BDp9463MsIIBj1gPDLs7f3yR6vtGDwk_/exec";
 
 // DATA
 let products = [];
