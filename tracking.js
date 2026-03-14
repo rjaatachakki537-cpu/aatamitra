@@ -1,11 +1,22 @@
-async function trackMyOrder(orderID) {
-    const response = await fetch(`${SCRIPT_URL}?action=getOrders`);
-    const data = await response.json();
-    const order = data.find(row => row[0] == orderID);
+const TRACK_API = "https://script.google.com/macros/s/AKfycbwKIh4Q2VGhGspPBEQe6cfrwJLOlrY76MC3BDp9463MsIIBj1gPDLs7f3yR6vtGDwk_/exec";
 
-    if(order) {
-        let status = order[7]; // Status Column 
-        // Tracking logic yahan dikhayenge
-        document.getElementById('track-status').innerText = "Current Status: " + status;
+async function trackMyOrder(orderID){
+
+    const res = await fetch(`${TRACK_API}?action=trackOrder&orderId=${orderID}`);
+
+    const order = await res.json();
+
+    if(order){
+
+        alert(
+        "Order ID: "+order[0]+"\n"+
+        "Status: "+order[7]
+        );
+
+    }else{
+
+        alert("Order nahi mila");
+
     }
+
 }
