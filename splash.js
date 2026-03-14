@@ -1,29 +1,39 @@
-document.addEventListener("DOMContentLoaded", () => {
+// ===============================
+// SPLASH SCREEN SYSTEM
+// ===============================
 
-    const splash = document.getElementById("splash-screen");
-    const login = document.getElementById("login-screen");
-    const mainApp = document.getElementById("main-app");
+window.addEventListener("load", ()=>{
 
-    setTimeout(() => {
+let splash = document.getElementById("splash-screen");
+let login = document.getElementById("login-screen");
+let main = document.getElementById("main-app");
 
-        splash.style.display = "none";
+// 3 seconds splash
 
-        const user = localStorage.getItem("userMobile");
+setTimeout(()=>{
 
-        if(user){
+splash.style.display="none";
 
-            mainApp.style.display = "block";
+// check login
 
-            if(typeof loadProducts === "function"){
-                loadProducts();
-            }
+let mobile = localStorage.getItem("userMobile");
 
-        } else {
+if(mobile){
 
-            login.style.display = "block";
+// already logged in
 
-        }
+main.style.display="block";
 
-    },3000);
+loadAppData();
+
+}else{
+
+// show login
+
+login.style.display="block";
+
+}
+
+},3000);
 
 });
