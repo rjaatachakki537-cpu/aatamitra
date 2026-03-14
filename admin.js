@@ -1,18 +1,57 @@
-const ADMIN_CODE = "LUCKY";
+const API_URL = "https://script.google.com/macros/s/AKfycbwKIh4Q2VGhGspPBEQe6cfrwJLOlrY76MC3BDp9463MsIIBj1gPDLs7f3yR6vtGDwk_/exec";
 
-async function loadAdminOrders() {
-    const response = await fetch(`${SCRIPT_URL}?action=getOrders`); // Humne Apps Script mein getOrders banaya tha
-    const data = await response.json();
-    const orders = data.slice(1); // Header [cite: 5] hata kar
+async function loadAdminOrders(){
 
-    let html = '<h2>Admin Dashboard (Rana Ji Aata Chakki)</h2>';
+    const res = await fetch(`${API_URL}?action=getOrders`);
+
+    const data = await res.json();
+
+    const orders = data.slice(1);
+
+    let html = "<h2>Admin Dashboard</h2>";
+
     orders.reverse().forEach(row => {
+
         html += `
-            <div class="admin-order-card">
-                <p><b>Order ID:</b> ${row[0]}</p> <p><b>Customer:</b> ${row[2]}</p> <p><b>Items:</b> ${row[5]}</p> <p><b>Total:</b> ₹${row[6]}</p> <p><b>Status:</b> ${row[7]}</p> <button onclick="updateStatus('${row[0]}', 'Out for Delivery')">Mark Out for Delivery</button>
-                <button onclick="updateStatus('${row[0]}', 'Delivered')">Mark Delivered</button>
-            </div>
+        <div style="background:#fff;padding:10px;margin:10px;border-radius:10px">
+        <b>Order ID:</b> ${row[0]} <br>
+        <b>Name:</b> ${row[2]} <br>
+        <b>Items:</b> ${row[5]} <br>
+        <b>Total:</b> ₹${row[6]} <br>
+        <b>Status:</b> ${row[7]} <br>
+
+        <button onclick="updateStatus('${row[0]}','Processing')">Processing</button>
+
+        <button onclick="updateStatus('${row[0]}','Out for Delivery')">Out for Delivery</button>
+
+        <button onclick="updateStatus('${row[0]}','Delivered')">Delivered</button>
+
+        </div>
         `;
+
     });
-    document.getElementById('admin-content').innerHTML = html;
+
+    document.getElementById("admin-content").innerHTML = html;
+
+}
+
+async function updateStatus(orderId,status){
+
+    await fetch(API_URL+"?action=updateStatus",{
+
+        method:"POST",
+
+        body: JSON.stringify({
+
+            orderId:orderId,
+            status:status
+
+        })
+
+    });
+
+    alert("Status Updated");
+
+    loadAdminOrders();
+
 }
