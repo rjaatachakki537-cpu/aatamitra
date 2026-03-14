@@ -1,78 +1,86 @@
-// ---------------------
-// Aata Mitra - auth.js
-// ---------------------
+// ===============================
+// OTP LOGIN SYSTEM
+// ===============================
 
-function sendOTP() {
+let generatedOTP = "";
 
-    let mobile = document.getElementById('mobile-input').value;
+// ===============================
+// SEND OTP
+// ===============================
 
-    if(mobile.length !== 10){
-        alert("Sahi 10 digit mobile number dalo");
-        return;
-    }
+function sendOTP(){
 
-    // Demo OTP
-    let otp = "1234";
+let mobile = document.getElementById("mobile-input").value;
 
-    localStorage.setItem("demoOTP", otp);
+if(mobile.length != 10){
 
-    document.getElementById('otp-section').style.display = "block";
+alert("Enter valid mobile number");
 
-    alert("OTP bhej diya! Demo OTP: 1234");
+return;
 
 }
 
-// OTP Verify
+// RANDOM OTP
+
+generatedOTP = Math.floor(1000 + Math.random() * 9000);
+
+console.log("OTP:",generatedOTP); 
+// demo ke liye console me show hoga
+
+alert("Demo OTP: "+generatedOTP);
+
+// OTP section show
+
+document.getElementById("otp-section").style.display="block";
+
+}
+
+// ===============================
+// VERIFY OTP
+// ===============================
+
 function verifyOTP(){
 
-    let userOTP = document.getElementById('otp-input').value;
+let userOTP = document.getElementById("otp-input").value;
 
-    let realOTP = localStorage.getItem("demoOTP");
+if(userOTP == generatedOTP){
 
-    if(userOTP === realOTP){
+let mobile = document.getElementById("mobile-input").value;
 
-        let mobile = document.getElementById('mobile-input').value;
+localStorage.setItem("userMobile",mobile);
 
-        // Save user
-        localStorage.setItem("userMobile", mobile);
+// LOGIN SUCCESS
 
-        // Hide login
-        document.getElementById('login-screen').style.display = "none";
+document.getElementById("login-screen").style.display="none";
 
-        // Show app
-        document.getElementById('main-app').style.display = "block";
+document.getElementById("main-app").style.display="block";
 
-        // Load products
-        if(typeof loadProducts === "function"){
-            loadProducts();
-        }
+loadAppData();
 
-        alert("Login Success!");
+}else{
 
-    }
-    else{
-
-        alert("OTP galat hai!");
-
-    }
+alert("Wrong OTP");
 
 }
 
-// Auto login check
-document.addEventListener("DOMContentLoaded", () => {
+}
 
-    let user = localStorage.getItem("userMobile");
+// ===============================
+// AUTO LOGIN
+// ===============================
 
-    if(user){
+window.addEventListener("load",()=>{
 
-        document.getElementById('login-screen').style.display = "none";
+let mobile = localStorage.getItem("userMobile");
 
-        document.getElementById('main-app').style.display = "block";
+if(mobile){
 
-        if(typeof loadProducts === "function"){
-            loadProducts();
-        }
+document.getElementById("login-screen").style.display="none";
 
-    }
+document.getElementById("main-app").style.display="block";
+
+loadAppData();
+
+}
 
 });
