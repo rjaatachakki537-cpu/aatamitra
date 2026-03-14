@@ -1,138 +1,305 @@
-// -----------------------
-// Aata Mitra - Script.js
-// -----------------------
-const API_URL = "https://script.google.com/macros/s/AKfycbwKIh4Q2VGhGspPBEQe6cfrwJLOlrY76MC3BDp9463MsIIBj1gPDLs7f3yR6vtGDwk_/exec";
+// ===============================
+// AATA MITRA MAIN SCRIPT
+// ===============================
 
-let allProducts = [];
+const API_URL = "YOUR_APPS_SCRIPT_URL";
+
+// DATA
+let products = [];
+let categories = [];
 let cart = [];
 
-// 1. Load Splash + App
-window.onload = () => {
-    console.log("Aata Mitra App Started...");
-};
+// ===============================
+// LOAD APP DATA
+// ===============================
 
-// 2. Load Products + Categories + Banners
-async function loadProducts() {
-    const productList = document.getElementById("product-list");
-    const categoryList = document.getElementById("category-list");
-    const bannerArea = document.getElementById("banner-area");
+async function loadAppData(){
 
-    try {
-        const res = await fetch(`${API_URL}?action=getProducts`);
-        const data = await res.json();
+try{
 
-        if(data && data.length > 1){
-            allProducts = data.slice(1);
+let res = await fetch(API_URL+"?action=getData");
 
-            // Categories
-            const categories = ["All", ...new Set(allProducts.map(item => item[2]))]; // Column 2 = Category
-            categoryList.innerHTML = categories.map(cat => 
-                `<span class="cat-pill" onclick="filterData('${cat}')">${cat}</span>`
-            ).join('');
+let data = await res.json();
 
-            renderProducts(allProducts);
-        }
+products = data.products;
+categories = data.categories;
 
-        // Load Banners
-        const bannerRes = await fetch(`${API_URL}?action=getBanners`);
-        const banners = await bannerRes.json();
-        if(banners && banners.length > 1){
-            bannerArea.innerHTML = banners.slice(1).map(b => 
-                `<img src="${b[3]}" style="width:100%; border-radius:12px; margin-bottom:10px;">`
-            ).join('');
-        }
+renderCategories();
+renderProducts();
 
-    } catch(e) {
-        productList.innerHTML = "Connection Failed!";
-        console.error(e);
-    }
+}catch(e){
+
+console.log("Data load error",e);
+
 }
 
-// 3. Render Products
-function renderProducts(items){
-    const list = document.getElementById('product-list');
-    list.innerHTML = items.map(row => `
-        <div class="product-card">
-            <img src="images/products/${row[0]}.jpg" onerror="this.src='welcome.jpg'">
-            <h4>${row[1]}</h4>
-            <p>${row[4]} (${row[3]})</p>
-            <b>₹${row[5]}</b>
-            <button class="add-btn" onclick="addToCart('${row[0]}','${row[1]}',${row[5]})">Add to Cart</button>
-        </div>
-    `).join('');
 }
 
-// 4. Filter Category
-function filterData(cat){
-    if(cat === "All") renderProducts(allProducts);
-    else renderProducts(allProducts.filter(p => p[2] === cat));
-}
+// ===============================
+// RENDER CATEGORIES
+// ===============================
 
-// 5. Add to Cart
-function addToCart(id,name,price){
-    cart.push({id,name,price});
-    document.getElementById('cart-count').innerText = cart.length;
-    alert(`${name} cart mein add ho gaya!`);
-}
+function renderCategories(){
 
-// 6. Show Tabs
-function showTab(tab){
-    if(tab==='cart'){
-        alert("Basket mein "+cart.length+" item hain.");
-    }
-    if(tab==='track'){
-        const orderID = prompt("Order ID Dalo:");
-        if(orderID) trackMyOrder(orderID);
-    }
-    if(tab==='home') location.reload();
-}
+let box = document.getElementById("category-list");
 
-// 7. Admin Panel Trigger
-document.getElementById('admin-trigger').addEventListener('click', async () => {
-    let code = prompt("Admin Code Dalo:");
-    if(code === "LUCKY"){
-        alert("Admin Panel Access Granted!");
-        loadAdminOrders();
-    }
+box.innerHTML = "";
+
+categories.forEach(cat=>{
+
+let div = document.createElement("div");
+
+div.className="category";
+
+div.innerText = cat.name;
+
+div.onclick=()=>filterProducts(cat.name);
+
+box.appendChild(div);
+
 });
 
-// 8. Admin Load Orders
-async function loadAdminOrders(){
-    const res = await fetch(`${API_URL}?action=getOrders`);
-    const data = await res.json();
-    const orders = data.slice(1);
-    let html = '<h2>Admin Dashboard (Rana Ji Aata Chakki)</h2>';
-    orders.reverse().forEach(row => {
-        html += `
-        <div class="admin-order-card">
-            <p><b>Order ID:</b> ${row[0]}</p>
-            <p><b>Customer:</b> ${row[2]}</p>
-            <p><b>Items:</b> ${row[5]}</p>
-            <p><b>Total:</b> ₹${row[6]}</p>
-            <p><b>Status:</b> ${row[7]}</p>
-            <button onclick="updateStatus('${row[0]}','Out for Delivery')">Mark Out for Delivery</button>
-            <button onclick="updateStatus('${row[0]}','Delivered')">Mark Delivered</button>
-        </div>
-        `;
-    });
-    document.getElementById('admin-content').innerHTML = html;
 }
 
-// 9. Admin Update Status
-async function updateStatus(orderID,status){
-    await fetch(API_URL+"?action=updateStatus", {
-        method:'POST',
-        body: JSON.stringify({orderId:orderID,status:status})
-    });
-    alert(`Order ${orderID} status updated to ${status}`);
-    loadAdminOrders();
+// ===============================
+// FILTER PRODUCTS
+// ===============================
+
+function filterProducts(category){
+
+let filtered = products.filter(p=>p.category==category);
+
+renderProducts(filtered);
+
 }
 
-// 10. Track My Order
-async function trackMyOrder(orderID){
-    const res = await fetch(`${API_URL}?action=trackOrder&orderId=${orderID}`);
-    const order = await res.json();
-    if(order){
-        alert(`Order ID: ${order[0]}\nCurrent Status: ${order[7]}`);
-    } else alert("Order ID galat hai!");
+// ===============================
+// RENDER PRODUCTS
+// ===============================
+
+function renderProducts(list=products){
+
+let box = document.getElementById("product-list");
+
+box.innerHTML="";
+
+list.forEach(p=>{
+
+let html = `
+
+<div class="product">
+
+<img src="${p.image}">
+
+<h3>${p.name}</h3>
+
+<p>₹${p.price}</p>
+
+<button onclick="addToCart('${p.id}')">
+Add To Cart
+</button>
+
+</div>
+
+`;
+
+box.innerHTML += html;
+
+});
+
 }
+
+// ===============================
+// CART SYSTEM
+// ===============================
+
+function addToCart(id){
+
+let item = products.find(p=>p.id==id);
+
+let exist = cart.find(c=>c.id==id);
+
+if(exist){
+
+exist.qty++;
+
+}else{
+
+cart.push({
+id:item.id,
+name:item.name,
+price:item.price,
+qty:1
+});
+
+}
+
+updateCartCount();
+
+}
+
+// ===============================
+// CART COUNT
+// ===============================
+
+function updateCartCount(){
+
+let total = cart.reduce((sum,i)=>sum+i.qty,0);
+
+document.getElementById("cart-count").innerText = total;
+
+}
+
+// ===============================
+// SHOW CART PAGE
+// ===============================
+
+function showCart(){
+
+let box = document.getElementById("main-app");
+
+let html = `<h2 style="padding:10px">Cart</h2>`;
+
+let total=0;
+
+cart.forEach(item=>{
+
+let price = item.price*item.qty;
+
+total += price;
+
+html+=`
+
+<div class="cart-item">
+
+<b>${item.name}</b>
+
+<p>₹${item.price} x ${item.qty}</p>
+
+</div>
+
+`;
+
+});
+
+html+=`
+
+<h3>Total ₹${total}</h3>
+
+<button onclick="placeOrder(${total})">
+Place Order
+</button>
+
+`;
+
+box.innerHTML = html;
+
+}
+
+// ===============================
+// PLACE ORDER
+// ===============================
+
+function placeOrder(total){
+
+openPayment(total);
+
+}
+
+// ===============================
+// ORDER SEND TO BACKEND
+// ===============================
+
+async function sendOrder(paymentType){
+
+let order = {
+
+mobile:localStorage.getItem("userMobile"),
+
+cart:cart,
+
+payment:paymentType,
+
+status:"Order Received"
+
+};
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify(order)
+
+});
+
+alert("Order Placed Successfully");
+
+cart=[];
+
+updateCartCount();
+
+showTab("track");
+
+}
+
+// ===============================
+// TAB NAVIGATION
+// ===============================
+
+function showTab(tab){
+
+if(tab=="home"){
+
+loadAppData();
+
+}
+
+if(tab=="cart"){
+
+showCart();
+
+}
+
+if(tab=="track"){
+
+loadTracking();
+
+}
+
+}
+
+// ===============================
+// ADMIN PANEL TRIGGER
+// ===============================
+
+let tapCount=0;
+
+document.getElementById("admin-trigger").addEventListener("click",()=>{
+
+tapCount++;
+
+if(tapCount>=5){
+
+let code = prompt("Enter Admin Code");
+
+if(code=="LUCKY"){
+
+openAdminPanel();
+
+}
+
+tapCount=0;
+
+}
+
+});
+
+// ===============================
+// START APP
+// ===============================
+
+window.onload = ()=>{
+
+loadAppData();
+
+};
