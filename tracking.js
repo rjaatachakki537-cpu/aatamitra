@@ -1,22 +1,88 @@
-const TRACK_API = "https://script.google.com/macros/s/AKfycbwKIh4Q2VGhGspPBEQe6cfrwJLOlrY76MC3BDp9463MsIIBj1gPDLs7f3yR6vtGDwk_/exec";
+// ===============================
+// ORDER TRACKING SYSTEM
+// ===============================
 
-async function trackMyOrder(orderID){
+async function loadTracking(){
 
-    const res = await fetch(`${TRACK_API}?action=trackOrder&orderId=${orderID}`);
+let mobile = localStorage.getItem("userMobile");
 
-    const order = await res.json();
+let box = document.getElementById("main-app");
 
-    if(order){
+box.innerHTML = "<h2 style='padding:10px'>Track Order</h2>";
 
-        alert(
-        "Order ID: "+order[0]+"\n"+
-        "Status: "+order[7]
-        );
+try{
 
-    }else{
+let res = await fetch(API_URL + "?action=track&mobile=" + mobile);
 
-        alert("Order nahi mila");
+let data = await res.json();
 
-    }
+if(!data || data.length==0){
+
+box.innerHTML += "<p style='padding:10px'>No orders found</p>";
+return;
+
+}
+
+data.forEach(order=>{
+
+let status = order.status;
+
+box.innerHTML += renderTracking(status,order);
+
+});
+
+}catch(e){
+
+console.log(e);
+
+box.innerHTML += "<p style='padding:10px'>Tracking error</p>";
+
+}
+
+}
+
+// ===============================
+// TRACKING UI
+// ===============================
+
+function renderTracking(status,order){
+
+let steps = [
+"Order Received",
+"Preparing",
+"Out For Delivery",
+"Delivered"
+];
+
+let html = `
+<div class="track-box">
+
+<h3>Order ID: ${order.id}</h3>
+
+<p>Total ₹${order.amount}</p>
+
+<div class="track-steps">
+`;
+
+steps.forEach(step=>{
+
+let active = steps.indexOf(step) <= steps.indexOf(status)
+? "active"
+: "";
+
+html += `
+<div class="step ${active}">
+${step}
+</div>
+`;
+
+});
+
+html += `
+</div>
+</div>
+`;
+
+return html;
 
 }
