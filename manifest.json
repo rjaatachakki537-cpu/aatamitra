@@ -1,11 +1,17 @@
 {
-  "name": "Aata Mitra - Rana Ji Aata Chakki",
-  "short_name": "Aata Mitra",
+  "name": "RANA JI AATA CHAKKI",
+  "short_name": "AataMitra",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#f1c40f",
-  "theme_color": "#f1c40f",
+  "background_color": "#ffffff",
+  "theme_color": "#27ae60",
+  "orientation": "portrait",
   "icons": [
+    {
+      "src": "welcome.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
     {
       "src": "welcome.jpg",
       "sizes": "512x512",
