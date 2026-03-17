@@ -2,7 +2,7 @@
 // AATA MITRA MAIN SCRIPT
 // ===============================
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwKIh4Q2VGhGspPBEQe6cfrwJLOlrY76MC3BDp9463MsIIBj1gPDLs7f3yR6vtGDwk_/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwbFViOx7sj46WHyqhV_p516n366LvdsslI07MvEFVSCxzFCDwvuMCMIAe4l6PuGsga/exec";
 
 // DATA
 let products = [];
