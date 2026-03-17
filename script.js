@@ -1,24 +1,22 @@
-// =============================== 
+// ===============================
 // AATA MITRA MAIN SCRIPT
 // ===============================
 
 const API_URL = "https://script.google.com/macros/s/AKfycbwbFViOx7sj46WHyqhV_p516n366LvdsslI07MvEFVSCxzFCDwvuMCMIAe4l6PuGsga/exec";
 
-// DATA
 let products = [];
 let categories = [];
 let cart = [];
 
 // ===============================
-// LOAD APP DATA
+// LOAD DATA FROM GOOGLE SHEET
 // ===============================
 
 async function loadAppData(){
 
 try{
 
-let res = await fetch(API_URL+"?action=getData");
-
+let res = await fetch(API_URL + "?action=getData");
 let data = await res.json();
 
 products = data.products;
@@ -27,35 +25,37 @@ categories = data.categories;
 renderCategories();
 renderProducts();
 
-}catch(e){
+}catch(err){
 
-console.log("Data load error",e);
+console.log("Load Error:",err);
 
 }
 
 }
 
 // ===============================
-// RENDER CATEGORIES
+// SHOW CATEGORY BUTTONS
 // ===============================
 
 function renderCategories(){
 
 let box = document.getElementById("category-list");
 
-box.innerHTML = "";
+if(!box) return;
+
+box.innerHTML="";
 
 categories.forEach(cat=>{
 
-let div = document.createElement("div");
+let btn = document.createElement("button");
 
-div.className="category";
+btn.className="category-btn";
 
-div.innerText = cat.name;
+btn.innerText = cat;
 
-div.onclick=()=>filterProducts(cat.name);
+btn.onclick = ()=>filterProducts(cat);
 
-box.appendChild(div);
+box.appendChild(btn);
 
 });
 
@@ -67,19 +67,21 @@ box.appendChild(div);
 
 function filterProducts(category){
 
-let filtered = products.filter(p=>p.category==category);
+let filtered = products.filter(p=>p.category == category);
 
 renderProducts(filtered);
 
 }
 
 // ===============================
-// RENDER PRODUCTS
+// SHOW PRODUCTS
 // ===============================
 
-function renderProducts(list=products){
+function renderProducts(list = products){
 
 let box = document.getElementById("product-list");
+
+if(!box) return;
 
 box.innerHTML="";
 
@@ -89,11 +91,15 @@ let html = `
 
 <div class="product">
 
-<img src="${p.image}">
+<img src="${p.image}" alt="${p.name}">
 
 <h3>${p.name}</h3>
 
-<p>₹${p.price}</p>
+<p>${p.sub_category}</p>
+
+<p>${p.weight}</p>
+
+<h4>₹${p.price}</h4>
 
 <button onclick="addToCart('${p.id}')">
 Add To Cart
@@ -110,14 +116,14 @@ box.innerHTML += html;
 }
 
 // ===============================
-// CART SYSTEM
+// ADD TO CART
 // ===============================
 
 function addToCart(id){
 
-let item = products.find(p=>p.id==id);
+let item = products.find(p=>p.id == id);
 
-let exist = cart.find(c=>c.id==id);
+let exist = cart.find(c=>c.id == id);
 
 if(exist){
 
@@ -139,14 +145,16 @@ updateCartCount();
 }
 
 // ===============================
-// CART COUNT
+// CART COUNT UPDATE
 // ===============================
 
 function updateCartCount(){
 
-let total = cart.reduce((sum,i)=>sum+i.qty,0);
+let total = cart.reduce((sum,i)=>sum + i.qty ,0);
 
-document.getElementById("cart-count").innerText = total;
+let el = document.getElementById("cart-count");
+
+if(el) el.innerText = total;
 
 }
 
@@ -158,17 +166,17 @@ function showCart(){
 
 let box = document.getElementById("main-app");
 
-let html = `<h2 style="padding:10px">Cart</h2>`;
+let html = `<h2>Cart</h2>`;
 
-let total=0;
+let total = 0;
 
 cart.forEach(item=>{
 
-let price = item.price*item.qty;
+let price = item.price * item.qty;
 
 total += price;
 
-html+=`
+html += `
 
 <div class="cart-item">
 
@@ -182,7 +190,7 @@ html+=`
 
 });
 
-html+=`
+html += `
 
 <h3>Total ₹${total}</h3>
 
@@ -202,43 +210,7 @@ box.innerHTML = html;
 
 function placeOrder(total){
 
-openPayment(total);
-
-}
-
-// ===============================
-// ORDER SEND TO BACKEND
-// ===============================
-
-async function sendOrder(paymentType){
-
-let order = {
-
-mobile:localStorage.getItem("userMobile"),
-
-cart:cart,
-
-payment:paymentType,
-
-status:"Order Received"
-
-};
-
-await fetch(API_URL,{
-
-method:"POST",
-
-body:JSON.stringify(order)
-
-});
-
-alert("Order Placed Successfully");
-
-cart=[];
-
-updateCartCount();
-
-showTab("track");
+alert("Proceed to payment ₹" + total);
 
 }
 
@@ -248,51 +220,11 @@ showTab("track");
 
 function showTab(tab){
 
-if(tab=="home"){
+if(tab=="home") loadAppData();
 
-loadAppData();
-
-}
-
-if(tab=="cart"){
-
-showCart();
+if(tab=="cart") showCart();
 
 }
-
-if(tab=="track"){
-
-loadTracking();
-
-}
-
-}
-
-// ===============================
-// ADMIN PANEL TRIGGER
-// ===============================
-
-let tapCount=0;
-
-document.getElementById("admin-trigger").addEventListener("click",()=>{
-
-tapCount++;
-
-if(tapCount>=5){
-
-let code = prompt("Enter Admin Code");
-
-if(code=="LUCKY"){
-
-openAdminPanel();
-
-}
-
-tapCount=0;
-
-}
-
-});
 
 // ===============================
 // START APP
