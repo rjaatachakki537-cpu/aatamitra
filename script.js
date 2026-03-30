@@ -159,7 +159,7 @@ if(el) el.innerText = total;
 }
 
 // ===============================
-// SHOW CART PAGE
+// SHOW CART PAGE (UPDATED PAYMENT)
 // ===============================
 
 function showCart(){
@@ -194,8 +194,12 @@ html += `
 
 <h3>Total ₹${total}</h3>
 
-<button onclick="placeOrder(${total})">
-Place Order
+<button onclick="payNow(${total})" style="background:green;color:#fff;padding:10px;margin:5px;">
+💳 Pay Online
+</button>
+
+<button onclick="cashOnDelivery(${total})" style="background:orange;color:#fff;padding:10px;margin:5px;">
+💵 Cash on Delivery
 </button>
 
 `;
@@ -205,12 +209,54 @@ box.innerHTML = html;
 }
 
 // ===============================
-// PLACE ORDER
+// PAYMENT FUNCTIONS (NEW)
 // ===============================
 
-function placeOrder(total){
+function payNow(total){
 
-alert("Proceed to payment ₹" + total);
+// payment.js wala function call
+openPayment(total);
+
+// delay ke baad order save
+setTimeout(()=>{
+sendOrder("ONLINE");
+},5000);
+
+}
+
+function cashOnDelivery(total){
+
+sendOrder("COD");
+
+alert("Order COD par place ho gaya!");
+
+}
+
+// ===============================
+// SEND ORDER TO BACKEND (NEW)
+// ===============================
+
+async function sendOrder(paymentType){
+
+let order = {
+
+name:"Customer",
+phone:localStorage.getItem("userMobile"),
+address:"Not Provided",
+items:JSON.stringify(cart),
+total:cart.reduce((sum,i)=>sum + i.price*i.qty,0)
+
+};
+
+await fetch(API_URL + "?action=placeOrder",{
+method:"POST",
+body:JSON.stringify(order)
+});
+
+alert("Order Placed Successfully");
+
+cart=[];
+updateCartCount();
 
 }
 
